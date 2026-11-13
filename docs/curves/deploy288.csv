@@ -1,0 +1,9 @@
+arm,steps,rehearsal,boss_rehearsal,config,n_seeds,win,win_se,fa,mates
+S,20029824,0,3,coop2l:ABYSS,288,0.1181,0.019,0.4009,mates r3
+S,20029824,0,3,coop4l:ABYSS,288,0.1319,0.0199,0.4349,mates r3
+S,20029824,0,3,solo:ABYSS,288,0.309,0.0272,0.7715,mates r3
+S,20029824,0,0,solo:ABYSS,288,0.2674,0.0261,0.7361,all r0
+m3s,20000000,0,3,coop2l:ABYSS,288,0.0972,0.0175,0.3871,mates r3
+m3s,20000000,0,3,coop4l:ABYSS,288,0.1215,0.0193,0.4607,mates r3
+m3s,20000000,0,3,solo:ABYSS,288,0.2847,0.0266,0.7628,mates r3
+m3s,20000000,0,0,solo:ABYSS,288,0.2257,0.0246,0.7277,all r0

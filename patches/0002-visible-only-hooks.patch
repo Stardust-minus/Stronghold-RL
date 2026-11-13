@@ -1,0 +1,74 @@
+diff --git a/server/match/bot.js b/server/match/bot.js
+index fbe2fd1..0e16167 100644
+--- a/server/match/bot.js
++++ b/server/match/bot.js
+@@ -91,7 +91,7 @@ import { freeSlot, countFree, legalTiles, canPlace, positionClass, placeClass, b
+ import { rotateOffset, normDir, mirrorDir, oppositeDir } from '../sim/dir.js';
+ import { itemKey } from './gamedata.js';
+ import { computeBonds } from './bondsMeta.js';
+-import { isFlyKey, bountySpawns } from './waves.js';
++import { isFlyKey, bountySpawns, gateOf } from './waves.js';
+ import { previewPlayer } from './preview.js';
+ import { bossPoolHp, SharedBossPool } from './finalAssault.js';
+ import { GEO } from '../../shared/constants.js';
+@@ -821,8 +821,12 @@ function bossWaveOf(m, ps) {
+ export function fieldModel(m, ps = null) {
+   const boss = m.wave ? null : bossWaveOf(m, ps);
+   const wave = m.wave || (boss && boss.wave);
++  // visible-only (RL env opt-in, m._visibleOnly = the RL seats; absent in production): the model of a player who sees only
++  // the wave preview — routes by preview gate / flight, no per-spawn route index, no spawn mods, no round HP multiplier
++  const vis = !!(ps && m._visibleOnly && typeof m._visibleOnly.has === 'function' && m._visibleOnly.has(ps.playerId));
++  const slotKey = vis ? '_botPathVis' : '_botPath';
+   const cacheKey = `${m.round}|${m.stageId}|${wave ? wave.templateId : 'boss'}|${boss ? boss.side : ''}`;
+-  if (m._botPath && m._botPath.key === cacheKey) return m._botPath;
++  if (m[slotKey] && m[slotKey].key === cacheKey) return m[slotKey];
+   const gd = ps?.gd || m.gd;
+   const st = m.stage;
+   const gpaths = (st && (st.groundPathsWithDevices || st.groundPaths)) || {};
+@@ -852,6 +856,12 @@ export function fieldModel(m, ps = null) {
+     return { ...rt, start: mc(rt.start), end: mc(rt.end), checkpoints: Array.isArray(rt.checkpoints) ? rt.checkpoints.map(mc) : [] };
+   };
+   const foes = new Map(); // DEF|RES → HP share of the round's enemies (effDps)
++  const visRoutes = (s) => {
++    const pv = s.preview || {}, gate = pv.gate === 'upper' ? 'upper' : 'lower', fly = !!pv.fly;
++    const all = routes.map((rt, i) => i).filter((i) => routes[i] && Array.isArray(routes[i].start));
++    const g = all.filter((i) => gateOf(routes[i].start, !!boss) === gate), gm = g.filter((i) => (routes[i].motion === 'FLY') === fly);
++    return gm.length ? gm : g.length ? g : all.length ? all : [0];
++  };
+   if (routes.length && spawns.length) {
+     const per = new Map();
+     for (const s of spawns) {
+@@ -864,13 +874,16 @@ export function fieldModel(m, ps = null) {
+         foes.set(k, (foes.get(k) || 0) + (isLeader ? LEADER_HP * LEADER_WEIGHT : (e.stats.maxHp || 1000) * n));
+       }
+       // the leader counts like LEADER_WEIGHT tough enemies: its huge pool makes damage on it worth a lot everywhere
+-      const hp = isLeader ? LEADER_HP : ((e && e.stats && e.stats.maxHp) || 1000) * ((s.mods && s.mods.hpMul) || 1) * roundHpMul(m);
+-      const spd = ((e && e.stats && e.stats.moveSpeed) || 1) * ((s.mods && s.mods.speedMul) || 1);
++      const hp = isLeader ? LEADER_HP : ((e && e.stats && e.stats.maxHp) || 1000) * (vis ? 1 : ((s.mods && s.mods.hpMul) || 1) * roundHpMul(m));
++      const spd = ((e && e.stats && e.stats.moveSpeed) || 1) * (vis ? 1 : ((s.mods && s.mods.speedMul) || 1));
+       const air = HOVER.has(s.enemyKey);
+-      const key = `${s.routeIndex}|${isLeader ? 'boss' : ''}|${air ? 'air' : ''}`;
+-      const a = per.get(key) || { ri: s.routeIndex, boss: isLeader, air, n: 0, hp: 0, spd: 0 };
+-      a.n += isLeader ? LEADER_WEIGHT : n; a.hp += hp * n; a.spd += spd * n;
+-      per.set(key, a);
++      const ris = vis ? visRoutes(s) : [s.routeIndex], w = 1 / ris.length;
++      for (const ri of ris) {
++        const key = `${ri}|${isLeader ? 'boss' : ''}|${air ? 'air' : ''}`;
++        const a = per.get(key) || { ri, boss: isLeader, air, n: 0, hp: 0, spd: 0 };
++        a.n += (isLeader ? LEADER_WEIGHT : n) * w; a.hp += hp * n * w; a.spd += spd * n * w;
++        per.set(key, a);
++      }
+     }
+     for (const a of per.values()) {
+       let rt = routes[a.ri];
+@@ -918,8 +931,8 @@ export function fieldModel(m, ps = null) {
+   let wsum = 0;
+   for (const w of foes.values()) wsum += w;
+   const armor = [...foes.entries()].map(([k, w]) => { const [def, res] = k.split('|').map(Number); return { def, res, w: w / wsum }; });
+-  m._botPath = { key: cacheKey, routes: routesOut, index, ground, flyTotal, airflow: airflowOf(st, toBoard, boss && boss.side === 'R'), armor, dps: new Map() };
+-  return m._botPath;
++  m[slotKey] = { key: cacheKey, routes: routesOut, index, ground, flyTotal, airflow: airflowOf(st, toBoard, boss && boss.side === 'R'), armor, dps: new Map() };
++  return m[slotKey];
+ }
+ 
+ /**

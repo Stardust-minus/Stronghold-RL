@@ -1,0 +1,7 @@
+arm,steps,rehearsal,boss_rehearsal,config,n_seeds,win,win_se,fa
+fr,10021760,0,3,coop4:ABYSS,96,0.1354,0.0349,0.4622
+fr,10021760,0,3,coop4:HARD,96,0.8333,0.038,0.9466
+fr,10021760,0,3,coop4ai:ABYSS,96,0.375,0.0494,0.7079
+fr,10021760,0,3,coop4ai:HARD,96,1.0,0.0,1.0
+fr,10021760,0,3,solo:ABYSS,96,0.0625,0.0247,0.4785
+fr,10021760,0,3,solo:HARD,96,0.8646,0.0349,0.9614

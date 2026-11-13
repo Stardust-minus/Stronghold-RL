@@ -1,0 +1,4 @@
+# Python side of the trainer (tested: Python 3.12, torch 2.15, numpy 2.5, tensorboard 2.21)
+torch>=2.4
+numpy>=1.26
+tensorboard>=2.16

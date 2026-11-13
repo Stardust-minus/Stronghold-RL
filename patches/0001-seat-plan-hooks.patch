@@ -1,0 +1,341 @@
+diff --git a/server/match/choices.js b/server/match/choices.js
+index 0642589..c360639 100644
+--- a/server/match/choices.js
++++ b/server/match/choices.js
+@@ -62,6 +62,7 @@
+ //   cards with `team: true` apply to the picker AND every alive teammate ("若存在其他队友则他们也获得").
+ 
+ import { weightedPick } from './waves.js';
++import { seatPlanOf, deferForeign } from './seatPlan.js';
+ import { PLUGIN_GAIN_COUNT_MAX } from '../../shared/plugins/limits.js';
+ 
+ export const FAMILY_NAMES = { bounty: '悬赏决策', supply: '道具补给', shop: '机密商店', tactic: '战术决策' }; // i18n-ignore: = choices.json families (the client shows the localized record)
+@@ -427,17 +428,24 @@ export function cardView(c) {
+ export function applyCard(m, ps, card) {
+   const targets = card.kind === 'tactic' && card.team ? [ps, ...m.alivePlayers().filter((p) => p !== ps)] : [ps];
+   for (const p of targets) {
+-    const chosen = m.capacityExperiment ? structuredClone(card) : card;
+-    const ev = { card: { ...chosen }, family: chosen.family, picker: ps.playerId, forTeammate: p !== ps };
+-    const key = `choice:${chosen.id}`;
+-    const handled = m.dispatcher.runKey(p, key, 'onChoicePick', { kind: 'choice', card: chosen }, ev);
+-    if (!handled) applyDefault(m, p, chosen);
+-    // every other source observes the pick (the card's own key already ran above)
+-    m.dispatch(p, 'onChoicePick', ev, { skipKey: key });
+-    p.recompute();
++    // a teammate planning its prep (seatPlan.js, model-AI seats only) gets the card when its plan ends
++    if (p !== ps && deferForeign(p, () => { if (p.alive) applyCardTo(m, ps, p, card); })) continue;
++    applyCardTo(m, ps, p, card);
+   }
+ }
+ 
++/** One target of a picked card (applyCard). */
++function applyCardTo(m, ps, p, card) {
++  const chosen = m.capacityExperiment ? structuredClone(card) : card;
++  const ev = { card: { ...chosen }, family: chosen.family, picker: ps.playerId, forTeammate: p !== ps };
++  const key = `choice:${chosen.id}`;
++  const handled = m.dispatcher.runKey(p, key, 'onChoicePick', { kind: 'choice', card: chosen }, ev);
++  if (!handled) applyDefault(m, p, chosen);
++  // every other source observes the pick (the card's own key already ran above)
++  m.dispatch(p, 'onChoicePick', ev, { skipKey: key });
++  p.recompute();
++}
++
+ function applyDefault(m, ps, card) {
+   const gd = m.gd;
+   if (card.kind === 'bounty') {
+@@ -496,10 +504,12 @@ function applyDefault(m, ps, card) {
+         const pgd = ps.gd || gd;
+         const hasBond = (cid) => { const c = pgd.chess(cid); return !!(c && Array.isArray(c.bonds) && c.bonds.includes(bs.bond)); };
+         const gain = Math.min(PLUGIN_GAIN_COUNT_MAX, count);
++        const plan = seatPlanOf(ps), grantRng = plan ? plan.meta : m.rngMeta; // a model-AI seat's plan (seatPlan.js): its meta stream, a stop point
++        if (plan && gain > 0) plan.stops.pool++;
+         for (let i = 0; i < gain; i++) {
+           const extra = typeof ps.diyStockEntries === 'function' ? ps.diyStockEntries() : null;
+-          const id = ps.pool.roll(m.rngMeta, { maxTier: Math.max(1, ps.shop.level), filter: hasBond, extra })
+-            || ps.pool.roll(m.rngMeta, { maxTier: 6, filter: hasBond, extra });
++          const id = ps.pool.roll(grantRng, { maxTier: Math.max(1, ps.shop.level), filter: hasBond, extra })
++            || ps.pool.roll(grantRng, { maxTier: 6, filter: hasBond, extra });
+           if (id) ps.acquireChess(id, { source: 'choice' });
+         }
+         handled = true;
+diff --git a/server/match/effectsMeta.js b/server/match/effectsMeta.js
+index ff1afb1..cc91dcb 100644
+--- a/server/match/effectsMeta.js
++++ b/server/match/effectsMeta.js
+@@ -40,6 +40,7 @@
+ // (onRoundStart, EffectDispatcher.dispatchEliminated: 信标's gift — GitHub #86).
+ 
+ import { dispatchOperatorTraits, operatorTraitHandler } from './operatorTraits.js';
++import { seatPlanOf, deferForeign } from './seatPlan.js';
+ import { itemKey } from './gamedata.js';
+ import { boardOrder, parseKey, tileKey } from './board.js';
+ import { pieceBonds as bondsOfPiece } from './bondsMeta.js';
+@@ -526,13 +527,32 @@ function grantSpeaker(gd, source) {
+  * @param {string} hook
+  * @param {object|null} [ev] the event being dispatched (onPrice: ctx.modifyPrice / ctx.setPrice edit ev.price)
+  */
+-export function makeCtx(m, ps, source, hook, ev = null, preview = null) {
++/** Context methods that write a player's state: through a planning teammate's context they wait (seatPlan.js). */
++const WRITES = new Set(['setCounter', 'incCounter', 'incPieceCounter', 'addFunds', 'addPendingFunds', 'spendFunds', 'grantFreeRefresh',
++  'modifyPrice', 'setPrice', 'addLayers', 'grantChess', 'grantItem', 'rollChess', 'rollItem', 'rollPool', 'triggerGarrisons', 'promote',
++  'transform', 'upgradeItem', 'equipDirect', 'destroyPiece', 'offerChess', 'offerItems', 'setShopSlot', 'addDeployCap', 'setDeployCapAtLeast',
++  'setBondCountBonus', 'setDeviceActive', 'setTileOverride', 'addEffect', 'removeEffect', 'setEffectCounter', 'addBounty', 'offerBountyChoice']);
++
++/** Another player's context of teammate `p`: its writes wait while p's plan is open (model-AI seats only), on the match streams. */
++function teammateCtx(m, ps, p, source, hook) {
++  if (p === ps || !seatPlanOf(p)) return makeCtx(m, p, source, hook, null);
++  const c = makeCtx(m, p, source, hook, null, null, true);
++  return new Proxy(c, { get(t, k) {
++    const v = t[k];
++    if (typeof v !== 'function' || !WRITES.has(k)) return v;
++    return (...args) => { if (!deferForeign(p, () => v.apply(t, args))) return v.apply(t, args); return null; };
++  } });
++}
++
++export function makeCtx(m, ps, source, hook, ev = null, preview = null, foreign = false) {
+   // the player's view of the data: its slotted 自选 slots are its operators (0.2.0, player/diy.js) — chessRecord,
+   // pieceBonds, a strategy's / 特质's bond and tier reads see the operator; the match's GameData for everyone else
+   const gd = ps.gd || m.gd;
+-  const rng = preview?.rng ?? m.rngMeta;
++  // a model-AI seat's plan (seatPlan.js; gated, never set for legacy or human seats): its own meta stream
++  const plan = preview || foreign ? null : seatPlanOf(ps);
++  const rng = preview?.rng ?? plan?.meta ?? m.rngMeta;
+   // The roll helpers only read pools/data; shadow their RNG receiver without replacing the live match stream.
+-  const rolls = preview ? Object.assign(Object.create(m), { rngMeta: rng }) : m;
++  const rolls = preview || plan ? Object.assign(Object.create(m), { rngMeta: rng }) : m;
+   const view = (p) => (p ? ps.pieceView(p) : null);
+   // the piece whose per-round counters a handler reads: an owned one, or the handler's own source copy that a merge
+   // consumed during this refresh dispatch — it still witnessed the refresh (EffectDispatcher._garrisons, GitHub #627)
+@@ -675,6 +695,7 @@ export function makeCtx(m, ps, source, hook, ev = null, preview = null) {
+      * bonds are read through the player's data view (a slotted slot: its operator's).
+      */
+     rollChess: (opts = {}) => {
++      if (plan) plan.stops.pool++; // a shared-pool draw: a stop point of the seat's plan
+       const f = (id) => {
+         if (opts.bond) { const c = gd.chess(id); if (!c || !Array.isArray(c.bonds) || !c.bonds.includes(opts.bond)) return false; }
+         return typeof opts.filter === 'function' ? !!opts.filter(id) : true;
+@@ -689,12 +710,12 @@ export function makeCtx(m, ps, source, hook, ev = null, preview = null) {
+      * Roll a choices.json pool: equip pools → { kind: 'item', id }; chess pools (items / weighted / shopEligible with
+      * tier, minTier, bond, golden) → { kind: 'chess', id, golden } (a pool chess needs a free copy). null when empty.
+      */
+-    rollPool: (poolId, opts = {}) => rolls.rollPool(poolId, {
++    rollPool: (poolId, opts = {}) => (plan && plan.stops.pool++, rolls.rollPool(poolId, {
+       shopLevel: ps.shop.level,
+       // a shared-pool draw also takes the player's 自选 stock, its bonds read through the player's view (rollChess)
+       extra: typeof ps.diyStockEntries === 'function' ? ps.diyStockEntries() : null, chessOf: (id) => gd.chess(id),
+       ...opts, player: ps,
+-    }),
++    })),
+     /**
+      * Run another owned chess's 特质 of `eventType` now (SERVER_GAIN / SERVER_PREP_START / SERVER_PREP_FIN /
+      * SERVER_CHESS_SOLD / SERVER_REFRESH_SHOP). opts.asUid: run them as if they belonged to that piece. Returns the
+@@ -798,8 +819,8 @@ export function makeCtx(m, ps, source, hook, ev = null, preview = null) {
+     },
+ 
+     // ---- team
+-    teammates: () => m.alivePlayers().filter((p) => p !== ps).map((p) => makeCtx(m, p, source, hook, null)),
+-    player: (playerId) => { const p = m.players.get(playerId); return p && p.alive ? makeCtx(m, p, source, hook, null) : null; },
++    teammates: () => m.alivePlayers().filter((p) => p !== ps).map((p) => teammateCtx(m, ps, p, source, hook)),
++    player: (playerId) => { const p = m.players.get(playerId); return p && p.alive ? teammateCtx(m, ps, p, source, hook) : null; },
+   };
+   if (!preview) return ctx;
+   const forPlayer = (p) => makeCtx(m, preview.players.get(p.playerId) || p, source, hook, null, preview);
+diff --git a/server/match/player/acquire.js b/server/match/player/acquire.js
+index 11ca94d..19abd5b 100644
+--- a/server/match/player/acquire.js
++++ b/server/match/player/acquire.js
+@@ -6,6 +6,7 @@
+ // the player state).
+ 
+ import { hasTraitFor } from '../operatorTraits.js';
++import { seatPlanOf, seatPlanOffer } from '../seatPlan.js';
+ import { pieceDir, parseDir, mergeTile } from '../board.js';
+ import { MAX_OFFER_SLOTS } from './common.js';
+ import { onMerge } from '../botEmotes.js';
+@@ -204,12 +205,17 @@ export class PlayerAcquire {
+     const t = Number.isInteger(tier) ? tier : Math.min(this.shop.level + ro.tierOffset, ro.maxTier);
+     // an offer never shows one operator twice, whoever built the list (user playtest #6 item 19)
+     let list = Array.isArray(ids) ? [...new Set(ids)].filter((id) => this.gd.chess(id)) : null;
++    if (!list) list = seatPlanOffer(this, t); // a model-AI seat's planned offer (seatPlan.js); null for every other seat
+     if (!list) {
+       list = [];
+       const fresh = (id) => !list.includes(id);
++      // a model-AI seat past its offer table: its own stream, and a stop point (the device cannot see the pool)
++      const plan = seatPlanOf(this);
++      if (plan) plan.stops.offer++;
++      const offerRng = plan ? plan.shop : this.m.rngShop;
+       for (let i = 0; i < ro.count; i++) { // loop-cap: rewardOffer().count ≤ MAX_OFFER_SLOTS
+         let id = null;
+-        for (let tt = t; tt >= 1 && !id; tt--) id = this.pool.roll(this.m.rngShop, { tier: tt, filter: fresh, extra: this.diyStockEntries() });
++        for (let tt = t; tt >= 1 && !id; tt--) id = this.pool.roll(offerRng, { tier: tt, filter: fresh, extra: this.diyStockEntries() });
+         if (id) list.push(id);
+       }
+     }
+diff --git a/server/match/player/economy.js b/server/match/player/economy.js
+index e718777..810436d 100644
+--- a/server/match/player/economy.js
++++ b/server/match/player/economy.js
+@@ -9,6 +9,7 @@ import { ruleOption } from '../../../shared/plugins/rules.js';
+ import { freeSlot } from '../board.js';
+ import { computeBonds } from '../bondsMeta.js';
+ import { OK, fail } from './common.js';
++import { seatPlanReroll } from '../seatPlan.js';
+ 
+ export class PlayerEconomy {
+   addFunds(n, { reason = '' } = {}) {
+@@ -67,13 +68,13 @@ export class PlayerEconomy {
+     return Number.isFinite(p) ? Math.max(0, Math.round(p)) : slot.basePrice;
+   }
+ 
+-  _rollChessSlot() {
++  _rollChessSlot(rng = this.m.rngShop, level = this.shop.level) {
+     // the slotted 自选 pieces join the draw once the 调度中心 reaches their slot's level (player/diy.js diyRollEntries)
+-    const id = this.pool.roll(this.m.rngShop, { maxTier: this.shop.level, extra: this.diyRollEntries() });
++    const id = this.pool.roll(rng, { maxTier: level, extra: this.diyRollEntries() });
+     return id ? { kind: 'chess', id, basePrice: this.gd.chessPrice(id), frozen: false, sold: false } : null;
+   }
+ 
+-  _rollItemSlot() {
++  _rollItemSlot(rng = this.m.rngShop, level = this.shop.level) {
+     // startRound rolls the shop before recompute, so the cached this.bonds can be one round behind.
+     // bondBias therefore calls computeBonds at the roll (no rng). The official rule passes null and
+     // does not call it, so the shop's rng stays today's two draws.
+@@ -83,7 +84,7 @@ export class PlayerEconomy {
+       bias = new Set();
+       for (const [id, st] of Object.entries(bonds)) if (st && st.active) bias.add(id);
+     }
+-    const id = this.pool.rollItem(this.m.rngShop, this.shop.level, this.itemPool, bias);
++    const id = this.pool.rollItem(rng, level, this.itemPool, bias);
+     return id ? { kind: 'item', id, basePrice: this.gd.itemPrice(id), frozen: false, sold: false } : null;
+   }
+ 
+@@ -93,6 +94,8 @@ export class PlayerEconomy {
+    */
+   rollShop({ keepFrozen = false } = {}) {
+     if (this._consumeTestShop()) return;
++    // a model-AI seat's planned reroll (seatPlan.js refresh table); gated: _seatPlan is never set for legacy or human seats
++    if (!keepFrozen && this._seatPlan && seatPlanReroll(this)) return;
+     const { chess: nChess, item: nItem } = this.gd.shopSlots(this.shop.level);
+     const old = this.shop.slots;
+     const layout = this.shop.layout || { chess: old.length, item: 0 };
+diff --git a/server/match/seatPlan.js b/server/match/seatPlan.js
+new file mode 100644
+index 0000000..1737522
+--- /dev/null
++++ b/server/match/seatPlan.js
+@@ -0,0 +1,115 @@
++// server/match/seatPlan.js — the one-round-trip prep plan of a model-AI seat (the AI model plan: client inference; the RL
++// environment tools/rl/env.mjs simulates the same rules). Gated: only a PlayerState whose `_seatPlan` is set (beginSeatPlan)
++// behaves differently; legacy bots, humans and golden replays never set it, so their rng streams are untouched.
++//   - Refresh table: at the prep start, rolls[L][k] for shop levels L = level .. level + 2 and k < SEAT_PLAN_REFRESHES,
++//     drawn from the seat's own stream deriveSeed(seed, 'aiShop:<playerId>:<round>') and the prep-start pool. The k-th
++//     reroll the seat makes while its shop is at level L (k counted per level, from 0) shows rolls[L][k]; its rerolls
++//     never draw m.rngShop. The device receives the table, never the pool counts (those are hidden from players).
++//   - Offer table: merge reward offers likewise — offers[T][j] for every tier T and j < SEAT_PLAN_OFFERS, drawn after the
++//     refresh table from the same stream and pool (player/acquire.js pushRewardOffer's draw); the j-th rolled offer of tier
++//     T the seat gets shows offers[T][j].
++//   - Its own effects (random coin, same-bond grants, rng picks of 机变 / item effects) draw the seat's meta stream
++//     deriveSeed(seed, 'aiMeta:<playerId>:<round>') instead of m.rngMeta.
++//   - A draw a device cannot reproduce — an effect rolling the shared pool, an offer or a reroll past its table —
++//     is a stop point: counted in `stops`; the plan ends there and the server (in training: the env) carries on.
++//   - Foreign effects: what another player's action does to the seat while its plan is open (a teammate's team tactic
++//     card, an effect of another seat writing through ctx.teammates() / ctx.player()) waits in `foreign` and is applied
++//     when the plan ends (the seat's Ready or the prep end), on the match streams; counted as stops.foreign.
++import { createRng, deriveSeed } from '../sim/rng.js';
++
++export const SEAT_PLAN_REFRESHES = 12, SEAT_PLAN_LEVELS = 3, SEAT_PLAN_OFFERS = 6;
++
++/** The seat's plan for the current round, or null (none, or left over from an earlier round). */
++export function seatPlanOf(ps) {
++  const p = ps && ps._seatPlan;
++  return p && ps.m && p.round === ps.m.round ? p : null;
++}
++
++/** A full shop layout at level `level` from `rng` (economy.js rollShop's draw order: chess slots, then item slots). */
++function rollLayout(ps, level, rng) {
++  const { chess: nChess, item: nItem } = ps.gd.shopSlots(level);
++  const slots = [];
++  for (let i = 0; i < nChess; i++) slots.push(ps._rollChessSlot(rng, level));
++  for (let i = 0; i < nItem; i++) slots.push(ps._rollItemSlot(rng, level));
++  return { slots, layout: { chess: nChess, item: nItem } };
++}
++
++/** A merge reward offer of tier `t` from `rng` (player/acquire.js pushRewardOffer's draw: distinct ids, lower tiers when empty). */
++function rollOffer(ps, t, count, rng) {
++  const list = [], fresh = (id) => !list.includes(id);
++  for (let i = 0; i < count; i++) { // loop-cap: rewardOffer().count
++    let id = null;
++    for (let tt = t; tt >= 1 && !id; tt--) id = ps.pool.roll(rng, { tier: tt, filter: fresh, extra: ps.diyStockEntries() });
++    if (id) list.push(id);
++  }
++  return list;
++}
++
++/** pushRewardOffer for a planning seat: its next planned offer of tier `t` (a copy), or null (no plan / past the table). */
++export function seatPlanOffer(ps, t) {
++  const p = seatPlanOf(ps);
++  if (!p) return null;
++  const rows = p.offers.get(t), k = p.offered.get(t) || 0;
++  if (!rows || k >= rows.length) return null;
++  p.offered.set(t, k + 1);
++  return rows[k].slice();
++}
++
++/** Start the seat's plan for this prep: the refresh and offer tables and its meta stream. */
++export function beginSeatPlan(m, ps) {
++  const shop = createRng(deriveSeed(m.seed, `aiShop:${ps.playerId}:${m.round}`));
++  const L0 = ps.shop.level, maxL = Number.isInteger(ps.gd.maxShopLevel) ? ps.gd.maxShopLevel : L0;
++  const table = new Map();
++  for (let L = L0; L <= Math.min(maxL, L0 + SEAT_PLAN_LEVELS - 1); L++) { // loop-cap: SEAT_PLAN_LEVELS levels × SEAT_PLAN_REFRESHES rolls
++    const rows = [];
++    for (let k = 0; k < SEAT_PLAN_REFRESHES; k++) rows.push(rollLayout(ps, L, shop));
++    table.set(L, rows);
++  }
++  const ro = ps.gd.rewardOffer(), offers = new Map();
++  for (let T = 1; T <= ro.maxTier; T++) { // loop-cap: reward tiers × SEAT_PLAN_OFFERS offers
++    const rows = [];
++    for (let j = 0; j < SEAT_PLAN_OFFERS; j++) rows.push(rollOffer(ps, T, ro.count, shop));
++    offers.set(T, rows);
++  }
++  ps._seatPlan = { round: m.round, table, rerolls: new Map(), offers, offered: new Map(), shop, meta: createRng(deriveSeed(m.seed, `aiMeta:${ps.playerId}:${m.round}`)),
++    stops: { pool: 0, offer: 0, table: 0, foreign: 0 }, foreign: [] };
++  return ps._seatPlan;
++}
++
++/** End the seat's plan (its Ready, or the prep's end): then the foreign effects it held, on the match streams. Returns its stop counts. */
++export function endSeatPlan(ps) {
++  const p = ps && ps._seatPlan;
++  if (ps) ps._seatPlan = null;
++  if (!p) return null;
++  for (const fn of p.foreign.splice(0)) fn(); // loop-cap: effects queued during one prep
++  return p.stops;
++}
++
++/** Hold `fn` (another player's effect on `ps`) while ps's plan is open; false = no plan: run it now. */
++export function deferForeign(ps, fn) {
++  const p = seatPlanOf(ps);
++  if (!p) return false;
++  p.stops.foreign++; p.foreign.push(fn);
++  return true;
++}
++
++/** Total rerolls of the seat's plan so far (every level). */
++export function seatPlanRerolls(ps) {
++  const p = seatPlanOf(ps);
++  let n = 0; if (p) for (const k of p.rerolls.values()) n += k;
++  return n;
++}
++
++/** economy.js rollShop for a planning seat's full reroll: the table's next row at the current level (true = done). */
++export function seatPlanReroll(ps) {
++  const p = seatPlanOf(ps);
++  if (!p) return false;
++  const L = ps.shop.level, rows = p.table.get(L), k = p.rerolls.get(L) || 0;
++  p.rerolls.set(L, k + 1);
++  let roll = rows && k < rows.length ? rows[k] : null;
++  if (!roll) { p.stops.table++; roll = rollLayout(ps, ps.shop.level, p.shop); }
++  ps.shop.slots = roll.slots.map((s) => (s ? { ...s, frozen: ps.shop.frozen } : null));
++  ps.shop.layout = { ...roll.layout };
++  ps.dirty();
++  return true;
++}

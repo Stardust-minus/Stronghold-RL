@@ -1,0 +1,23 @@
+# Checkpoints, recorded data, logs and run outputs never go into this repository.
+*.pt
+*.pth
+*.bin
+*.f32
+*.u8
+*.npy
+*.npz
+*.tgz
+*.log
+*.jsonl
+eval-*.json
+events.out.tfevents.*
+runs/
+data/
+www/
+tb/
+# local game checkout made by setup.sh, Python / Node clutter
+/Stronghold-Protocol/
+__pycache__/
+*.pyc
+.venv/
+node_modules/

@@ -1,0 +1,9 @@
+arm,steps,rehearsal,boss_rehearsal,config,n_seeds,win,win_se,fa
+v4-ab-xL,2006704,0,3,coop4:ABYSS,48,0.0208,0.0206,0.097
+v4-ab-xL,2006704,0,3,coop4:HARD,48,0.2292,0.0607,0.3982
+v4-ab-xL,2006704,0,3,solo:ABYSS,48,0,0.0,0.0226
+v4-ab-xL,2006704,0,3,solo:HARD,48,0,0.0,0.2205
+v4-ab-xL,2564928,0,3,coop4:ABYSS,48,0,0.0,0.052
+v4-ab-xL,2564928,0,3,coop4:HARD,48,0.2292,0.0607,0.3692
+v4-ab-xL,2564928,0,3,solo:ABYSS,48,0,0.0,0.0049
+v4-ab-xL,2564928,0,3,solo:HARD,48,0,0.0,0.1644

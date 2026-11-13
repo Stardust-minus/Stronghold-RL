@@ -1,0 +1,108 @@
+policy,rehearsal,boss_rehearsal,config,n_seeds,win,win_se,fa
+BC v4 dLxs + v4b set-loss fine-tune,0,3,coop4:ABYSS,96,0.0104,0.0104,0.0584
+BC v4 dLxs + v4b set-loss fine-tune,0,3,coop4:HARD,96,0.2083,0.0414,0.4921
+BC v4 dLxs + v4b set-loss fine-tune,0,3,solo:ABYSS,96,0,0.0,0.0666
+BC v4 dLxs + v4b set-loss fine-tune,0,3,solo:HARD,96,0.1458,0.036,0.4838
+BC v4 dLxs + v4c econ fine-tune,0,3,coop4:ABYSS,96,0.0104,0.0104,0.063
+BC v4 dLxs + v4c econ fine-tune,0,3,coop4:HARD,96,0.1562,0.0371,0.3561
+BC v4 dLxs + v4c econ fine-tune,0,3,solo:ABYSS,96,0,0.0,0.0114
+BC v4 dLxs + v4c econ fine-tune,0,3,solo:HARD,96,0.0833,0.0282,0.2651
+BC v4 dLxs ep3,0,3,coop4:ABYSS,96,0.0104,0.0104,0.0966
+BC v4 dLxs ep3,0,3,coop4:HARD,96,0.3646,0.0491,0.6174
+BC v4 dLxs ep3,0,3,solo:ABYSS,96,0,0.0,0.0782
+BC v4 dLxs ep3,0,3,solo:HARD,96,0.2812,0.0459,0.6011
+BC v4 xL + v4b set-loss fine-tune,0,3,coop4:ABYSS,96,0,0.0,0.0685
+BC v4 xL + v4b set-loss fine-tune,0,3,coop4:HARD,96,0.3021,0.0469,0.5474
+BC v4 xL + v4b set-loss fine-tune,0,3,solo:ABYSS,96,0.0104,0.0104,0.0696
+BC v4 xL + v4b set-loss fine-tune,0,3,solo:HARD,96,0.1042,0.0312,0.431
+BC v4 xL + v4c econ fine-tune,0,3,coop4:ABYSS,96,0,0.0,0.057
+BC v4 xL + v4c econ fine-tune,0,3,coop4:HARD,96,0.1875,0.0398,0.4174
+BC v4 xL + v4c econ fine-tune,0,3,solo:ABYSS,96,0,0.0,0.0284
+BC v4 xL + v4c econ fine-tune,0,3,solo:HARD,96,0.0417,0.0204,0.2944
+BC v4 xL ep3,0,3,coop4:ABYSS,96,0.0312,0.0178,0.1066
+BC v4 xL ep3,0,3,coop4:HARD,96,0.3646,0.0491,0.601
+BC v4 xL ep3,0,3,solo:ABYSS,96,0,0.0,0.0896
+BC v4 xL ep3,0,3,solo:HARD,96,0.2917,0.0464,0.6255
+BC v4 xL ep4,0,3,coop4:ABYSS,96,0,0.0,0.0628
+BC v4 xL ep4,0,3,coop4:HARD,96,0.3125,0.0473,0.5823
+BC v4 xL ep4,0,3,solo:ABYSS,96,0,0.0,0.1132
+BC v4 xL ep4,0,3,solo:HARD,96,0.2292,0.0429,0.6112
+m3@10M,0,0,coop2l:ABYSS,96,0.0521,0.0227,0.344
+m3@10M,0,3,coop2l:ABYSS,96,0.0729,0.0265,0.3592
+m3@10M,0,3,coop4:ABYSS,96,0.1354,0.0349,0.4875
+m3@10M,0,3,coop4:HARD,96,0.8021,0.0407,0.9319
+m3@10M,0,3,coop4ai:ABYSS,96,0.4271,0.0505,0.7438
+m3@10M,0,3,coop4ai:HARD,96,1.0,0.0,1.0
+m3@10M,0,0,coop4l:ABYSS,96,0.0938,0.0297,0.3531
+m3@10M,0,3,coop4l:ABYSS,96,0.1354,0.0349,0.3812
+m3@10M,0,3,coop4l:HARD,96,0.8229,0.039,0.9148
+m3@10M,0,0,solo:ABYSS,96,0.2188,0.0422,0.6633
+m3@10M,0,3,solo:ABYSS,96,0.2188,0.0422,0.6963
+m3@10M,0,3,solo:HARD,96,0.8542,0.036,0.9736
+ppo2@15M,0,0,coop2l:ABYSS,96,0.0104,0.0104,0.1966
+ppo2@15M,0,3,coop2l:ABYSS,96,0.0104,0.0104,0.1984
+ppo2@15M,0,3,coop4:ABYSS,96,0.0208,0.0146,0.2499
+ppo2@15M,0,3,coop4:HARD,96,0.8646,0.0349,0.9609
+ppo2@15M,0,3,coop4ai:ABYSS,96,0.0729,0.0265,0.4325
+ppo2@15M,0,3,coop4ai:HARD,96,0.9375,0.0247,0.9946
+ppo2@15M,0,0,coop4l:ABYSS,96,0.0104,0.0104,0.1685
+ppo2@15M,0,3,coop4l:ABYSS,96,0.0104,0.0104,0.1754
+ppo2@15M,0,0,solo:ABYSS,96,0.0312,0.0178,0.4721
+ppo2@15M,0,3,solo:ABYSS,96,0.0417,0.0204,0.5166
+ppo2@15M,0,3,solo:HARD,96,0.7188,0.0459,0.9423
+"ppo3h@6.0M, buggy env (_seat lp0)",0,3,coop4:ABYSS,96,0.1354,0.0349,0.4147
+"ppo3h@6.0M, buggy env (_seat lp0)",0,3,coop4:HARD,96,0.8542,0.036,0.9281
+"ppo3h@6.0M, buggy env (_seat lp0)",0,3,coop4ai:ABYSS,96,0.3542,0.0488,0.6246
+"ppo3h@6.0M, buggy env (_seat lp0)",0,3,coop4ai:HARD,96,1.0,0.0,1.0
+"ppo3h@6.0M, buggy env (_seat lp0)",0,3,solo:ABYSS,96,0.0833,0.0282,0.3929
+"ppo3h@6.0M, buggy env (_seat lp0)",0,3,solo:HARD,96,0.7812,0.0422,0.9474
+"ppo3h@6.0M, fixed env",0,0,coop2l:ABYSS,96,0.0208,0.0146,0.1829
+"ppo3h@6.0M, fixed env",0,3,coop2l:ABYSS,96,0.0208,0.0146,0.193
+"ppo3h@6.0M, fixed env",0,3,coop4:ABYSS,96,0.0417,0.0204,0.3056
+"ppo3h@6.0M, fixed env",0,3,coop4:HARD,96,0.8333,0.038,0.9275
+"ppo3h@6.0M, fixed env",0,3,coop4ai:ABYSS,96,0.1354,0.0349,0.5064
+"ppo3h@6.0M, fixed env",0,3,coop4ai:ABYSS,192,0.1302,0.0243,0.5318
+"ppo3h@6.0M, fixed env",0,3,coop4ai:HARD,96,0.9896,0.0104,0.9994
+"ppo3h@6.0M, fixed env",0,0,coop4l:ABYSS,96,0.0521,0.0227,0.2775
+"ppo3h@6.0M, fixed env",0,3,coop4l:ABYSS,96,0.0625,0.0247,0.3017
+"ppo3h@6.0M, fixed env",0,3,coop4l:HARD,96,0.7708,0.0429,0.892
+"ppo3h@6.0M, fixed env",0,0,solo:ABYSS,96,0.0625,0.0247,0.4298
+"ppo3h@6.0M, fixed env",0,3,solo:ABYSS,96,0.0938,0.0297,0.445
+"ppo3h@6.0M, fixed env",0,3,solo:HARD,96,0.7812,0.0422,0.9525
+"ppo3h@6.0M, fixed env, raw-LP obs",0,3,coop4:ABYSS,96,0.1354,0.0349,0.4147
+"ppo3h@6.0M, fixed env, raw-LP obs",0,3,coop4:HARD,96,0.8542,0.036,0.9281
+"ppo3h@6.0M, fixed env, raw-LP obs",0,3,coop4ai:ABYSS,96,0.3542,0.0488,0.6246
+"ppo3h@6.0M, fixed env, raw-LP obs",0,3,coop4ai:HARD,96,1.0,0.0,1.0
+"ppo3h@6.0M, fixed env, raw-LP obs",0,3,solo:ABYSS,96,0.0833,0.0282,0.3929
+"ppo3h@6.0M, fixed env, raw-LP obs",0,3,solo:HARD,96,0.7812,0.0422,0.9474
+production legacy,0,0,coop2l:ABYSS,96,0.0104,0.0104,0.0446
+production legacy,0,3,coop2l:ABYSS,96,0,0.0,0.0451
+production legacy,0,0,coop4l:ABYSS,96,0.0417,0.0204,0.1485
+production legacy,0,3,coop4l:ABYSS,96,0.0417,0.0204,0.1549
+production legacy,0,0,solo:ABYSS,96,0.0104,0.0104,0.1512
+production legacy,0,3,solo:ABYSS,96,0.0104,0.0104,0.1549
+production legacy (v4 env),0,3,coop4:ABYSS,96,0.0625,0.0247,0.1509
+production legacy (v4 env),0,3,coop4:HARD,96,0.5208,0.051,0.7363
+production legacy (v4 env),0,3,solo:ABYSS,96,0.0104,0.0104,0.1549
+production legacy (v4 env),0,3,solo:HARD,96,0.3438,0.0485,0.7177
+"production legacy (v4 env, +coop4ai)",0,3,coop4:ABYSS,96,0.0625,0.0247,0.1509
+"production legacy (v4 env, +coop4ai)",0,3,coop4:HARD,96,0.5208,0.051,0.7363
+"production legacy (v4 env, +coop4ai)",0,3,coop4ai:ABYSS,96,0,0.0,0.0569
+"production legacy (v4 env, +coop4ai)",0,3,coop4ai:HARD,96,0.5938,0.0501,0.7895
+"production legacy (v4 env, +coop4ai)",0,3,solo:ABYSS,96,0.0104,0.0104,0.1549
+"production legacy (v4 env, +coop4ai)",0,3,solo:HARD,96,0.3438,0.0485,0.7177
+teacher (rule-enforcing legacy),0,0,coop2l:ABYSS,96,0,0.0,0.0352
+teacher (rule-enforcing legacy),0,3,coop2l:ABYSS,96,0,0.0,0.0375
+teacher (rule-enforcing legacy),0,3,coop4:ABYSS,96,0.0312,0.0178,0.1308
+teacher (rule-enforcing legacy),0,3,coop4:HARD,96,0.4062,0.0501,0.6392
+teacher (rule-enforcing legacy),0,3,coop4ai:ABYSS,96,0,0.0,0.0569
+teacher (rule-enforcing legacy),0,3,coop4ai:HARD,96,0.5938,0.0501,0.7895
+teacher (rule-enforcing legacy),0,0,coop4l:ABYSS,96,0.0104,0.0104,0.0873
+teacher (rule-enforcing legacy),0,3,coop4l:ABYSS,96,0.0104,0.0104,0.0936
+teacher (rule-enforcing legacy),0,0,solo:ABYSS,96,0.0104,0.0104,0.1512
+teacher (rule-enforcing legacy),0,3,solo:ABYSS,96,0.0104,0.0104,0.1549
+teacher (rule-enforcing legacy),0,3,solo:HARD,96,0.3438,0.0485,0.7177
+"teacher, v4 full-prep",0,3,coop4:ABYSS,96,0.0104,0.0104,0.0727
+"teacher, v4 full-prep",0,3,coop4:HARD,96,0.4479,0.0508,0.6722
+"teacher, v4 full-prep",0,3,solo:ABYSS,96,0.0208,0.0146,0.139
+"teacher, v4 full-prep",0,3,solo:HARD,96,0.2917,0.0464,0.6779
