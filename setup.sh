@@ -30,6 +30,7 @@ cd "$DEST"
 if [ "$RESET" = 1 ]; then
   git reset -q --hard
   rm -rf tools/rl
+  git checkout -q HEAD -- tools/rl 2>/dev/null || true   # a checkout whose commit tracks tools/rl (the pinned one) gets it back
   for p in "$HERE"/patches/*.patch; do
     sed -n 's|^+++ b/||p' "$p" | while read -r f; do git ls-files --error-unmatch "$f" >/dev/null 2>&1 || rm -f "$f"; done
   done

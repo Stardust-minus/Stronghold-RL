@@ -14,7 +14,7 @@ EMB = {'piece': 32, 'enemy': 16, 'band': 16, 'stage': 8, 'card': 16, 'kind': 8, 
 # blocks a spec does not have are skipped (an older checkpoint builds as before); S5 blocks come last, so their pooled
 # features are the trunk's last input columns (surgery.py zero-initialises them)
 ENTITY_OUT = {'global': 128, 'shop': 128, 'owned': 128, 'enemies': 64, 'rewards': 96, 'personal': 64, 'cards': 64, 'mates': 64,
-              'extra': 32, 'mateBonds': 64, 'bands': 32}
+              'extra': 32, 'mateBonds': 64, 'bands': 32, 'plan': 32}  # plan (11-13, NAT arm): appended last, only in specs that have it
 POINTER = ['shop', 'owned', 'rewards', 'personal', 'cards', 'bands']  # the action order after the 4 scalars (blocks a spec has)
 SCALARS = 4
 

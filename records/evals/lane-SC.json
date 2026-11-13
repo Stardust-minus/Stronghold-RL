@@ -1,0 +1,189 @@
+{
+ "group": "eval lane (SC)",
+ "evals": [
+  {
+   "file": "eval-25018240-solo480-b0.json",
+   "label": "SC__25018240.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 91.2,
+   "decisions": 64324,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.26458333333333334,
+     "faShare": 0.7435440079210004,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.183333333333334,
+       "lp": 1.3041666666666667,
+       "win": 0.26458333333333334
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.37708333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.1758225616921269,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.26458333333333334,
+       "fa": 0.7435440079210006
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-25018240-solo480-b3.json",
+   "label": "SC__25018240.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 92.2,
+   "decisions": 64393,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.31875,
+     "faShare": 0.774678333113372,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.222916666666666,
+       "lp": 1.5770833333333334,
+       "win": 0.31875
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.385416666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.17577266735022704,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.31875,
+       "fa": 0.7746783331133724
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-30002944-solo480-b0.json",
+   "label": "SC__30002944.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 87.2,
+   "decisions": 64267,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.28541666666666665,
+     "faShare": 0.7536270835549608,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.191666666666666,
+       "lp": 1.6,
+       "win": 0.28541666666666665
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 33.80416666666667,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.1607457428068115,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.28541666666666665,
+       "fa": 0.7536270835549609
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-30002944-solo480-b3.json",
+   "label": "SC__30002944.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 87.0,
+   "decisions": 64345,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.35,
+     "faShare": 0.788879383519427,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.229166666666666,
+       "lp": 2.033333333333333,
+       "win": 0.35
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 33.82083333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16076134699853586,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.35,
+       "fa": 0.7888793835194269
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  }
+ ]
+}

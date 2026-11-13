@@ -1,0 +1,1275 @@
+{
+ "group": "NAT arm evals + LIN-C final baseline (picker, b0)",
+ "evals": [
+  {
+   "file": "LINC-final-coop4h1-480.json",
+   "label": "LINC-final.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 667.8,
+   "decisions": 172187,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.5104166666666666,
+     "faShare": 0.8507954087286758,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 1440,
+       "survival": 14.088194444444444,
+       "lp": 2.7875,
+       "win": 0.49166666666666664
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 13.81875,
+       "lp": 2.8,
+       "win": 0.44166666666666665,
+       "humanMainTier": 1.5166666666666666
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 97.19375,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.03534283038398975,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.5104166666666666,
+      "seats": 1440,
+      "natMain": 0.09097222222222222,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8506944444444444,
+      "mainLayers": 110.79027777777777,
+      "secLayers": 108.40347222222222,
+      "sumLayers": 322.8375,
+      "elites": 6.25625,
+      "winNatT2": null,
+      "winOther": 0.5104166666666666,
+      "topMain": [
+       [
+        "坚守",
+        0.51
+       ],
+       [
+        "精准",
+        0.33
+       ],
+       [
+        "谢拉格",
+        0.07
+       ],
+       [
+        "突袭",
+        0.04
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.39
+       ],
+       [
+        "精准",
+        0.27
+       ],
+       [
+        "坚守",
+        0.26
+       ]
+      ],
+      "r9": {
+       "natMain": 0.045201668984700974,
+       "sumLayers": 96.5048678720445,
+       "elites": 3.8178025034770515
+      },
+      "r12": {
+       "natMain": 0.0781140042223786,
+       "sumLayers": 225.81984517945108,
+       "elites": 5.690358902181562
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 465,
+       "win": 0.5032258064516129,
+       "fa": 0.8489517624024067
+      },
+      "band_amedic": {
+       "n": 463,
+       "win": 0.5118790496760259,
+       "fa": 0.853188417094463
+      },
+      "band_amiya": {
+       "n": 423,
+       "win": 0.48226950354609927,
+       "fa": 0.8433217684737232
+      },
+      "band_paganini": {
+       "n": 86,
+       "win": 0.6744186046511628,
+       "fa": 0.8806637236782727
+      },
+      "band_lmlee": {
+       "n": 2,
+       "win": 0.5,
+       "fa": 0.9471968183606083
+      },
+      "band_narant": {
+       "n": 1,
+       "win": 1.0,
+       "fa": 1.0
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     },
+     "picker": {
+      "decisions": 1655,
+      "nonDefault": 1607,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "LINC-final-solo480.json",
+   "label": "LINC-final.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 127.8,
+   "decisions": 62970,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.47708333333333336,
+     "faShare": 0.8553633350362018,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.33125,
+       "lp": 2.8291666666666666,
+       "win": 0.47708333333333336
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.55833333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.09012937927024277,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.47708333333333336,
+      "seats": 480,
+      "natMain": 0.06666666666666667,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8770833333333334,
+      "mainLayers": 124.78333333333333,
+      "secLayers": 126.78125,
+      "sumLayers": 381.87708333333336,
+      "elites": 6.541666666666667,
+      "winNatT2": null,
+      "winOther": 0.47708333333333336,
+      "topMain": [
+       [
+        "坚守",
+        0.59
+       ],
+       [
+        "精准",
+        0.28
+       ],
+       [
+        "谢拉格",
+        0.06
+       ],
+       [
+        "突袭",
+        0.04
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.46
+       ],
+       [
+        "精准",
+        0.3
+       ],
+       [
+        "坚守",
+        0.21
+       ]
+      ],
+      "r9": {
+       "natMain": 0.041666666666666664,
+       "sumLayers": 100.38125,
+       "elites": 3.63125
+      },
+      "r12": {
+       "natMain": 0.05625,
+       "sumLayers": 243.97291666666666,
+       "elites": 5.7125
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.47708333333333336,
+       "fa": 0.8553633350362013
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     },
+     "picker": {
+      "decisions": 639,
+      "nonDefault": 622,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-81025920-coop4h1-480.json",
+   "label": "model-81025920.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 449.3,
+   "decisions": 166098,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.5270833333333333,
+     "faShare": 0.8451533983157632,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 1440,
+       "survival": 14.099305555555556,
+       "lp": 3.160416666666667,
+       "win": 0.5069444444444444
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 13.8875,
+       "lp": 2.8979166666666667,
+       "win": 0.46458333333333335,
+       "humanMainTier": 1.5416666666666667
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 93.0375,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.02595675515933606,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.5270833333333333,
+      "seats": 1440,
+      "natMain": 0.0763888888888889,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8388888888888888,
+      "mainLayers": 110.50694444444444,
+      "secLayers": 109.39375,
+      "sumLayers": 320.93958333333336,
+      "elites": 6.021527777777778,
+      "winNatT2": null,
+      "winOther": 0.5270833333333333,
+      "topMain": [
+       [
+        "坚守",
+        0.5
+       ],
+       [
+        "精准",
+        0.35
+       ],
+       [
+        "谢拉格",
+        0.06
+       ],
+       [
+        "突袭",
+        0.06
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.42
+       ],
+       [
+        "精准",
+        0.27
+       ],
+       [
+        "坚守",
+        0.24
+       ]
+      ],
+      "r9": {
+       "natMain": 0.04027777777777778,
+       "sumLayers": 94.44652777777777,
+       "elites": 3.6013888888888888
+      },
+      "r12": {
+       "natMain": 0.07859649122807018,
+       "sumLayers": 223.91719298245613,
+       "elites": 5.463859649122807
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 465,
+       "win": 0.5204301075268817,
+       "fa": 0.843333788002002
+      },
+      "band_amedic": {
+       "n": 463,
+       "win": 0.5269978401727862,
+       "fa": 0.8448288270110115
+      },
+      "band_amiya": {
+       "n": 453,
+       "win": 0.5099337748344371,
+       "fa": 0.8399173201091426
+      },
+      "band_paganini": {
+       "n": 57,
+       "win": 0.7192982456140351,
+       "fa": 0.9019153333875684
+      },
+      "band_lmlee": {
+       "n": 2,
+       "win": 0.5,
+       "fa": 0.9116076175681046
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     },
+     "natPlan": {
+      "seats": 1440,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.29305555555555557
+     },
+     "picker": {
+      "decisions": 1673,
+      "nonDefault": 1620,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-81025920-solo480.json",
+   "label": "model-81025920.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 172.8,
+   "decisions": 62035,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.47291666666666665,
+     "faShare": 0.8621606140353545,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.335416666666667,
+       "lp": 2.5708333333333333,
+       "win": 0.47291666666666665
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.322916666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.08356343554715884,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.47291666666666665,
+      "seats": 480,
+      "natMain": 0.03958333333333333,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.9083333333333334,
+      "mainLayers": 122.84791666666666,
+      "secLayers": 132.4,
+      "sumLayers": 384.05,
+      "elites": 6.44375,
+      "winNatT2": null,
+      "winOther": 0.47291666666666665,
+      "topMain": [
+       [
+        "坚守",
+        0.55
+       ],
+       [
+        "精准",
+        0.37
+       ],
+       [
+        "突袭",
+        0.04
+       ],
+       [
+        "谢拉格",
+        0.03
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.54
+       ],
+       [
+        "精准",
+        0.22
+       ],
+       [
+        "坚守",
+        0.19
+       ]
+      ],
+      "r9": {
+       "natMain": 0.04375,
+       "sumLayers": 98.87708333333333,
+       "elites": 3.43125
+      },
+      "r12": {
+       "natMain": 0.052083333333333336,
+       "sumLayers": 243.53125,
+       "elites": 5.502083333333333
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.47291666666666665,
+       "fa": 0.8621606140353545
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     },
+     "natPlan": {
+      "seats": 480,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.3229166666666667
+     },
+     "picker": {
+      "decisions": 641,
+      "nonDefault": 623,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-84059520-coop4h1-480.json",
+   "label": "model-84059520.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 417.7,
+   "decisions": 160127,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.5604166666666667,
+     "faShare": 0.8663417994043233,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 1440,
+       "survival": 14.092361111111112,
+       "lp": 3.395138888888889,
+       "win": 0.5347222222222222
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 13.779166666666667,
+       "lp": 3.3208333333333333,
+       "win": 0.48333333333333334,
+       "humanMainTier": 1.5645833333333334
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 99.04791666666667,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.029862514167446903,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.5604166666666667,
+      "seats": 1440,
+      "natMain": 0.09791666666666667,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8298611111111112,
+      "mainLayers": 109.25486111111111,
+      "secLayers": 110.03402777777778,
+      "sumLayers": 327.2375,
+      "elites": 6.1715277777777775,
+      "winNatT2": null,
+      "winOther": 0.5604166666666667,
+      "topMain": [
+       [
+        "精准",
+        0.42
+       ],
+       [
+        "坚守",
+        0.41
+       ],
+       [
+        "谢拉格",
+        0.08
+       ],
+       [
+        "突袭",
+        0.05
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.42
+       ],
+       [
+        "坚守",
+        0.27
+       ],
+       [
+        "精准",
+        0.22
+       ]
+      ],
+      "r9": {
+       "natMain": 0.057678943710910355,
+       "sumLayers": 97.40931202223767,
+       "elites": 3.5378735232800556
+      },
+      "r12": {
+       "natMain": 0.10126582278481013,
+       "sumLayers": 227.3382559774965,
+       "elites": 5.630098452883263
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 465,
+       "win": 0.5548387096774193,
+       "fa": 0.8642927013930412
+      },
+      "band_amedic": {
+       "n": 463,
+       "win": 0.5637149028077754,
+       "fa": 0.8686891802239833
+      },
+      "band_amiya": {
+       "n": 412,
+       "win": 0.5242718446601942,
+       "fa": 0.8518178320901605
+      },
+      "band_paganini": {
+       "n": 97,
+       "win": 0.7216494845360825,
+       "fa": 0.9251040222760545
+      },
+      "band_narant": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.9163191896114684
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     },
+     "natPlan": {
+      "seats": 1440,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.8958333333333334
+     },
+     "picker": {
+      "decisions": 1670,
+      "nonDefault": 1622,
+      "single": 4,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-84059520-solo480.json",
+   "label": "model-84059520.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 165.8,
+   "decisions": 60905,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.5,
+     "faShare": 0.8725780195876323,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.35,
+       "lp": 2.720833333333333,
+       "win": 0.5
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 37.18958333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.08507549361207897,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.5,
+      "seats": 480,
+      "natMain": 0.05625,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8979166666666667,
+      "mainLayers": 121.04375,
+      "secLayers": 127.21041666666666,
+      "sumLayers": 386.9458333333333,
+      "elites": 6.64375,
+      "winNatT2": null,
+      "winOther": 0.5,
+      "topMain": [
+       [
+        "坚守",
+        0.5
+       ],
+       [
+        "精准",
+        0.4
+       ],
+       [
+        "谢拉格",
+        0.04
+       ],
+       [
+        "突袭",
+        0.04
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.47
+       ],
+       [
+        "精准",
+        0.29
+       ],
+       [
+        "坚守",
+        0.21
+       ]
+      ],
+      "r9": {
+       "natMain": 0.06041666666666667,
+       "sumLayers": 103.98958333333333,
+       "elites": 3.595833333333333
+      },
+      "r12": {
+       "natMain": 0.0625,
+       "sumLayers": 249.37083333333334,
+       "elites": 5.766666666666667
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.5,
+       "fa": 0.8725780195876321
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     },
+     "natPlan": {
+      "seats": 480,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.9895833333333334
+     },
+     "picker": {
+      "decisions": 650,
+      "nonDefault": 639,
+      "single": 1,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-86026624-coop4h1-480.json",
+   "label": "model-86026624.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 411.0,
+   "decisions": 160924,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.5791666666666667,
+     "faShare": 0.872619594475404,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 1440,
+       "survival": 14.099305555555556,
+       "lp": 3.6333333333333333,
+       "win": 0.5513888888888889
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 13.8625,
+       "lp": 3.4541666666666666,
+       "win": 0.4979166666666667,
+       "humanMainTier": 1.56875
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 97.82916666666667,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.028419445402157316,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.5791666666666667,
+      "seats": 1440,
+      "natMain": 0.10694444444444444,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8138888888888889,
+      "mainLayers": 107.41944444444445,
+      "secLayers": 106.53055555555555,
+      "sumLayers": 320.0777777777778,
+      "elites": 6.327083333333333,
+      "winNatT2": null,
+      "winOther": 0.5791666666666667,
+      "topMain": [
+       [
+        "坚守",
+        0.42
+       ],
+       [
+        "精准",
+        0.41
+       ],
+       [
+        "谢拉格",
+        0.07
+       ],
+       [
+        "突袭",
+        0.04
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.4
+       ],
+       [
+        "坚守",
+        0.26
+       ],
+       [
+        "精准",
+        0.25
+       ]
+      ],
+      "r9": {
+       "natMain": 0.06184850590687978,
+       "sumLayers": 92.04933981931897,
+       "elites": 3.63724808895066
+      },
+      "r12": {
+       "natMain": 0.09469964664310954,
+       "sumLayers": 219.5243816254417,
+       "elites": 5.704593639575972
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 465,
+       "win": 0.5698924731182796,
+       "fa": 0.8698687291453835
+      },
+      "band_amedic": {
+       "n": 463,
+       "win": 0.572354211663067,
+       "fa": 0.8708420092866292
+      },
+      "band_amiya": {
+       "n": 342,
+       "win": 0.47953216374269003,
+       "fa": 0.8422701107494651
+      },
+      "band_paganini": {
+       "n": 162,
+       "win": 0.8148148148148148,
+       "fa": 0.9433767210861213
+      },
+      "band_narant": {
+       "n": 8,
+       "win": 1.0,
+       "fa": 1.0
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     },
+     "natPlan": {
+      "seats": 1440,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.8986111111111111
+     },
+     "picker": {
+      "decisions": 1697,
+      "nonDefault": 1643,
+      "single": 1,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-86026624-solo480.json",
+   "label": "model-86026624.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 162.3,
+   "decisions": 59299,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.49375,
+     "faShare": 0.8749893962369674,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.310416666666667,
+       "lp": 3.589583333333333,
+       "win": 0.49375
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 36.0625,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.07235405444751783,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.49375,
+      "seats": 480,
+      "natMain": 0.06458333333333334,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8729166666666666,
+      "mainLayers": 119.1375,
+      "secLayers": 122.66041666666666,
+      "sumLayers": 380.17291666666665,
+      "elites": 6.664583333333334,
+      "winNatT2": null,
+      "winOther": 0.49375,
+      "topMain": [
+       [
+        "坚守",
+        0.46
+       ],
+       [
+        "精准",
+        0.42
+       ],
+       [
+        "谢拉格",
+        0.06
+       ],
+       [
+        "突袭",
+        0.04
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.45
+       ],
+       [
+        "精准",
+        0.26
+       ],
+       [
+        "坚守",
+        0.23
+       ]
+      ],
+      "r9": {
+       "natMain": 0.05416666666666667,
+       "sumLayers": 98.18541666666667,
+       "elites": 3.5395833333333333
+      },
+      "r12": {
+       "natMain": 0.0625,
+       "sumLayers": 245.15625,
+       "elites": 5.766666666666667
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.49375,
+       "fa": 0.8749893962369675
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     },
+     "natPlan": {
+      "seats": 480,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.9958333333333333
+     },
+     "picker": {
+      "decisions": 629,
+      "nonDefault": 610,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-88026048-coop4h1-480.json",
+   "label": "model-88026048.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 265.6,
+   "decisions": 154578,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.58125,
+     "faShare": 0.8769459275289814,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 1440,
+       "survival": 14.105555555555556,
+       "lp": 3.995138888888889,
+       "win": 0.5604166666666667
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 13.883333333333333,
+       "lp": 3.6,
+       "win": 0.5145833333333333,
+       "humanMainTier": 1.5875
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 96.92291666666667,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.04450571090980701,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.58125,
+      "seats": 1440,
+      "natMain": 0.08680555555555555,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8347222222222221,
+      "mainLayers": 110.78333333333333,
+      "secLayers": 105.35416666666667,
+      "sumLayers": 319.8965277777778,
+      "elites": 6.0680555555555555,
+      "winNatT2": null,
+      "winOther": 0.58125,
+      "topMain": [
+       [
+        "精准",
+        0.49
+       ],
+       [
+        "坚守",
+        0.36
+       ],
+       [
+        "谢拉格",
+        0.07
+       ],
+       [
+        "突袭",
+        0.05
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.39
+       ],
+       [
+        "坚守",
+        0.29
+       ],
+       [
+        "精准",
+        0.2
+       ]
+      ],
+      "r9": {
+       "natMain": 0.05142460041695622,
+       "sumLayers": 91.94301598332176,
+       "elites": 3.37178596247394
+      },
+      "r12": {
+       "natMain": 0.07389162561576355,
+       "sumLayers": 223.2512315270936,
+       "elites": 5.503166783954962
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 465,
+       "win": 0.5741935483870968,
+       "fa": 0.8767100394268609
+      },
+      "band_amedic": {
+       "n": 463,
+       "win": 0.5766738660907127,
+       "fa": 0.8769319262118623
+      },
+      "band_amiya": {
+       "n": 313,
+       "win": 0.46325878594249204,
+       "fa": 0.8478531137127173
+      },
+      "band_paganini": {
+       "n": 186,
+       "win": 0.7903225806451613,
+       "fa": 0.9237018421458839
+      },
+      "band_narant": {
+       "n": 13,
+       "win": 0.8461538461538461,
+       "fa": 0.9173783262258053
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     },
+     "natPlan": {
+      "seats": 1440,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.8930555555555556
+     },
+     "picker": {
+      "decisions": 1694,
+      "nonDefault": 1646,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "NAT-88026048-solo480.json",
+   "label": "model-88026048.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 126.8,
+   "decisions": 58801,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.5958333333333333,
+     "faShare": 0.8980623754294983,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.325,
+       "lp": 5.083333333333333,
+       "win": 0.5958333333333333
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 36.53125,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.0780977312390925,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.5958333333333333,
+      "seats": 480,
+      "natMain": 0.0625,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.8770833333333334,
+      "mainLayers": 116.11041666666667,
+      "secLayers": 124.33333333333333,
+      "sumLayers": 374.88958333333335,
+      "elites": 6.614583333333333,
+      "winNatT2": null,
+      "winOther": 0.5958333333333333,
+      "topMain": [
+       [
+        "精准",
+        0.52
+       ],
+       [
+        "坚守",
+        0.35
+       ],
+       [
+        "谢拉格",
+        0.06
+       ],
+       [
+        "突袭",
+        0.04
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.5
+       ],
+       [
+        "坚守",
+        0.25
+       ],
+       [
+        "精准",
+        0.16
+       ]
+      ],
+      "r9": {
+       "natMain": 0.05010438413361169,
+       "sumLayers": 98.13361169102296,
+       "elites": 3.3048016701461376
+      },
+      "r12": {
+       "natMain": 0.07531380753138076,
+       "sumLayers": 243.23430962343096,
+       "elites": 5.7489539748953975
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.5958333333333333,
+       "fa": 0.8980623754294981
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     },
+     "natPlan": {
+      "seats": 480,
+      "tier2AtFA": 0.0,
+      "bonusPaid": 0.9916666666666667
+     },
+     "picker": {
+      "decisions": 643,
+      "nonDefault": 619,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  }
+ ]
+}

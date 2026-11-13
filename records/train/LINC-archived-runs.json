@@ -1,0 +1,172 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "LINC-init-54002368.pt",
+   "params": 2524203,
+   "thresholds": {},
+   "args": {
+    "init": "LINC-init-54002368.pt",
+    "out": "LINC",
+    "procs": 80,
+    "envs": 64,
+    "rollout": 65536,
+    "epochs": 3,
+    "minibatch": 8192,
+    "lr": 0.0001,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 200000000.0,
+    "hours": 24.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 10000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.0,
+    "node": "node",
+    "eval_matches": 96,
+    "eval_chunks": 4,
+    "eval_configs": "solo:ABYSS,solo:HARD",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{\"round\":0.05,\"fa\":1.5}",
+    "vf_warmup": 10,
+    "learner_cpus": "0,1",
+    "env_cpus": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152",
+    "check": true,
+    "eval_baselines": "",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "ppo2-15M-v3-ref.pt",
+    "strict_preview": false,
+    "visible_only": false,
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "solo:ABYSS",
+    "eval2_boss_rehearsal": 3,
+    "mix": "mp1",
+    "reward_by": "{}",
+    "freeze_band": true,
+    "lr_warmup": 20,
+    "start_steps": 54002368.0,
+    "seed_offset": 22000000,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 0,
+    "mem_frac": 0.12,
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.3,
+    "snap_collect": 0.25,
+    "band_policy": 0.7,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 0,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3
+   },
+   "learner_cpus": 2,
+   "env_cpus": 80,
+   "unit_cpus": 82,
+   "stages": [
+    "mixmp1"
+   ],
+   "t": 1794548763.5
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.396,
+     "survival": 14.27,
+     "fa": 0.815,
+     "rt": 0.109
+    }
+   },
+   "t": 1794551361.5,
+   "file": "eval-60054400-b3.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.302,
+     "survival": 14.23,
+     "fa": 0.764,
+     "rt": 0.11
+    },
+    "solo:HARD": {
+     "win": 0.885,
+     "survival": 14.45,
+     "fa": 0.97,
+     "rt": 0.02
+    }
+   },
+   "t": 1794551361.5,
+   "file": "eval-60054400.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.323,
+     "survival": 14.19,
+     "fa": 0.793,
+     "rt": 0.125
+    }
+   },
+   "t": 1794555325.4,
+   "file": "eval-70023104-b3.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.292,
+     "survival": 14.18,
+     "fa": 0.754,
+     "rt": 0.125
+    },
+    "solo:HARD": {
+     "win": 0.812,
+     "survival": 14.34,
+     "fa": 0.965,
+     "rt": 0.029
+    }
+   },
+   "t": 1794555325.4,
+   "file": "eval-70023104.json"
+  }
+ ],
+ "end": []
+}

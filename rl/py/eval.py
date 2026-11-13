@@ -25,7 +25,10 @@ def run(a, policy=None):
                     'rehearsal': a.rehearsal,
                     'metrics': True, 'check': True, 'tripLog': a.trips, **({'lpObs': a.lp_obs if a.lp_obs == 'raw' else float(a.lp_obs)} if getattr(a, 'lp_obs', None) else {}), 'obsVersion': a.obs_version, **({'bondLog': True} if getattr(a, 'bond_log', False) else {}),
                     **({'forceBand': a.force_band} if a.force_band else {}),
-                    **({'bandPolicy': {'share': a.band_policy, 'uniform': False}} if a.band_policy > 0 and policy is not None else {}),
+                    **({'actLog': True} if getattr(a, 'act_log', False) else {}),
+                    **({'pickerHead': {'head': a.picker_head, 'trunk': a.picker_trunk, 'K': a.picker_k}} if getattr(a, 'picker_head', None) else {}),
+                    **({'natPlan': json.loads(a.nat_plan)} if getattr(a, 'nat_plan', None) else {}), **({'bountyField': True} if getattr(a, 'bounty_field', False) else {}),
+                    **({'bandPolicy': {'share': a.band_policy, 'uniform': False, **({'planProb': a.plan_prob} if getattr(a, 'plan_prob', None) is not None else {})}} if a.band_policy > 0 and policy is not None else {}),
                     **({'bossRehearsal': a.boss_rehearsal} if a.boss_rehearsal is not None else {}),
                     **({'mateRehearsal': a.mate_rehearsal} if a.mate_rehearsal is not None else {}),
                     **({'visibleOnly': True} if getattr(a, 'visible_only', False) else {}), **({'strictPreview': True} if getattr(a, 'strict_preview', False) else {})}
@@ -85,9 +88,10 @@ def aggregate(configs, owner, stats, decisions, ai_role='rl'):
                           'bands': [st.get('band') for st in r['seats'] if st.get('rl')],
                           'band0': next((st.get('band') for st in r['seats'] if st['playerId'] == 'ai_0'), None),
                           **({'fa': r['fa'], 'seatsAll': r['seatsAll']} if 'seatsAll' in r else {}),
-                          **({'bondLog': [dict(st['bondLog'], band=st.get('band'), win=st['win']) for st in r['seats'] if st.get('rl') and 'bondLog' in st]}
+                          **({'bondLog': [dict(st['bondLog'], band=st.get('band'), win=st['win']) for st in r['seats'] if (st.get('rl') or st.get('role') == 'legacy') and 'bondLog' in st]}
                              if any('bondLog' in st for st in r['seats']) else {}),
-                          **({'trips': r['trips']} if 'trips' in r else {})} for r in res]
+                          **({'trips': r['trips']} if 'trips' in r else {}),
+                          **({'forced': r['forced']} if 'forced' in r else {}), **({'team': r['team']} if 'team' in r else {}), **({'picker': r['picker']} if 'picker' in r else {}), **({'nat': [st['nat'] for st in r['seats'] if 'nat' in st]} if any('nat' in st for st in r['seats']) else {}), **({'act': r['act']} if 'act' in r else {}), **({'bf': r['bf']} if 'bf' in r else {})} for r in res]
         if ai_role != 'rl':
             if ai_role in c['roles']:
                 c['roles']['rl'] = c['roles'].pop(ai_role)
@@ -102,6 +106,11 @@ def aggregate(configs, owner, stats, decisions, ai_role='rl'):
         c['byBand'] = {b: {'n': n, 'win': w / n, 'fa': f / n} for b, (n, w, f) in sorted(bb.items(), key=lambda x: -x[1][0])}
         if any(pm.get('bondLog') for pm in c['perMatch']):
             c['bondSummary'] = bond_summary(c['perMatch'])
+            try:  # (11-13) stacking metrics: national main bond and tier, main / secondary / Σ layers, elites (stackrep.py)
+                from stackrep import summarize as _stack
+                c['stack'] = _stack(c['perMatch'], c['teamWin'])
+            except Exception as e:
+                c['stack'] = {'error': str(e)[:200]}
         out['configs'][cfg] = c
     return out
 
@@ -206,7 +215,13 @@ if __name__ == '__main__':
     ap.add_argument('--mate-rehearsal', type=int, default=None, help='legacy (non-RL) seats rehearse this many layouts at normal rounds (production); RL seats keep --rehearsal')
     ap.add_argument('--lp-obs', default=None, help="own-LP obs field override: 'raw' (raw LP) or a scale k on lp / lp0")
     ap.add_argument('--bond-log', action='store_true', help='per RL seat: active bonds at the battles of R6 / R9 / R12 and the last one (perMatch bondLog, bondSummary)')
-    ap.add_argument('--force-band', default=None, help='Step 0: seat ai_0 opens with this band (band strength table)')
+    ap.add_argument('--force-band', default=None, help="Step 0: seat ai_0 opens with this band (band strength table); with --band-policy at ai_0's own band decision, 'random' = a random allowed band")
+    ap.add_argument('--plan-prob', type=float, default=None, help='with --band-policy: chance a human proxy whose band has no tied bond announces a random core 主盟约 (env default 0.5)')
+    ap.add_argument('--picker-head', default=None, help="boss-round layout picker: the head JSON (with --picker-trunk, the frozen JS trunk export base); boss rehearsal 0")
+    ap.add_argument('--picker-trunk', default=None); ap.add_argument('--picker-k', type=int, default=8)
+    ap.add_argument('--nat-plan', default=None, help='NAT arm: env natPlan JSON (plan obs block + terms); a NAT checkpoint needs it (its obs has the plan block)')
+    ap.add_argument('--act-log', action='store_true', help='per RL seat: applied actions, buys by kind, 机变 picks, bounty outcomes, items equipped (perMatch act)')
+    ap.add_argument('--bounty-field', action='store_true', help="experiment: an RL seat's legacy layout models its own bounty spawns at normal rounds (env bountyField)")
     a = ap.parse_args()
     a.obs_version = int(os.environ.get('EVAL_OBS', '3'))  # teacher / legacy baselines: the env layout (4 = full control, one-round-trip plans)
     t0 = time.time()

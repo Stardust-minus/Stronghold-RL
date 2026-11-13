@@ -69,16 +69,22 @@ class XAttn(nn.Module):
         return q + self.o(y) * any_.unsqueeze(-1).to(q.dtype)
 
 
+import os as _os, torch.utils.checkpoint  # noqa: E402
+EA_CKPT = _os.environ.get('SPRL_EA_CKPT') == '1'
+EA_SKIP = ('global', 'extra', 'bands')  # entattn: rows kept out (the single global / extra rows; the band rows: the frozen band head)
 V4_OUT = {'globalX': 32, 'tiles': 64}  # version 4 entity blocks (ownedX joins the owned rows)
 LA_FIELD = {'shop': 3, 'owned': 4, 'rewards': 2}  # the piece-code field of each candidate block (spec.mjs ids)
 LA_PER_BOND, LA_BONDS = 8, 3
 
 
 class SPNet2(nn.Module):
-    def __init__(self, spec, width=1.0, trunk='mlp', depth=2, attn=0, attn_dim=128, heads=4, ctx=256, lookahead=None, emb_mult=1, xattn=0, attn_skip=(), qkln=False):
+    def __init__(self, spec, width=1.0, trunk='mlp', depth=2, attn=0, attn_dim=128, heads=4, ctx=256, lookahead=None, emb_mult=1, xattn=0, attn_skip=(), qkln=False,
+                 entattn=0, critic=0):
         super().__init__()
         self.spec = spec; self.cfg = dict(width=width, trunk=trunk, depth=depth, attn=attn, attn_dim=attn_dim, heads=heads, ctx=ctx, lookahead=lookahead,
                                           emb_mult=emb_mult, xattn=xattn, attn_skip=tuple(attn_skip), qkln=qkln)
+        if entattn: self.cfg['entattn'] = entattn  # (11-13) absent from older configs: they build as before
+        if critic: self.cfg['critic'] = critic  # (11-13, LIN-C) a separate critic trunk: the value head reads its own copy
         EMBX = {k: d * emb_mult for k, d in EMB.items()}  # emb_mult: parameters without deployed compute (folded into tables)
         self.embx = EMBX
         self.la = None
@@ -141,11 +147,29 @@ class SPNet2(nn.Module):
             self.trunk = nn.Sequential(nn.Linear(trunk_in, H), *[ResBlock(H) for _ in range(depth)], nn.LayerNorm(H), nn.Linear(H, C), nn.ReLU())
         else:
             self.trunk = nn.Sequential(nn.Linear(trunk_in, H), nn.ReLU(), nn.Linear(H, C), nn.ReLU())
+        if critic:  # same layers as the trunk; widen / critic init copies the trunk's weights (function-identical start)
+            self.vtrunk = (nn.Sequential(nn.Linear(trunk_in, H), *[ResBlock(H) for _ in range(depth)], nn.LayerNorm(H), nn.Linear(H, C), nn.ReLU())
+                           if trunk == 'resln' else nn.Sequential(nn.Linear(trunk_in, H), nn.ReLU(), nn.Linear(H, C), nn.ReLU()))
         self.scalar = nn.Linear(C, SCALARS)
         self.pointer = [n for n in POINTER if n in blocks]
         self.ptr = nn.ModuleDict({n: nn.Sequential(nn.Linear(slot_dim[n] + C, W(128)), nn.ReLU(), nn.Linear(W(128), 1)) for n in self.pointer})
         self.value = nn.Sequential(nn.Linear(C, W(128)), nn.ReLU(), nn.Linear(W(128), 1))
         self.ents = ents
+        if entattn:
+            # (11-13, arm AT) residual entity self-attention: every entity row (projected to attn_dim, plus a type embedding)
+            # and two read-only token sets — a global token (global + bonds encodings) and one token per bond row (raw bond
+            # features) — go through `entattn` pre-LN AttnLayers; each row gets ea_out(x_L - x_0) added, ea_out zero-initialised,
+            # so the network starts as the plain SPNet2 (function-identical); absent rows are never changed
+            assert not attn, 'entattn and attn are alternatives'
+            da = attn_dim; self.ea_ents = [n for n in ents if n not in EA_SKIP]
+            self.ea_in = nn.ModuleDict({n: nn.Linear(self.out[n], da) for n in self.ea_ents})
+            self.ea_out = nn.ModuleDict({n: nn.Linear(da, self.out[n]) for n in self.ea_ents})
+            for m_ in self.ea_out.values(): nn.init.zeros_(m_.weight); nn.init.zeros_(m_.bias)
+            nb_ = blocks['bonds']; self.ea_bonds_rows = (nb_['offset'], nb_['count'], nb_['width'])
+            self.ea_bond = nn.Linear(nb_['width'], da)
+            self.ea_g = nn.Linear(self.out['global'] + W(128), da)
+            self.ea_typ = nn.Parameter(torch.zeros(len(self.ea_ents) + 2, da))
+            self.ea_layers = nn.ModuleList([AttnLayer(da, heads, qkln) for _ in range(entattn)])
         if self.v4:
             # version 4 heads, in the action order after the 100 of version 3: MOVE / EQUIP (owned rows), TILE (tile x 4
             # facings, given the selected owned row), BENCH + CANCEL, TARGET (owned rows, given the selected item)
@@ -218,6 +242,22 @@ class SPNet2(nn.Module):
         if self.v4 and self.cfg.get('xattn'):
             hs['tiles'] = self.xa(hs['tiles'], hs['owned'], pres['owned'])
             hs['owned'] = self.xb(hs['owned'], hs['tiles'], pres['tiles'])
+        if self.cfg.get('entattn'):
+            B_ = obs.shape[0]; off_, n_, w_ = self.ea_bonds_rows
+            xb = obs[:, off_:off_ + n_ * w_].reshape(B_, n_, w_)
+            toks = [self.ea_g(torch.cat([g, bo], -1))[:, None] + self.ea_typ[0]]; keep = [torch.ones(B_, 1, dtype=torch.bool, device=obs.device)]
+            spans, t0 = {}, 1
+            for j, name in enumerate(self.ea_ents):
+                toks.append(self.ea_in[name](hs[name]) + self.ea_typ[j + 1]); keep.append(pres[name])
+                spans[name] = (t0, t0 + hs[name].shape[1]); t0 += hs[name].shape[1]
+            toks.append(self.ea_bond(xb) + self.ea_typ[-1]); keep.append(xb[..., 0] > 0)
+            x0 = torch.cat(toks, 1); kp = torch.cat(keep, 1); x = x0
+            for layer in self.ea_layers:  # SPRL_EA_CKPT=1: activation checkpointing in training (same values, less memory)
+                x = torch.utils.checkpoint.checkpoint(layer, x, kp, use_reentrant=False) if self.training and EA_CKPT else layer(x, kp)
+            dx = x - x0
+            for name in self.ea_ents:
+                a_, b_ = spans[name]
+                hs[name] = hs[name] + self.ea_out[name](dx[:, a_:b_]) * pres[name].unsqueeze(-1).to(dx.dtype)
         if self.cfg['attn']:
             toks, keep, spans, t0 = [self.gproj(torch.cat([g, bo], -1))[:, None] + self.typ[0]], [torch.ones_like(pres[self.ents[0]][:, :1])], {}, 1
             for j, name in enumerate(self.att_ents):
@@ -234,7 +274,8 @@ class SPNet2(nn.Module):
         else:
             for name in self.ents:
                 feats.append(self._pool(hs[name], pres[name]))
-        c = self.trunk(torch.cat(feats, -1))
+        fc = torch.cat(feats, -1); c = self.trunk(fc)
+        cv = self.vtrunk(fc) if self.cfg.get('critic') else c  # LIN-C: the value from the critic trunk; the policy never reads it
         logits = [self.scalar(c)]
         for name in self.pointer:
             h = hs[name]; cc = c.unsqueeze(1).expand(-1, h.shape[1], -1)
@@ -254,7 +295,7 @@ class SPNet2(nn.Module):
         logits = torch.cat(logits, -1)
         if mask is not None:
             logits = logits.masked_fill(~mask, -1e9)
-        return logits, self.value(c).squeeze(-1)
+        return logits, self.value(cv).squeeze(-1)
 
 
 def flops_per_forward(net, obs, mask):

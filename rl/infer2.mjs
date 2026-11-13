@@ -77,6 +77,7 @@ export class SPPolicy2 {
     const [bo] = this.m.bondsAt;
     SPPolicy2.dense(this.bonds0, obs, bo, this.bh, true); SPPolicy2.dense(this.bonds2, this.bh, 0, this.bo, true);
     cat.set(this.bo, off); off += this.bo.length;
+    if (this.ea) this.ea(obs); // infer2at.mjs (arm AT): residual entity attention on the encoded rows, before pooling
     for (const name of Object.keys(this.m.layout)) {
       if (name === 'global') continue;
       const B = this.blocks[name], d = B.l2.out; let n = 0;

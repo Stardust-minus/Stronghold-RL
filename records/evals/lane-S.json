@@ -1,0 +1,403 @@
+{
+ "group": "eval lane (S)",
+ "evals": [
+  {
+   "file": "eval-20029824-dr288.json",
+   "label": "S__20029824.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 272.3,
+   "decisions": 116274,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 288,
+     "teamWin": 0.3090277777777778,
+     "faShare": 0.7714559428004129,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 288,
+       "survival": 14.21875,
+       "lp": 1.8229166666666667,
+       "win": 0.3090277777777778
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.208333333333336,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.1658119658119658,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 288,
+       "win": 0.3090277777777778,
+       "fa": 0.7714559428004129
+      }
+     },
+     "seeds": {
+      "n": 288,
+      "min": 9000000,
+      "max": 9000287
+     }
+    },
+    "coop4l:ABYSS": {
+     "matches": 288,
+     "teamWin": 0.13194444444444445,
+     "faShare": 0.4348725549747874,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 288,
+       "survival": 13.48611111111111,
+       "lp": 1.2152777777777777,
+       "win": 0.1284722222222222
+      },
+      "legacy": {
+       "seats": 433,
+       "survival": 12.752886836027713,
+       "lp": 0.8937644341801386,
+       "win": 0.09699769053117784
+      },
+      "human-legacy": {
+       "seats": 431,
+       "survival": 12.54292343387471,
+       "lp": 0.6357308584686775,
+       "win": 0.06960556844547564,
+       "humanMainTier": 1.4037122969837588
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.829861111111114,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.08084449021627188,
+       "violations": 0.0
+      },
+      "legacy": {
+       "buysPerMatch": 53.52558139534884,
+       "yieldMainPerMatch": 2.2511627906976743,
+       "yieldMergePerMatch": 1.4,
+       "roundTripsPerPrep": 0.05758783049619703,
+       "violations": 785.0
+      }
+     },
+     "byBand": {
+      "band_amedic": {
+       "n": 265,
+       "win": 0.12075471698113208,
+       "fa": 0.4224430058494553
+      },
+      "band_ioleta": {
+       "n": 23,
+       "win": 0.2608695652173913,
+       "fa": 0.5780825775057934
+      }
+     },
+     "seeds": {
+      "n": 288,
+      "min": 198000000,
+      "max": 198000287
+     }
+    },
+    "coop2l:ABYSS": {
+     "matches": 288,
+     "teamWin": 0.11805555555555555,
+     "faShare": 0.4009147975950554,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 288,
+       "survival": 13.447916666666666,
+       "lp": 1.2916666666666667,
+       "win": 0.11805555555555555
+      },
+      "legacy": {
+       "seats": 144,
+       "survival": 13.006944444444445,
+       "lp": 1.6944444444444444,
+       "win": 0.1527777777777778
+      },
+      "human-legacy": {
+       "seats": 144,
+       "survival": 12.88888888888889,
+       "lp": 0.6041666666666666,
+       "win": 0.05555555555555555,
+       "humanMainTier": 1.3958333333333333
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.510416666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.10147172734314484,
+       "violations": 0.0
+      },
+      "legacy": {
+       "buysPerMatch": 27.291666666666668,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.05872931126534971,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_amedic": {
+       "n": 274,
+       "win": 0.09854014598540146,
+       "fa": 0.38033611147856605
+      },
+      "band_ioleta": {
+       "n": 14,
+       "win": 0.5,
+       "fa": 0.8036690830177736
+      }
+     },
+     "seeds": {
+      "n": 288,
+      "min": 795000000,
+      "max": 795000287
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-20029824-solo-b0-288.json",
+   "label": "S__20029824.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 43.2,
+   "decisions": 38653,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 288,
+     "teamWin": 0.2673611111111111,
+     "faShare": 0.7360656438183394,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 288,
+       "survival": 14.194444444444445,
+       "lp": 1.46875,
+       "win": 0.2673611111111111
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.201388888888886,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16560665362035226,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 288,
+       "win": 0.2673611111111111,
+       "fa": 0.7360656438183395
+      }
+     },
+     "seeds": {
+      "n": 288,
+      "min": 9000000,
+      "max": 9000287
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-25015872-solo480-b0.json",
+   "label": "S__25015872.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 83.0,
+   "decisions": 64055,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.2520833333333333,
+     "faShare": 0.756089805500652,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.16875,
+       "lp": 1.3833333333333333,
+       "win": 0.2520833333333333
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.88125,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16071166004999266,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.2520833333333333,
+       "fa": 0.7560898055006515
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-25015872-solo480-b3.json",
+   "label": "S__25015872.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 88.3,
+   "decisions": 64145,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.31666666666666665,
+     "faShare": 0.7927575047942658,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.208333333333334,
+       "lp": 1.89375,
+       "win": 0.31666666666666665
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.9,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16143695014662757,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.31666666666666665,
+       "fa": 0.7927575047942661
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-30001152-solo480-b0.json",
+   "label": "S__30001152.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 85.9,
+   "decisions": 64719,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.2916666666666667,
+     "faShare": 0.7616032770371526,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.204166666666667,
+       "lp": 1.6625,
+       "win": 0.2916666666666667
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.04375,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.1818715165737753,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.2916666666666667,
+       "fa": 0.761603277037152
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-30001152-solo480-b3.json",
+   "label": "S__30001152.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 86.8,
+   "decisions": 64760,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.3458333333333333,
+     "faShare": 0.7982946260779915,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.241666666666667,
+       "lp": 2.027083333333333,
+       "win": 0.3458333333333333
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.045833333333334,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.18139262726740785,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.3458333333333333,
+       "fa": 0.7982946260779918
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  }
+ ]
+}

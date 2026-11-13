@@ -1,0 +1,97 @@
+{
+ "group": "eval lane (KL)",
+ "evals": [
+  {
+   "file": "eval-30001408-solo480-b0.json",
+   "label": "KL__30001408.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 82.1,
+   "decisions": 60513,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.27708333333333335,
+     "faShare": 0.7647810771825552,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.183333333333334,
+       "lp": 1.4666666666666666,
+       "win": 0.27708333333333335
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.78125,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16304347826086957,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.27708333333333335,
+       "fa": 0.7647810771825552
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-30001408-solo480-b3.json",
+   "label": "KL__30001408.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 83.1,
+   "decisions": 60566,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.31875,
+     "faShare": 0.7957593957273718,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.21875,
+       "lp": 1.70625,
+       "win": 0.31875
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.797916666666666,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16307692307692306,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.31875,
+       "fa": 0.7957593957273718
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  }
+ ]
+}

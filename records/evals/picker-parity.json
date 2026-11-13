@@ -1,0 +1,57 @@
+{
+ "group": "boss-round picker in the env (SK-30M solo480 b0)",
+ "evals": [
+  {
+   "file": "pick-solo480.json",
+   "label": "SK30__30004992__30000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 395.9,
+   "decisions": 62029,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.44166666666666665,
+     "faShare": 0.839216281075249,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.3,
+       "lp": 2.1625,
+       "win": 0.44166666666666665
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.666666666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.14743589743589744,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.44166666666666665,
+       "fa": 0.8392162810752495
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     },
+     "picker": {
+      "decisions": 627,
+      "nonDefault": 611,
+      "single": 0,
+      "sims": 0
+     }
+    }
+   }
+  }
+ ]
+}

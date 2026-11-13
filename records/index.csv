@@ -1,0 +1,88 @@
+file,bytes,what
+band/band-refit-LIN40M-fit.json,3526,band-head refit on LIN 40M: TV to target before / after per config
+band/band-table2-LIN40M.json,41141,"band strength table (paired forced bands) on LIN 40M, the band refit target"
+band/combo-coop4h1-screen.json,19222,team band-combination screen on coop4h1 (paired seeds; no set beats the current head)
+derived/action-histogram.json,1872,"action histogram per RL seat per match (SK-30M, greedy, b0, RL r0, proxies r3)"
+derived/width-ab-paired.json,3243,"width / structure A/B, paired vs W1 on the same seeds (b0, greedy, band-policy 1, proxies r3)"
+evals/action-log.json,5378,"action histogram runs (SK-30M, act log) and bounty-aware layout A/B"
+evals/flags-off-identity.json,5318,flags-off identity references (SK-30M)
+evals/lane-KL.json,1971,eval lane (KL)
+evals/lane-LEGACY.json,4583,eval lane (LEGACY)
+evals/lane-LIN.json,61540,eval lane (LIN)
+evals/lane-LINC.json,35767,eval lane (LINC)
+evals/lane-S.json,8842,eval lane (S)
+evals/lane-SC.json,3926,eval lane (SC)
+evals/lane-SCR.json,20320,eval lane (SCR)
+evals/lane-SK.json,3886,eval lane (SK)
+evals/lane-SK30.json,14231,eval lane (SK30)
+evals/lane-SO1.json,3892,eval lane (SO1)
+evals/lane-m3s.json,4957,eval lane (m3s)
+evals/legacy-fill-stack.json,4238,"legacy fill with bond logs (legacy mode, r3, mates r3)"
+evals/nat-arm.json,25934,"NAT arm evals + LIN-C final baseline (picker, b0)"
+evals/picker-parity.json,1159,boss-round picker in the env (SK-30M solo480 b0)
+evals/proxy-plan-prob.json,6606,"human proxy vs legacy seat (legacy-mode identity, plan-prob 0 A/B)"
+evals/width-arms.json,30737,width / structure A/B evals (W1 W2 AT at +5/10/15M)
+placement/placement-ceilings-equip-bounty.json,23007,placement track: equipment and bounty-round candidate ceilings
+placement/placement-results.json,116679,"placement track: boss picker, ceilings, stacking oracle, recipes, layer spread, normal-round ablation"
+results/evals-all.csv,39148,"one row per eval x config: win, FA share, rehearsal, seeds, stacking block (national main / tier 2 / layers / elites), picker"
+results/nat-arm.csv,1816,"NAT arm (from LIN-C final 78M to 88M) vs the LIN-C final baseline, picker on, b0, 480 paired seeds"
+results/placement.csv,13885,"placement track groups: n, win, FA share, layers; paired deltas vs the base / legacy group on the same seeds"
+results/train-runs.csv,4412,"one row per training (re)start: init, steps, mix and the main hyperparameters (full args in the -runs.json files)"
+results/width-ab-paired.csv,840,"width / structure A/B (W1 W2 AT from LIN 40M), paired vs W1, 480 + 480 seeds, b0"
+scratch/evals/B1.json,16704,"scratch batch 1 arm B1: in-run evals (BC init, 5M PPO)"
+scratch/evals/B2.json,16754,"scratch batch 1 arm B2: in-run evals (BC init, 5M PPO)"
+scratch/evals/LR3.json,16600,"scratch batch 1 arm LR3: in-run evals (BC init, 5M PPO)"
+scratch/meta/B1-meta.json,1481,"run meta: manifest md5, init md5, full argv"
+scratch/meta/B2-meta.json,1484,"run meta: manifest md5, init md5, full argv"
+scratch/meta/LR3-meta.json,1505,"run meta: manifest md5, init md5, full argv"
+scratch/train/B1-curve.csv,11189,train curve: one row per PPO update
+scratch/train/B1-runs.json,3874,"run args (start events), in-run evals, end events"
+scratch/train/B2-curve.csv,11279,train curve: one row per PPO update
+scratch/train/B2-runs.json,3874,"run args (start events), in-run evals, end events"
+scratch/train/LR3-curve.csv,11158,train curve: one row per PPO update
+scratch/train/LR3-runs.json,3876,"run args (start events), in-run evals, end events"
+train/ALL-mixv2-stopped-curve.csv,2364,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/ALL-mixv2-stopped-runs.json,2421,"run args (every start event), in-run eval results, end events"
+train/ALL-stopped-curve.csv,71391,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/ALL-stopped-runs.json,3855,"run args (every start event), in-run eval results, end events"
+train/KL-mixv2-stopped-curve.csv,2418,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/KL-mixv2-stopped-runs.json,2314,"run args (every start event), in-run eval results, end events"
+train/KL-stopped-curve.csv,150263,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/KL-stopped-runs.json,5085,"run args (every start event), in-run eval results, end events"
+train/LIN-archived-curve.csv,168609,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/LIN-archived-runs.json,7286,"run args (every start event), in-run eval results, end events"
+train/LINC-archived-curve.csv,83026,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/LINC-archived-runs.json,3644,"run args (every start event), in-run eval results, end events"
+train/NAT-curve.csv,32297,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/NAT-runs.json,8966,"run args (every start event), in-run eval results, end events"
+train/P-mixv2-stopped-curve.csv,2717,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/P-mixv2-stopped-runs.json,2408,"run args (every start event), in-run eval results, end events"
+train/P-stopped-curve.csv,84213,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/P-stopped-runs.json,3844,"run args (every start event), in-run eval results, end events"
+train/P0-mixv2-stopped-curve.csv,2734,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/P0-mixv2-stopped-runs.json,2418,"run args (every start event), in-run eval results, end events"
+train/P0-stopped-curve.csv,83801,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/P0-stopped-runs.json,3851,"run args (every start event), in-run eval results, end events"
+train/R3-mixv2-stopped-curve.csv,971,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/R3-mixv2-stopped-runs.json,2303,"run args (every start event), in-run eval results, end events"
+train/R3-r3-stopped-curve.csv,525,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/R3-r3-stopped-runs.json,2397,"run args (every start event), in-run eval results, end events"
+train/S-stopped-curve.csv,171325,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/S-stopped-runs.json,5078,"run args (every start event), in-run eval results, end events"
+train/SC-stopped-curve.csv,81219,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/SC-stopped-runs.json,3724,"run args (every start event), in-run eval results, end events"
+train/SCR-killed-curve.csv,86515,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/SCR-killed-runs.json,8506,"run args (every start event), in-run eval results, end events"
+train/SK-stopped-curve.csv,129013,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/SK-stopped-runs.json,3717,"run args (every start event), in-run eval results, end events"
+train/SO1-stopped-curve.csv,73244,train curve: one row per PPO update (rolling win / FA share by difficulty)
+train/SO1-stopped-runs.json,3731,"run args (every start event), in-run eval results, end events"
+width/evals/AT-inrun.json,6319,width arm AT: in-run eval at 55M
+width/evals/W1-inrun.json,6374,width arm W1: in-run eval at 55M
+width/evals/W2-inrun.json,6402,width arm W2: in-run eval at 55M
+width/train/AT-curve.csv,51911,train curve: one row per PPO update
+width/train/AT-runs.json,3074,"run args (start events), in-run evals, end events"
+width/train/W1-curve.csv,51859,train curve: one row per PPO update
+width/train/W1-runs.json,3079,"run args (start events), in-run evals, end events"
+width/train/W2-curve.csv,51914,train curve: one row per PPO update
+width/train/W2-runs.json,3076,"run args (start events), in-run evals, end events"

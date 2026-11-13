@@ -1,0 +1,323 @@
+[
+ {
+  "id": "kjerag-freeze",
+  "name": "谢拉格冰冻叠层",
+  "bond": "kjeragShip",
+  "subs": [
+   "swiftShip",
+   "skillfulShip",
+   "arcaneShip"
+  ],
+  "engines": [
+   "chess_char_3_14_a",
+   "chess_char_4_22_a",
+   "chess_char_4_13_a",
+   "chess_char_3_20_a",
+   "chess_char_1_02_a",
+   "chess_char_3_21_a",
+   "chess_char_4_25_a",
+   "chess_char_5_14_a",
+   "chess_char_5_22_a",
+   "chess_char_3_11_a",
+   "chess_item_5_02_e_a",
+   "chess_item_5_02_e_b"
+  ],
+  "bands": [
+   "band_sciurus",
+   "band_kirara"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "strategy-community.js builds kjerag-freeze; AI-STRATEGY §9 freeze play, §35.62 (999 谢拉格), §35.63 layer trade 灵知/角峰/雪猎 and L5 R9 / L6 R11; band_sciurus = community main, band_kirara = opening-plan table"
+ },
+ {
+  "id": "kazimierz-redeploy",
+  "name": "卡西米尔部署叠层 / 突袭卡西米尔",
+  "bond": "kazimierzShip",
+  "subs": [
+   "raidShip",
+   "swiftShip",
+   "indomShip",
+   "steadShip"
+  ],
+  "engines": [
+   "chess_char_4_20_a",
+   "chess_char_2_12_a",
+   "chess_char_3_12_a",
+   "chess_char_1_19_a",
+   "chess_char_2_18_a",
+   "chess_char_4_19_a",
+   "chess_char_5_10_a",
+   "chess_char_6_17_a"
+  ],
+  "bands": [
+   "band_emperor",
+   "band_mlynar",
+   "band_lisa"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "strategy-community.js builds kazimierz-redeploy; AI-STRATEGY §9 redeployment play, §35.63 layer trade 野鬃, true damage vs 铳; mains band_emperor / band_mlynar, band_lisa evidence"
+ },
+ {
+  "id": "siracusa",
+  "name": "叙拉古",
+  "bond": "siracusaShip",
+  "subs": [
+   "arcaneShip",
+   "swiftShip"
+  ],
+  "engines": [
+   "chess_char_3_18_a"
+  ],
+  "bands": [
+   "band_chiave"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "strategy-community.js mains band_chiave, pairs arcane, 电表倒转 siracusa variant (忍冬 + swift), bossCounters 卢西恩 / 铳; AI-STRATEGY §35.63 layer trade 忍冬"
+ },
+ {
+  "id": "egir",
+  "name": "阿戈尔",
+  "bond": "egirShip",
+  "subs": [
+   "raidShip",
+   "indomShip"
+  ],
+  "engines": [
+   "chess_char_5_13_a"
+  ],
+  "bands": [
+   "band_ermengard",
+   "band_clementia"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "strategy-community.js mains band_ermengard / band_clementia, pairs raid / indom; AI-STRATEGY §9 异鲨 garrison_40_a (+5 阿戈尔/不屈), §35.62 6-member core (阿戈尔 5)"
+ },
+ {
+  "id": "sargon",
+  "name": "萨尔贡",
+  "bond": "sargonShip",
+  "subs": [
+   "preciShip",
+   "swiftShip",
+   "skillfulShip"
+  ],
+  "engines": [],
+  "bands": [
+   "band_pepe",
+   "band_narant"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "strategy-community.js mains band_pepe / band_narant, pairs preci / swift / skillful; AI-STRATEGY §35.63 multiplier subs"
+ },
+ {
+  "id": "yan",
+  "name": "炎",
+  "bond": "yanShip",
+  "subs": [
+   "arcaneShip"
+  ],
+  "engines": [],
+  "bands": [
+   "band_duyaoy"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "track 2 (L): strategy-community.js mains band_duyaoy, pairs arcane"
+ },
+ {
+  "id": "victoria",
+  "name": "维多利亚",
+  "bond": "victoriaShip",
+  "subs": [
+   "arcaneShip"
+  ],
+  "engines": [],
+  "bands": [
+   "band_harold"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "track 2 (L): strategy-community.js mains band_harold, pairs arcane"
+ },
+ {
+  "id": "laterano",
+  "name": "拉特兰",
+  "bond": "lateranoShip",
+  "subs": [
+   "preciShip",
+   "skillfulShip"
+  ],
+  "engines": [],
+  "bands": [
+   "band_paganini"
+  ],
+  "rhythm": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "source": "track 2 (L): strategy-community.js mains band_paganini, pairs preci / skillful"
+ }
+]

@@ -1,0 +1,189 @@
+{
+ "group": "eval lane (SO1)",
+ "evals": [
+  {
+   "file": "eval-25018752-solo480-b0.json",
+   "label": "SO1__25018752.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 85.8,
+   "decisions": 64044,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.29375,
+     "faShare": 0.7568131447522057,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.202083333333333,
+       "lp": 1.3,
+       "win": 0.29375
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.447916666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.15285316121461054,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.29375,
+       "fa": 0.7568131447522057
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-25018752-solo480-b3.json",
+   "label": "SO1__25018752.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 87.3,
+   "decisions": 64081,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.34791666666666665,
+     "faShare": 0.7841008205841028,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.233333333333333,
+       "lp": 1.70625,
+       "win": 0.34791666666666665
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.44583333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.1525175644028103,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.34791666666666665,
+       "fa": 0.7841008205841026
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-30005184-solo480-b0.json",
+   "label": "SO1__30005184.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 85.4,
+   "decisions": 65680,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.27291666666666664,
+     "faShare": 0.7526657763766669,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.21875,
+       "lp": 0.9791666666666666,
+       "win": 0.27291666666666664
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.23125,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16424908424908424,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.27291666666666664,
+       "fa": 0.7526657763766672
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-30005184-solo480-b3.json",
+   "label": "SO1__30005184.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 88.7,
+   "decisions": 65743,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.33125,
+     "faShare": 0.7896342605718372,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.266666666666667,
+       "lp": 1.3125,
+       "win": 0.33125
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.2375,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.16384345794392524,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_ioleta": {
+       "n": 480,
+       "win": 0.33125,
+       "fa": 0.7896342605718368
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  }
+ ]
+}

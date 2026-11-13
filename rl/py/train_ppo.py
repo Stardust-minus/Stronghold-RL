@@ -47,6 +47,17 @@ FIXED3S = [{'name': 'mix3s', 'key': 'ABYSS', 'configs': W(solo_ABYSS=0.45, coop4
 FIXED3SC = [{'name': 'mix3sc', 'key': 'ABYSS', 'configs': W(solo_ABYSS=0.35, coop4l_ABYSS=0.25, coop2l_ABYSS=0.15, coop4ai_ABYSS=0.01, coop4_ABYSS=0.01, coop2_ABYSS=0.01, solo_HARD=0.08, coop4l_HARD=0.05, coop2l_HARD=0.03, coop4ai_HARD=0.01, solo_NORMAL=0.03, coop4l_NORMAL=0.02)}]
 # solo1 (11-13, the owner: solo:ABYSS only; the small co-op share only against forgetting): ABYSS .80, HARD .15, NORMAL .05
 FIXED_SOLO1 = [{'name': 'mixsolo1', 'key': 'ABYSS', 'configs': W(solo_ABYSS=0.70, coop4l_ABYSS=0.05, coop2l_ABYSS=0.03, coop4ai_ABYSS=0.02, solo_HARD=0.12, coop4l_HARD=0.03, solo_NORMAL=0.05)}]
+# solo1w (11-13, from-scratch warm phase, first ~10M): solo1 shifted to easier difficulties — ABYSS .50, HARD .35, NORMAL .15
+FIXED_SOLO1W = [{'name': 'mixsolo1w', 'key': 'ABYSS', 'configs': W(solo_ABYSS=0.44, coop4l_ABYSS=0.03, coop2l_ABYSS=0.02, coop4ai_ABYSS=0.01, solo_HARD=0.30, coop4l_HARD=0.05, solo_NORMAL=0.15)}]
+# mp1 (11-13 rev 2, multiplayer-first, every empty seat filled by the model; --legacy-mates 0): game weights from SAMPLE targets
+# solo 30 (ABYSS 23 / HARD 5 / NORMAL 2), humans+model 65 (ABYSS 49 / HARD 12 / NORMAL 4; coop4 2/3, coop2 1/4, coop3 1/12),
+# rule-AI mates 5 (coop4l ABYSS 3, coop2l ABYSS 2), divided by measured samples per game (coop4 2.06x, coop2 1.46x, coop3 1.44x solo)
+FIXED_MP1 = [{'name': 'mixmp1', 'key': 'ABYSS', 'configs': W(solo_ABYSS=0.3233, coop4_ABYSS=0.2233, coop2_ABYSS=0.1183, coop3_ABYSS=0.0399, coop4l_ABYSS=0.0431, coop2l_ABYSS=0.0292, solo_HARD=0.0703, coop4_HARD=0.0547, coop2_HARD=0.029, coop3_HARD=0.0098, solo_NORMAL=0.0281, coop4_NORMAL=0.0182, coop2_NORMAL=0.0097, coop3_NORMAL=0.0033)}]
+# mp1w: the same room-type split (30 / 65 / 5) at ABYSS .50 / HARD .35 / NORMAL .15 (from-scratch warm phase)
+FIXED_MP1W = [{'name': 'mixmp1w', 'key': 'ABYSS', 'configs': W(solo_ABYSS=0.2108, coop4_ABYSS=0.1481, coop2_ABYSS=0.0785, coop3_ABYSS=0.0264, coop4l_ABYSS=0.0215, coop2l_ABYSS=0.0146, solo_HARD=0.1476, coop4_HARD=0.1037, coop2_HARD=0.0549, coop3_HARD=0.0185, coop4l_HARD=0.0151, coop2l_HARD=0.0102, solo_NORMAL=0.0633, coop4_NORMAL=0.0444, coop2_NORMAL=0.0235, coop3_NORMAL=0.0079, coop4l_NORMAL=0.0065, coop2l_NORMAL=0.0044)}]
+FIXED_AUTO1 = [{'name': 'mixauto1', 'key': 'ABYSS', 'configs': W(solo_NORMAL=0.15, solo_HARD=0.85, solo_ABYSS=0.0)}]  # (scr0) weights set per update by auto_mix()
+FIXED_HARD1 = [{'name': 'mixhard1', 'key': 'HARD', 'configs': W(solo_HARD=1.0)}]  # (scr0) proxy task: solo HARD only
+FIXED_MP2 = [{'name': 'mixmp2', 'key': 'ABYSS', 'configs': W(solo_ABYSS=0.4444, coop4_ABYSS=0.157, coop2_ABYSS=0.0832, coop3_ABYSS=0.0281, coop4l_ABYSS=0.0384, coop2l_ABYSS=0.026, solo_HARD=0.0966, coop4_HARD=0.0385, coop2_HARD=0.0204, coop3_HARD=0.0069, solo_NORMAL=0.0386, coop4_NORMAL=0.0128, coop2_NORMAL=0.0068, coop3_NORMAL=0.0023)}]  # (11-13) final phase: solo ~45% of samples, humans + model ~50%, coop*l ~5% (mp1's per-game sample factors)
 
 def cpu_list(s):
     out = set()
@@ -83,6 +94,9 @@ ap.add_argument('--overlap', action='store_true', help='T1: update on a learner 
 ap.add_argument('--device', default='cuda', help='cuda, or cpu for smoke tests while the GPU is taken')
 ap.add_argument('--kl-ref', default='', help='checkpoint of the KL anchor policy (default: --init)')
 ap.add_argument('--strict-preview', action='store_true', help='strict preview for the RL seats (env strictPreview), off by default')
+ap.add_argument('--picker-head', default=None, help='boss-round layout picker in the training envs and in-run evals (env pickerHead; with --picker-trunk, a frozen JS trunk export; boss rehearsal 0)')
+ap.add_argument('--picker-trunk', default=None); ap.add_argument('--picker-k', type=int, default=8)
+ap.add_argument('--nat-plan', default=None, help='(11-13) NAT arm: env natPlan JSON (plan pair obs block, national / secondary terms, potential); in-run evals too')
 ap.add_argument('--visible-only', action='store_true', help='deploy information set for the RL seats (env visibleOnly), in training and in-run evals')
 ap.add_argument('--lp-obs', default=None, help="own-LP obs field for every seat: 'raw' (raw LP) or a scale k on lp / lp0 (env lpObs)")
 ap.add_argument('--reward-v', type=int, default=1, help='2: reward version 2 (team clear, FA team/own, leaks, 联防 saves, LP vs L_ref, elimination)')
@@ -90,17 +104,28 @@ ap.add_argument('--r2', default='{}', help='reward version 2 weight overrides, e
 ap.add_argument('--shape-uncapped', action='store_true', help='bond shaping stack term uncapped: Σ stacking-bond layers / 100 (potential-based)')
 ap.add_argument('--eval2-configs', default='', help='a second in-run eval (eval-<steps>-b<N>.json, TB eval_b<N>/…) of these configs with --eval2-boss-rehearsal')
 ap.add_argument('--eval2-boss-rehearsal', type=int, default=0)
-ap.add_argument('--mix', default='v1', choices=['v1', 'v2', 'v3', 'v3s', 'v3sc', 'solo1'], help='v2 (11-12): fixed mix with coop4ai (4 RL seats) ABYSS .20 / HARD .06')
+ap.add_argument('--mix', default='v1', choices=['v1', 'v2', 'v3', 'v3s', 'v3sc', 'solo1', 'solo1w', 'mp1', 'mp1w', 'mp2', 'hard1', 'auto1'], help='v2 (11-12): fixed mix with coop4ai (4 RL seats) ABYSS .20 / HARD .06')
 ap.add_argument('--reward-by', default='{}', help='per-difficulty reward overrides, e.g. {"ABYSS": {"round": 0, "win": 1.0}} (env rewardBy)')
 ap.add_argument('--freeze-band', action='store_true', help='band choice fixed: no gradient on enc.bands / ptr.bands (no optimizer entries), band-decision rows out of the policy-gradient and entropy terms (their KL anchor stays)')
 ap.add_argument('--lr-warmup', type=int, default=0, help='resume: ramp lr linearly over this many updates after the value warm-up (fresh Adam moments)')
 ap.add_argument('--start-steps', type=float, default=0, help='resume: the step counter starts here (checkpoint / eval cadence continues)')
 ap.add_argument('--seed-offset', type=int, default=0, help='resume: added to the training match seeds (envSeed += offset // 1000), so a resumed run does not replay its first matches')
+ap.add_argument('--bc-kl-from', type=float, default=None, help='(11-13) --bc-kl-steps counts from this absolute step (the phase start; restart-safe: pass the same value on every resume), not from step 0')
+ap.add_argument('--lr-final', type=float, default=None, help='(11-13) anneal lr linearly to this value from --lr-anneal-start (absolute steps) to --max-steps')
+ap.add_argument('--lr-anneal-start', type=float, default=None)
 ap.add_argument('--bc-kl-min', type=float, default=0.0, help='with --bc-kl-steps > 0: the KL anchor decays linearly from --bc-kl to this floor')
 ap.add_argument('--viol-rate', type=float, default=0.6, help='in-run eval: rule violations per match above this alert (one-round-trip plans make a few inherent; teacher4 0.28)')
 ap.add_argument('--micro', type=int, default=0, help='gradient accumulation chunk inside a minibatch (memory); 0 = the whole minibatch')
 ap.add_argument('--mem-frac', type=float, default=0.0, help='cap this process\'s share of the GPU memory (a shared GPU); 0 = no cap')
 # ppo3 candidates (off by default)
+ap.add_argument('--ent-final', type=float, default=None, help='(scr0) anneal the entropy coefficient linearly from --ent to this over start..max steps')
+ap.add_argument('--auto-hard-gate', type=float, default=0.60, help='(scr0, auto1) HARD rolling win that switches ABYSS on')
+ap.add_argument('--auto-target', type=float, default=0.35, help='(scr0, auto1) expected win rate of the mix (band 0.15-0.60)')
+ap.add_argument('--auto-smin', type=float, default=0.10); ap.add_argument('--auto-smax', type=float, default=0.85)
+ap.add_argument('--auto-step', type=float, default=0.02, help='(scr0, auto1) max change of the ABYSS share per update')
+ap.add_argument('--auto-nfloor', type=float, default=0.05, help='(scr0, auto1) NORMAL share floor')
+ap.add_argument('--log-diag', action='store_true', help='(scr0) update events carry entropy by kind / chosen type, advantage and return scale, EV by group')
+ap.add_argument('--eval-at', default='', help='(scr0) extra in-run evals at these absolute steps (comma list; 0 or the start step = the init, before training)')
 ap.add_argument('--plr', type=float, default=0.0, help='S3: share of new matches that replay a buffered level (seed)')
 ap.add_argument('--plr-buffer', type=int, default=256); ap.add_argument('--plr-beta', type=float, default=0.1)
 ap.add_argument('--plr-staleness', type=float, default=0.3)
@@ -121,7 +146,7 @@ ap.add_argument('--shape-stack', type=float, default=0.0, help='bond shaping: we
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
 if a.curriculum == 'fixed':
-    STAGES = FIXED if a.mix == 'v1' else FIXED2 if a.mix == 'v2' else FIXED3S if a.mix == 'v3s' else FIXED3SC if a.mix == 'v3sc' else FIXED_SOLO1 if a.mix == 'solo1' else FIXED3
+    STAGES = FIXED_AUTO1 if a.mix == 'auto1' else FIXED_HARD1 if a.mix == 'hard1' else FIXED if a.mix == 'v1' else FIXED2 if a.mix == 'v2' else FIXED3S if a.mix == 'v3s' else FIXED3SC if a.mix == 'v3sc' else FIXED_SOLO1 if a.mix == 'solo1' else FIXED_SOLO1W if a.mix == 'solo1w' else FIXED_MP1 if a.mix == 'mp1' else FIXED_MP1W if a.mix == 'mp1w' else FIXED_MP2 if a.mix == 'mp2' else FIXED3
 reward_over = json.loads(a.reward)
 reward_by = json.loads(a.reward_by)
 dev = torch.device(a.device)
@@ -144,7 +169,7 @@ opt = torch.optim.Adam([p_ for p_ in net.parameters() if p_.requires_grad], lr=a
 import copy, threading
 actor = copy.deepcopy(net) if a.overlap else net  # T1: the network that acts; net is the learner
 actor.eval()
-value_params = list(net.value.parameters())
+value_params = list(net.value.parameters()) + (list(net.vtrunk.parameters()) if hasattr(net, 'vtrunk') else [])  # LIN-C: the critic trunk warms up with its head
 opt_v = torch.optim.Adam(value_params, lr=a.lr, eps=1e-5)  # A1: the value-only warm-up
 spec = net.spec
 threshold = {}
@@ -167,6 +192,8 @@ envs = [NodeEnv({'envs': a.envs, 'configs': STAGES[0]['configs'], 'seed': 1_000_
                  **({'rewardV': 2, 'r2': json.loads(a.r2)} if a.reward_v == 2 else {}),
                  **({'lpObs': a.lp_obs if a.lp_obs == 'raw' else float(a.lp_obs)} if a.lp_obs else {}),
                  **({'visibleOnly': True} if a.visible_only else {}), **({'strictPreview': True} if a.strict_preview else {}),
+                 **({'pickerHead': {'head': a.picker_head, 'trunk': a.picker_trunk, 'K': a.picker_k}} if a.picker_head else {}),
+                 **({'natPlan': json.loads(a.nat_plan)} if a.nat_plan else {}),
                  **({'snapCollect': {'prob': a.snap_collect}, 'snapStart': {'frac': a.snap_start}} if a.snap_start > 0 else {}),
                  **({'bandPolicy': {'share': a.band_policy}} if a.band_policy > 0 else {}),
                  **({'bossRehearsal': a.boss_rehearsal} if a.boss_rehearsal is not None else {})}, node=a.node)
@@ -226,6 +253,7 @@ BOND = envs[0].spec['blocks']['bonds']  # tier field 2 = tier / 3
 G0 = envs[0].spec['blocks']['global']['offset']  # field 0 = round / 15
 assert envs[0].spec['dataId'] == spec['dataId'], ('observation layout changed since the checkpoint', envs[0].spec['dataId'], spec['dataId'])
 env_stage = [0] * len(envs)
+env_mix = [0] * len(envs)  # (scr0) auto1 mix version applied per process
 pool = AsyncPool(envs); pool.reset()
 pending, chains = {}, defaultdict(list)
 ready = 0
@@ -234,6 +262,7 @@ steps = int(a.start_steps); t0 = time.time(); update_no = 0
 next_ckpt = (math.floor(steps / a.ckpt_every) + 1) * a.ckpt_every; next_eval = (math.floor(steps / a.eval_every) + 1) * a.eval_every
 gen = torch.Generator(device=dev); gen.manual_seed(7)
 evals = []
+eval_at = sorted(float(x) for x in a.eval_at.split(',') if x.strip())  # (scr0)
 
 def finalize(key, r, nv, done):
     global ready
@@ -245,6 +274,27 @@ def rolling(key):
         return None
     return {'n': len(xs), 'win': float(np.mean([e[1] for e in xs])), 'survival': float(np.mean([e[2] for e in xs])), 'lp': float(np.mean([e[3] for e in xs])),
             'fa': float(np.mean([e[4] for e in xs]))}
+
+auto_state = {'on': False, 's': 0.0, 'ver': 0}
+def auto_mix():  # (scr0) --mix auto1: in-update difficulty mixing gated on rolling win rates
+    rN, rH, rA = rolling('NORMAL'), rolling('HARD'), rolling('ABYSS')
+    pN = rN['win'] if rN and rN['n'] >= 100 else 0.9; pH = rH['win'] if rH and rH['n'] >= 300 else 0.0
+    pA = rA['win'] if rA and rA['n'] >= 100 else 0.0
+    if not auto_state['on'] and pH >= a.auto_hard_gate:
+        auto_state['on'] = True; emit(event='mix-gate', steps=steps, reason='HARD rolling win %.3f >= %.2f' % (pH, a.auto_hard_gate))
+    n = max(a.auto_nfloor, 0.30 if pH < 0.30 else a.auto_nfloor)
+    if auto_state['on']:
+        pR = (n * pN + (1 - n) * pH)  # win rate of the non-ABYSS part
+        want = a.auto_smax if pA >= a.auto_target else (pR - a.auto_target) / max(1e-6, pR - pA)
+        want = min(a.auto_smax, max(a.auto_smin, want))
+        s_ = auto_state['s'] if auto_state['s'] > 0 else a.auto_smin
+        auto_state['s'] = s_ + max(-a.auto_step, min(a.auto_step, want - s_))
+    sA = auto_state['s']; wN = (1 - sA) * n; wH = (1 - sA) - wN
+    cfg = W(solo_NORMAL=round(wN, 4), solo_HARD=round(wH, 4), solo_ABYSS=round(sA, 4))
+    STAGES[0]['configs'] = cfg
+    auto_state['ver'] += 1  # applied per process at its next batch (the protocol is request / response)
+    emit(event='mix', steps=steps, w={'NORMAL': round(wN, 4), 'HARD': round(wH, 4), 'ABYSS': round(sA, 4)}, p={'NORMAL': round(pN, 3), 'HARD': round(pH, 3), 'ABYSS': round(pA, 3)},
+         n={k: (r or {}).get('n', 0) for k, r in (('NORMAL', rN), ('HARD', rH), ('ABYSS', rA))}, expected=round(wN * pN + wH * pH + sA * pA, 3))
 
 def checkpoint(tag):
     path = os.path.join(a.out, f'model-{tag}.pt')
@@ -258,7 +308,7 @@ def launch_eval(path, block=False, second=False):
     out = os.path.join(a.out, f'eval-{steps}-b{a.eval2_boss_rehearsal}.json' if second else f'eval-{steps}.json')
     cmd = [sys.executable, os.path.join(os.path.dirname(__file__), 'eval.py'), '--ckpt', path, '--out', out, '--greedy',
            '--matches', str(a.eval_matches), '--chunks', str(a.eval_chunks), '--envs', '6', '--node', a.node,
-           '--bond-log', *(['--lp-obs', str(a.lp_obs)] if a.lp_obs else []), *(['--visible-only'] if a.visible_only else []), *(['--strict-preview'] if a.strict_preview else []), '--configs', a.eval2_configs if second else a.eval_configs, '--rehearsal', str(a.rehearsal), '--device', a.device] + (['--boss-rehearsal', str(a.eval2_boss_rehearsal if second else a.boss_rehearsal)] if second or a.boss_rehearsal is not None else []) \
+           '--bond-log', *(['--lp-obs', str(a.lp_obs)] if a.lp_obs else []), *(['--visible-only'] if a.visible_only else []), *(['--strict-preview'] if a.strict_preview else []), *(['--picker-head', a.picker_head, '--picker-trunk', a.picker_trunk, '--picker-k', str(a.picker_k)] if a.picker_head else []), *(['--nat-plan', a.nat_plan] if a.nat_plan else []), '--configs', a.eval2_configs if second else a.eval_configs, '--rehearsal', str(a.rehearsal), '--device', a.device] + (['--boss-rehearsal', str(a.eval2_boss_rehearsal if second else a.boss_rehearsal)] if second or a.boss_rehearsal is not None else []) \
           + (['--band-policy', '1'] if a.band_policy > 0 else [])  # the policy's own band picks are evaluated too
     p = subprocess.Popen(cmd, stdout=open(out + '.log', 'w'), stderr=subprocess.STDOUT,
                          env={**os.environ, 'OMP_NUM_THREADS': '4'}, preexec_fn=lambda: os.sched_setaffinity(0, full_cpus))
@@ -388,6 +438,9 @@ def update(rollout):
         var = r_np[sel].var()
         return float(1 - (r_np[sel] - v_np[sel]).var() / var) if var > 1e-12 else float('nan')
     diag['diag/ev_all'] = explained(np.ones(N, bool)); diag['diag/adv_std_all'] = float(adv_np.std())
+    if a.log_diag:  # (scr0) return scale and raw advantage magnitude
+        diag['diag/ret_mean'] = float(r_np.mean()); diag['diag/ret_std'] = float(r_np.std()); diag['diag/ret_p95'] = float(np.percentile(r_np, 95))
+        diag['diag/adv_absmean_all'] = float(np.abs(adv_np).mean()); diag['diag/adv_mean_all'] = float(adv_np.mean())
     for gi, gname in enumerate(GROUPS):
         sel = gnp == gi
         if sel.sum() >= 32:
@@ -404,10 +457,15 @@ def update(rollout):
     else:
         AD = (AD_raw - gm) / gs
     # bc_kl_steps <= 0: a persistent anchor (ppo2: 0.01 towards the init policy, ppo1-final)
-    bc_coef = 0.0 if bc_net is None else a.bc_kl if a.bc_kl_steps <= 0 else a.bc_kl_min + (a.bc_kl - a.bc_kl_min) * max(0.0, 1.0 - steps / a.bc_kl_steps)
+    bc_coef = 0.0 if bc_net is None else a.bc_kl if a.bc_kl_steps <= 0 else a.bc_kl_min + (a.bc_kl - a.bc_kl_min) * max(0.0, 1.0 - ((steps - a.bc_kl_from) if a.bc_kl_from is not None else steps) / a.bc_kl_steps)
     warm = update_no < a.vf_warmup
+    ent_now = a.ent if a.ent_final is None else a.ent + (a.ent_final - a.ent) * min(1.0, max(0.0, steps - a.start_steps) / max(1.0, a.max_steps - a.start_steps))  # (scr0) linear entropy anneal over the run
+    if a.ent_final is not None:
+        diag['diag/ent_coef'] = ent_now
     if a.lr_warmup > 0:
         lr_now = a.lr * min(1.0, max(1, update_no - a.vf_warmup + 1) / a.lr_warmup)
+        if a.lr_final is not None and a.lr_anneal_start is not None and steps > a.lr_anneal_start:  # (11-13) final-phase anneal
+            lr_now = min(lr_now, a.lr + (a.lr_final - a.lr) * min(1.0, (steps - a.lr_anneal_start) / max(1.0, a.max_steps - a.lr_anneal_start)))
         for g_ in opt.param_groups: g_['lr'] = lr_now
         diag['diag/lr'] = lr_now
     TB = None
@@ -460,14 +518,14 @@ def update(rollout):
                 if NBW is not None:  # --freeze-band: band rows give no policy-gradient / entropy signal
                     pgr = pgr * NBW[idx]; entr = entr * NBW[idx]
                 pg = -pgr.mean(); ent = entr.mean()
-                loss = pg + a.vf * vl - a.ent * ent
+                loss = pg + a.vf * vl - ent_now * ent
                 if TB is not None:  # Step 2 warm start: the band head towards the Step 0 table on band rows
                     tb = TB[idx]; has = tb.sum(1) > 0
                     if has.any():
                         lb_ = -(tb[has] * logp_all[has].clamp_min(-1e4)).sum(1).mean(); loss = loss + lb_; acc['band_warm_ce'] += lb_.item() * f
                 if bc_coef > 0:
                     with torch.no_grad():
-                        lb, _ = bc_net(O[idx], M[idx]); lpb = F.log_softmax(lb, 1)
+                        lb, _ = bc_net(O[idx][:, :bc_net.D] if bc_net.D < O.shape[1] else O[idx], M[idx]); lpb = F.log_softmax(lb, 1)  # a ref without the appended plan block reads the obs it knows
                     kl_bc = (lpb.exp() * (lpb - logp_all)).sum(1).mean()
                     loss = loss + bc_coef * kl_bc; acc['kl_bc'] += kl_bc.item() * f
                 (loss * f).backward()
@@ -528,6 +586,8 @@ emit(event='start', init=a.init, params=sum(p.numel() for p in net.parameters())
 last_log = time.time(); sps_steps = 0; sps_t = time.time()
 t_sel = t_fwd = 0.0; prev_update = time.time()
 upd_thread = None; upd_box = {}; lag_steps = 0  # main-loop time in select waits / forward passes since the last update
+if eval_at and eval_at[0] <= steps:  # (scr0) the init's own in-run eval, before any update
+    launch_eval(checkpoint(f'{int(steps)}')); eval_at = [x for x in eval_at if x > steps]
 while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
     ts = time.time(); batch_list = list(pool.poll(timeout=60)); t_sel += time.time() - ts
     for i, b in batch_list:
@@ -557,6 +617,8 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
                 envs[i].set_configs(seeds=queue)
         if env_stage[i] != stage:
             envs[i].set_configs(STAGES[stage]['configs']); env_stage[i] = stage
+        if a.mix == 'auto1' and env_mix[i] != auto_state['ver']:  # (scr0) the newest in-update mix
+            envs[i].set_configs(STAGES[0]['configs']); env_mix[i] = auto_state['ver']
         if b.n == 0:
             pool.step(i, np.zeros(0, dtype=np.int32)); continue
         tf = time.time()
@@ -604,12 +666,13 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
                          'diag/plr_score_mean': float(np.mean([e['score'] for L in levels for e in L.values()] or [0]))})
         t_sel = t_fwd = 0.0
         st = STAGES[stage]; roll = rolling(st['key'])
+        diagj = {'diag': {k[5:]: round(v, 4) for k, v in extra['diag'].items() if isinstance(v, float) and k.startswith(('diag/entropy', 'diag/adv_', 'diag/ev_', 'diag/ret_', 'diag/share_kind', 'diag/lr', 'diag/ent_coef'))}} if a.log_diag else {}
         emit(event='update', update=update_no, steps=steps, sps=round(sps_steps / max(1e-6, time.time() - sps_t)), samples=n, epochs=epochs_done,
              update_s=round(upd_s, 2), bc_coef=round(bc_coef, 4), stage=st['name'], stage_steps=steps - stage_since,
              rolling={k: rolling(k) for k in ('NORMAL', 'HARD', 'ABYSS')}, hours=round((time.time() - t0) / 3600, 3),
              env_errors=sum(c[0] for c in env_counts), env_rejected=sum(c[1] for c in env_counts), env_violations=sum(c[2] for c in env_counts),
              warmup=update_no <= a.vf_warmup, ev=round(extra['diag'].get('diag/ev_all', float('nan')), 4),
-             stall=round(loop['diag/stall_ratio'], 4), **info)
+             stall=round(loop['diag/stall_ratio'], 4), **info, **diagj)
         board.update(steps, {'sps': sps_steps / max(1e-6, time.time() - sps_t), 'update_s': upd_s, 'bc_coef': bc_coef, 'samples': n,
                              'epochs': epochs_done, 'stage': stage, 'warmup': float(update_no <= a.vf_warmup),
                              'env_errors': sum(c[0] for c in env_counts), 'env_rejected': sum(c[1] for c in env_counts),
@@ -617,6 +680,8 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
                      {k: rolling(k) for k in ('NORMAL', 'HARD', 'ABYSS')}, recent_terms, Rw,
                      extra if update_no % a.hist_every == 0 else None, bonds=(extra['tiers'], extra['rounds']), R_by=reward_by)
         recent_terms.clear()
+        if a.mix == 'auto1':
+            auto_mix()
         bad = eval_problems()
         if sum(c[0] for c in env_counts) or sum(c[2] for c in env_counts) or bad:
             path = checkpoint(f'{int(steps)}-alert')
@@ -633,8 +698,11 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
                 emit(event='stage', stage=STAGES[stage]['name'], steps=steps, reason='threshold' if in_stage < a.stage_max else 'max-steps', rolling=roll, threshold=thr)
         if steps >= next_ckpt:
             path = checkpoint(f'{int(steps)}'); next_ckpt += a.ckpt_every
-            if steps >= next_eval:
-                launch_eval(path); next_eval += a.eval_every
+            if steps >= next_eval or (eval_at and steps >= eval_at[0]):  # (scr0) --eval-at adds evals, never removes one
+                launch_eval(path)
+                if steps >= next_eval:
+                    next_eval += a.eval_every
+                eval_at = [x for x in eval_at if x > steps]
 if upd_thread is not None:  # T1: the last overlapped update finishes before the final checkpoint
     upd_thread.join()
 path = checkpoint('final')

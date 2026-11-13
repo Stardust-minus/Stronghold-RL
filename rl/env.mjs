@@ -9,14 +9,17 @@ import { Match } from '../../server/match/Match.js';
 import { VirtualScheduler } from '../../server/match/scheduler.js';
 import { getData } from '../../server/data.js';
 import { defineBotStrategy, LEGACY_BOT } from '../../server/match/botStrategyContract.js';
-import { createBotPrepSteps, runSteps } from '../../server/match/bot.js';
+import { createBotPrepSteps, runSteps, layoutCandidatesForPicker, applyPlanForPicker } from '../../server/match/bot.js';
+import { PickerHead, pickerRow } from './picker.mjs';
 import { collectViolations } from '../../server/match/invariants.js';
 import { snapshotMatch, restoreMatch } from '../../server/match/snapshot.js';
 import { createRngFromState } from '../../server/sim/rng.js';
 import { Encoder, ACT, KIND, SHOP, OWNED, REWARDS, PERSONAL, CARDS, BANDS, DIRS, tileRC, tileIndex, humanBonds, humanPairs, chessInBonds, mainCoreBondOf, rulesOf, bandConflicts } from './spec.mjs';
 import { beginSeatPlan, endSeatPlan, seatPlanOf, seatPlanRerolls } from '../../server/match/seatPlan.js';
 import { pieceDir } from '../../server/match/board.js';
+import { withBounties } from '../../server/match/waves.js';
 import { SPPolicy2 } from './infer2.mjs';
+import { recipePlan } from './recipes.mjs';
 
 // Legacy prep with its procurement switched off — rewards too (the policy picks them, under the 让盟约 mask): a personal
 // choice left over, arrange, equip, final arrange (+ rehearsal); prepEnd (legacy) applies the rehearsed plan, resolves
@@ -191,6 +194,41 @@ export class SPEnv {
     this.bandStats = { decisions: 0, fallback: 0, humanConflict: 0, aiSameBond: 0, policySeats: 0, legacySeats: 0 };
     // Step 0 (band strength table): seat ai_0's legacy pick returns this band; teammates re-draw instead of taking it
     this.forceBand = o.forceBand || null;
+    // band table (11-13): with bandPolicy on, ai_0's own band decision (after every human proxy, first of the model seats)
+    // takes the forced band when the seat's mask allows it and no human's band bonds / 主盟约 meet its tied bonds (else the
+    // policy's pick stands and the seed counts as not obtained); 'random' = a uniformly random allowed band (the baseline).
+    // res.forced per match. Off (null) unless forceBand is set with bandPolicy.
+    // team combo table (11-13): forceBand 'team:a,b,c' = the model seats' own band decisions take a, b, c in their pick order
+    // (after the human proxies; each under its own mask and the human-bond rule, else the policy's pick stands: res.team per match)
+    this.forceTeam = typeof this.forceBand === 'string' && this.forceBand.startsWith('team:') && this.bandPolicy ? this.forceBand.slice(5).split(',').filter(Boolean) : null;
+    this.forceAt = this.forceBand && this.bandPolicy && !this.forceTeam ? 'policy' : null;
+    // action histogram (11-13, diagnostics, off): per RL seat the policy's applied actions, buys / rewards by kind, 机变 picks
+    // by family, its bounty units spawned / leaked at normal-round battles, the items legacy equips; res.act per match
+    this.actLog = !!o.actLog;
+    // bounty-aware legacy layout (11-13 experiment, off): an RL seat's legacy layout at a normal round models its own bounty
+    // spawns too (bot.js fieldModel reads m.wave.spawns only; rehearsal adds the bounties) — env-side, bot.js unchanged
+    this.bountyField = !!o.bountyField;
+    this.bfStats = { swaps: 0, seatPreps: 0 };
+    // boss-round layout picker (11-13, track 2, off): pickerHead { head: picker head JSON, trunk: frozen JS trunk export
+    // base, K }; at the boss / hidden-core round an RL seat's legacy layout (after LAYOUT_ONLY's final arrange, before
+    // prepEnd) is replaced by the head's pick among K legacy candidates (planLayout only: no battle may be built)
+    // national-route plan (11-13, NAT arm; off): every RL seat (not a human proxy) gets a plan pair at its first decision after
+    // the band — nation P (bondType SEASON; none tied to a human's band bonds / 主盟约, none another RL seat of the match holds)
+    // and a class bond S carried by P's operators — shown in an obs block 'plan' appended after the encoder's layout. R2 terms
+    // (rewardV 2): at match end, `bonus` x (0.5 + 0.5 faShare) if P (phase 'free': any nation) was at tier >= 2 at the Final
+    // Assault start, + `sec` if S (free: any class stacking bond) was active there with >= secLayers layers; and the potential
+    // phiCount x min(P on board, 6) / 6 + phiLayers x P layers / 100 (free: the best nation) inside the shaping term.
+    this.natPlan = o.natPlan ? { phase: 'forced', bonus: 1.5, sec: 0.5, secLayers: 40, phiCount: 0.5, phiLayers: 0.3, ...o.natPlan } : null;
+    this.picker = o.pickerHead ? { head: PickerHead.load(o.pickerHead.head), trunk: SPPolicy2.load(o.pickerHead.trunk), K: o.pickerHead.K || 8 } : null;
+    // diagnostics (track 2): readyHook(m, ps, slot) runs right before a legacy-placed seat readies (its final layout,
+    // after any rehearsal), e.g. a candidate pick; seatPlanBonds { ai_0: bondId }: legacy's focus bond for those seats
+    this.readyHook = o.readyHook || null;
+    this.equipHook = o.equipHook || null; // diagnostics: replaces equipItems for the policy (LAYOUT_ONLY) seats
+    this.seatPlanBonds = o.seatPlanBonds || null;
+    // diagnostics (track 2): recipeSeats { recipes, seats: { pid: k } } — those seats are legacy with recipe k's advisor plan
+    // (the recipe bots: recipes.mjs through Match.externalAI.planFor, server/match/aiPlan.js) and open with its first band
+    this.recipeSeats = o.recipeSeats && o.recipeSeats.recipes?.length ? o.recipeSeats : null;
+    this.bountyAware = !!o.bountyAware; // diagnostics: legacy's field model of the policy seats adds their bounty spawns
     this.R = Object.freeze({ ...REWARD, ...(o.reward || {}) });
     // per-difficulty reward overrides on top of this.R (o.rewardBy { ABYSS: { round: 0, win: 1 } }); a seat keeps its match's weights
     this.RB = Object.fromEntries(Object.entries(o.rewardBy || {}).map(([d, r]) => [String(d).toUpperCase(), Object.freeze({ ...this.R, ...r })]));
@@ -216,7 +254,7 @@ export class SPEnv {
     this.errorSamples = [];
     this.slots = new Array(this.envs).fill(null);
     for (let i = 0; i < this.envs; i++) this.slots[i] = this._open(i);
-    this.D = this.encoder.dim; this.A = this.encoder.A;
+    this.D = this.encoder.dim + (this.natPlan ? this._planWidth() : 0); this.A = this.encoder.A;
     this._buf(64);
   }
 
@@ -225,8 +263,91 @@ export class SPEnv {
     this.cw = this.configs.reduce((s, c) => s + c.w, 0);
   }
 
-  spec() { return { ...this.encoder.spec(), reward: this.R, configs: this.configs.map((c) => c.name), termWidth: this.termWidth,
+  spec() { return { ...this._encSpec(), reward: this.R, configs: this.configs.map((c) => c.name), termWidth: this.termWidth,
     ...(this.rewardV === 2 ? { rewardV: 2, r2: this.R2 } : {}) }; }
+
+  /** The encoder's spec, plus the appended 'plan' block when natPlan is on. */
+  _encSpec() {
+    const sp = this.encoder.spec();
+    if (!this.natPlan) return sp;
+    return { ...sp, dim: this.D, blocks: { ...sp.blocks, plan: { offset: this.encoder.dim, count: 1, width: this._planWidth() } } };
+  }
+
+  _planWidth() { return 1 + 2 * this.encoder.vocab.bondIds.length + 6; }
+
+  _natBonds(gd) {
+    if (this._nat) return this._nat;
+    const ids = this.encoder.vocab.bondIds, rec = (b) => gd.bond(b) || {};
+    const nations = ids.filter((b) => rec(b).bondType === 'SEASON');
+    const classes = new Set(ids.filter((b) => rec(b).bondType === 'REGULAR' && !rec(b).noStack && (rec(b).perStackParams || []).length));
+    const secOf = new Map(nations.map((n) => {
+      const mem = (rec(n).members || []).map((id) => gd.chess(id)).filter((c) => c && !c.isHidden);
+      return [n, [...new Set(mem.flatMap((c) => (c.bonds || []).filter((b) => classes.has(b))))].sort()];
+    }));
+    this._nat = { nations, classes, secOf, index: new Map(ids.map((b, i) => [b, i])) };
+    return this._nat;
+  }
+
+  /** The seat's plan pair (P, S), drawn once per seat from a seat-and-seed stream. */
+  _assignPlan(slot, ps) {
+    const m = slot.m, N = this._natBonds(m.gd), bc = bandConflicts(m.gd, m.publicView(), ps.playerId, slot.humans, null);
+    const taken = (slot.natTaken ||= new Set());
+    let ok = N.nations.filter((n) => !bc.humanBand.has(n) && !bc.humanMain.has(n) && !taken.has(n));
+    if (!ok.length) ok = N.nations.filter((n) => !taken.has(n));
+    if (!ok.length) ok = N.nations;
+    const rng = mulberry32((slot.seed ^ Math.imul((Number(String(ps.playerId).split('_')[1]) || 0) + 1, 0x9E3779B1) ^ 0x7A11) >>> 0);
+    const P = ok[Math.floor(rng() * ok.length)], ss = N.secOf.get(P) || [];
+    const S = ss.length ? ss[Math.floor(rng() * ss.length)] : null;
+    taken.add(P);
+    return { P, S };
+  }
+
+  /** Bond view helpers: { tier, count, layers, active } of a bond in a privateView bonds list. */
+  static _bv(bonds, id) { const b = (bonds || []).find((x) => x.bondId === id); return b ? { tier: b.active ? (b.tier || 0) : 0, count: b.count || 0, layers: b.layers || 0, active: !!b.active } : { tier: 0, count: 0, layers: 0, active: false }; }
+
+  /** The nation the potential and the free-phase bonus follow: P (forced) or the seat's best nation (most units, then tier). */
+  _natTarget(bonds, plan) {
+    if (this.natPlan.phase !== 'free') return plan.P;
+    const N = this._natBonds(this.slots.find(Boolean)?.m.gd || this.encoder.gd);
+    let best = plan.P, bk = -1;
+    for (const n of N.nations) { const v = SPEnv._bv(bonds, n), k = v.count * 10 + v.tier; if (k > bk) { bk = k; best = n; } }
+    return best;
+  }
+
+  _natPhi(bonds, plan) {
+    const t = SPEnv._bv(bonds, this._natTarget(bonds, plan));
+    return this.natPlan.phiCount * Math.min(t.count, 6) / 6 + this.natPlan.phiLayers * t.layers / 100;
+  }
+
+  _planObs(bonds, plan, out, o) {
+    const N = this._natBonds(this.encoder.gd), NB = this.encoder.vocab.bondIds.length;
+    out[o] = 1; out[o + 1 + N.index.get(plan.P)] = 1; if (plan.S) out[o + 1 + NB + N.index.get(plan.S)] = 1;
+    const p = SPEnv._bv(bonds, plan.P), sv = plan.S ? SPEnv._bv(bonds, plan.S) : { tier: 0, layers: 0, active: false }, q = o + 1 + 2 * NB;
+    out[q] = Math.min(p.count, 9) / 6; out[q + 1] = p.tier / 2; out[q + 2] = Math.min(p.layers, 999) / 100; out[q + 3] = sv.active ? 1 : 0;
+    out[q + 4] = Math.min(sv.layers, 999) / 100; out[q + 5] = this.natPlan.phase === 'free' ? 0 : 1;
+  }
+
+  /** At the Final Assault start: every RL seat's plan state (for the terminal bonus and the metrics). */
+  _natAtFA(slot) {
+    const m = slot.m, at = (slot.natFA ||= new Map()), N = this._natBonds(m.gd);
+    for (const pid of slot.rl) {
+      const ps = m.players.get(pid), s = slot.seat.get(pid);
+      if (!ps || !ps.alive || !s || !s.plan || at.has(pid)) continue;
+      const bonds = ps.privateView().bonds || [], P = SPEnv._bv(bonds, s.plan.P), S = s.plan.S ? SPEnv._bv(bonds, s.plan.S) : null;
+      let bn = null, bv = null; for (const n of N.nations) { const v = SPEnv._bv(bonds, n); if (!bv || v.tier * 100 + v.count > bv.tier * 100 + bv.count) { bv = v; bn = n; } }
+      let bs = null, bsv = null; for (const c of N.classes) { const v = SPEnv._bv(bonds, c); if (v.active && (!bsv || v.layers > bsv.layers)) { bsv = v; bs = c; } }
+      at.set(pid, { P: s.plan.P, S: s.plan.S, pTier: P.tier, pCount: P.count, pLayers: P.layers, sActive: !!S?.active, sLayers: S?.layers || 0,
+        bestNat: bn, bestNatTier: bv?.tier || 0, bestSec: bs, bestSecLayers: bsv?.layers || 0 });
+    }
+  }
+
+  /** Terminal plan bonus of a seat (rewardV 2). */
+  _natBonus(slot, pid, faShare) {
+    const f = slot.natFA?.get(pid), N = this.natPlan; if (!f) return 0;
+    const free = N.phase === 'free', natOk = free ? f.bestNatTier >= 2 : f.pTier >= 2;
+    const secOk = free ? f.bestSecLayers >= N.secLayers : f.sActive && f.sLayers >= N.secLayers;
+    return (natOk ? N.bonus * (0.5 + 0.5 * faShare) : 0) + (secOk ? N.sec : 0);
+  }
 
   _buf(n) {
     this.cap = n;
@@ -286,6 +407,11 @@ export class SPEnv {
       slot.role.set(pid, this.mode === 'legacy' ? (role.startsWith('human') ? 'human-legacy' : 'legacy') : role);
       if (this.mode !== 'legacy' && (role === 'rl' || role === 'human-rl')) slot.rl.add(pid);
     }
+    slot.recipeSeat = new Map();
+    if (this.recipeSeats) for (const [pid, k] of Object.entries(this.recipeSeats.seats || {})) {
+      if (!k || !slot.role.has(pid)) continue;
+      slot.recipeSeat.set(pid, k); slot.rl.delete(pid); slot.humans.delete(pid); slot.role.set(pid, 'recipe');
+    }
     slot.deferredBand = []; slot.bandSeats = new Set(); slot.announced = new Set(); slot.deferredPrep = [];
     if (this.bandPolicy && !snap) for (const pid of slot.rl) {
       if (slot.humans.has(pid)) continue;
@@ -316,6 +442,8 @@ export class SPEnv {
         return true;
       },
       pickBand(m, ps) {
+        const rk = slot.recipeSeat?.get(ps.playerId);
+        if (rk) { const ok = (env.recipeSeats.recipes[rk - 1].bands || []).filter((id) => m.gd.bandAllowed(id) && !m.bandTaken(id, ps.playerId)); if (ok.length) return ok[0]; }
         if (env.bandPolicy?.uniform && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId) && !slot.bandSeats?.has(ps.playerId)) {
           const ok = m.gd.bandIds().filter((id) => m.gd.bandAllowed(id) && !m.bandTaken(id, ps.playerId));
           if (ok.length) return ok[Math.floor(slot.collectRng() * ok.length)];
@@ -323,16 +451,17 @@ export class SPEnv {
         const f = env.forceBand;
         if (f && ps.playerId === 'ai_0' && m.gd.bandAllowed(f) && !m.bandTaken(f, ps.playerId)) return f;
         let id = LEGACY_BOT.pickBand(m, ps);
-        for (let k = 0; f && id === f && k < 8; k++) id = LEGACY_BOT.pickBand(m, ps);
+        for (let k = 0; f && !env.forceAt && id === f && k < 8; k++) id = LEGACY_BOT.pickBand(m, ps); // forceAt: the human proxies pick as in the baseline (a forced band they take: not obtained)
         return id;
       },
       *prepBegin(m, ps, o) {
         // the rehearsal count is set for THIS seat before every resumption of its prep steps (per-seat rehearsal, mateRehearsal)
-        return yield* env._perSeat(m, ps, slot, (slot.rl.has(ps.playerId) ? LAYOUT_ONLY : LEGACY_BOT).prepBegin(m, ps, o));
+        const base = env.readyHook ? env._hookSteps(slot)[slot.rl.has(ps.playerId) ? 'layout' : 'legacy'] : (slot.rl.has(ps.playerId) ? LAYOUT_ONLY : LEGACY_BOT);
+        return yield* env._perSeat(m, ps, slot, base.prepBegin(m, ps, o), true);
       },
       prepEnd(m, ps, job) {
-        const g = LEGACY_BOT.prepEnd(m, ps, job); // the base hook as before, only wrapped
-        return g && typeof g.next === 'function' && (env.bossRehearsal !== null || env.mateRehearsal !== null || env.infoGuard) ? env._perSeat(m, ps, slot, g) : g;
+        const g = (env.readyHook ? env._hookSteps(slot)[slot.rl.has(ps.playerId) ? 'layout' : 'legacy'] : LEGACY_BOT).prepEnd(m, ps, job); // the base hook as before, only wrapped
+        return g && typeof g.next === 'function' && (env.bossRehearsal !== null || env.mateRehearsal !== null || env.infoGuard || env.bountyField || env.readyHook) ? env._perSeat(m, ps, slot, g) : g;
       },
     });
     const collect = this.snapCollect && this.snapCollect.configs.includes(cfg.difficulty) ? this.snapCollect : null;
@@ -353,6 +482,10 @@ export class SPEnv {
       botRehearsal: this.rehearsal, botStrategy: strategy, log, send: () => true, broadcast: () => {},
       onEnd: (s) => { slot.summary = s; slot.ended = true; } });
     if (!this.encoder) this.encoder = new Encoder(slot.m.gd, { version: this.obsVersion });
+    if (this.bountyAware) slot.m._bountyAware = new Set(slot.rl);
+    if (slot.recipeSeat.size) { const rs = this.recipeSeats.recipes, mm = slot.m;
+      mm.externalAI = { config: { mode: 'recipe' }, observe() {}, close() {}, planFor: (q) => { const k = slot.recipeSeat.get(q.playerId); return k ? recipePlan(mm, q, rs[k - 1]) : null; } }; }
+    if (this.seatPlanBonds) for (const [pid, bond] of Object.entries(this.seatPlanBonds)) { const q = slot.m.players.get(pid); if (q) q._envPlanBonds = [{ id: bond, priority: 1 }]; }
     if (this.G0 === null) this.G0 = this.encoder.spec().blocks.global.offset;
     if (this.metrics) this._instrument(slot);
     if (this.rewardV === 2) this._wrapSettle(slot);
@@ -365,12 +498,14 @@ export class SPEnv {
         return inner(plan, ur);
       };
     }
+    if (this.actLog) this._actInstrument(slot);
     if (this.timing) { // battle stepping time, rehearsal fields ('r:…') apart from real battles (as tools/botbench.mjs)
       const timing = this.timing, nb = slot.m.newBattle.bind(slot.m);
       slot.m.newBattle = (opts) => {
         const b = nb(opts);
         if (b && typeof b.step === 'function') {
-          const reh = typeof opts?.fieldId === 'string' && opts.fieldId.startsWith('r:'), step = b.step.bind(b);
+          const reh = typeof opts?.fieldId === 'string' && (opts.fieldId.startsWith('r:') || opts.fieldId.startsWith('rb:')), step = b.step.bind(b);
+          if (reh) { const t = timing[slot.m.round || 0] ||= { prep: 0, battle: 0, other: 0, teach: 0, encode: 0, decisions: 0 }; t.rehN = (t.rehN || 0) + 1; }
           b.step = (...args) => {
             const t0 = performance.now();
             try { return step(...args); } finally {
@@ -394,6 +529,7 @@ export class SPEnv {
     slot.m.startFinalAssault = function (hidden) {
       const r = startFA.call(this, hidden);
       if (!hidden && !slot.faPool) slot.faPool = this.bossPool;
+      if (!hidden && env.natPlan) env._natAtFA(slot);
       return r;
     };
     if (snap) {
@@ -510,6 +646,10 @@ export class SPEnv {
     if (!proxiesDone && m.phase === 'BAND_DRAFT') return;
     // one model-AI band decision at a time: the next one is encoded after this one applied, so its AI-AI mask sees the pick
     // (releasing them together let two seats of one batch take the same band: an engine-rejected pick)
+    if (this.forceAt) { // band table: ai_0 picks first of the model seats (no earlier AI pick constrains the forced band)
+      const j = slot.deferredBand.findIndex((x) => x.ps.playerId === 'ai_0');
+      if (j > 0) slot.deferredBand.unshift(...slot.deferredBand.splice(j, 1));
+    }
     while (slot.deferredBand.length) {
       const dec = slot.deferredBand.shift();
       if (dec.d.valid() && !dec.d.complete()) { slot.pending.push(dec); return; }
@@ -560,11 +700,13 @@ export class SPEnv {
     return this.rehearsal;
   }
 
-  *_perSeat(m, ps, slot, gen) {
+  *_perSeat(m, ps, slot, gen, begin = false) {
     const set = () => { if (this.bossRehearsal !== null || this.mateRehearsal !== null) m.botRehearsal = this._rehearsalFor(m, ps, slot); };
-    const rl = this.infoGuard && slot.rl.has(ps.playerId) ? ps.playerId : null, step = (v) => { if (this.infoGuard) { this._guardRefresh(slot); m._rlPath = rl; m._rlPhase = 'prep'; } try { return gen.next(v); } finally { if (this.infoGuard) m._rlPath = null; } };
+    const bf = this.bountyField && slot.rl.has(ps.playerId) ? ps : null;
+    const rl = this.infoGuard && slot.rl.has(ps.playerId) ? ps.playerId : null, step = (v) => { if (this.infoGuard) { this._guardRefresh(slot); m._rlPath = rl; m._rlPhase = 'prep'; } const sw = bf ? this._bfSwap(m, bf, slot) : null; try { return gen.next(v); } finally { if (sw) this._bfRestore(m, sw); if (this.infoGuard) m._rlPath = null; } };
     set(); let r = step();
     while (!r.done) { const v = yield r.value; set(); r = step(v); }
+    if (begin && this.picker && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId)) this._bossPick(m, ps, slot);
     return r.value;
   }
 
@@ -602,6 +744,222 @@ export class SPEnv {
     }
   }
 
+  // ---- band table (forceAt): ai_0's forced band at its own (policy) band decision ----
+  _forcedBand(slot, ps, dec, mask, own) {
+    const m = slot.m, f = this.forceBand, list = this.encoder.vocab.bandList;
+    const bc = bandConflicts(m.gd, m.publicView(), ps.playerId, slot.humans, dec.aiPicks);
+    const legal = (id) => { const j = list.indexOf(id); return j >= 0 && j < BANDS && !!mask[ACT.BAND + j] && !m.gd.bandBondIds(id).some((b) => bc.humanBand.has(b) || bc.humanMain.has(b)); };
+    let band = own, how;
+    if (f === 'random') {
+      const ok = list.filter(legal), r = mulberry32((slot.seed ^ 0xBA4D) >>> 0);
+      how = ok.length ? 'random' : 'none';
+      if (ok.length) band = ok[Math.floor(r() * ok.length)];
+    } else if (legal(f)) { band = f; how = 'forced'; }
+    else how = !list.includes(f) ? 'unknown' : m.bandTaken?.(f, ps.playerId) ? 'taken' : !m.gd.bandAllowed(f) ? 'notAllowed' : 'masked';
+    slot.forced = { band: f, how, pick: band, policy: own };
+    return band;
+  }
+
+  /** The combo as a set: each model seat, in pick order, takes the first band of the combo not yet given out that its mask
+   *  and the human-bond rule allow; none left = the policy's pick (the match then does not count as the combo). */
+  _teamBand(slot, ps, dec, mask, own) {
+    const left = (slot.teamLeft ||= this.forceTeam.slice());
+    if (!left.length) return own;
+    const saved = slot.forced, fb = this.forceBand; let band = own, rec = null;
+    for (const f of left) {
+      this.forceBand = f; const b = this._forcedBand(slot, ps, dec, mask, own);
+      if (slot.forced.how === 'forced') { band = b; rec = slot.forced; left.splice(left.indexOf(f), 1); break; }
+      rec ||= slot.forced;
+    }
+    this.forceBand = fb; (slot.team ||= []).push({ seat: ps.playerId, ...rec, ...(rec.how === 'forced' ? {} : { band: null }) }); slot.forced = saved;
+    return band;
+  }
+
+  /** Boss-round picker (pickerHead): the head's pick among legacy's candidate layouts of the fielded lineup. */
+  _bossPick(m, ps, slot) {
+    if (m.wave || (m.round !== m.gd.bossRound && m.round !== m.gd.hiddenRound)) return;
+    const P = this.picker, S = (slot.pick ||= { decisions: 0, nonDefault: 0, cands: 0, single: 0, sims: 0, ms: 0 }), t0 = performance.now();
+    const nb = m.newBattle; let sims = 0;
+    m.newBattle = function (...a) { sims++; return nb.apply(this, a); }; // deploy rule: no battle may be built at a pick
+    try {
+      const C = layoutCandidatesForPicker(m, ps, P.K);
+      if (!C || C.cands.length < 2) { S.single++; return; }
+      const s = this._seat(slot, ps), ob = new Float32Array(this.encoder.dim), mk = new Uint8Array(this.encoder.A);
+      this.encoder.encode(m, ps, { kind: 'prep', actions: 0, freezes: 0, lp0: s.lp0, humans: slot.humans, rules: this.rules, cache: {} }, ob, mk);
+      P.trunk.forward(ob, mk, { value: false });
+      const c = Float32Array.from(P.trunk.c), rows = C.cands.map((_, j) => pickerRow(C.feats[j], C.variants[j], j === 0, C.feats[0]));
+      const lg = P.head.score(c, rows); let idx = 0;
+      for (let j = 1; j < lg.length; j++) if (lg[j] > lg[idx]) idx = j;
+      if (idx > 0) { applyPlanForPicker(m, ps, C.chosen, C.cands[idx]); S.nonDefault++; }
+      S.decisions++; S.cands += C.cands.length;
+    } finally { if (m.newBattle !== nb) m.newBattle = nb; S.sims += sims; S.ms += performance.now() - t0; }
+  }
+
+  // ---- bounty-aware legacy layout (bountyField): the seat's own bounty spawns in m.wave while its layout steps run ----
+  _bfSwap(m, ps, slot) {
+    const w = m.wave;
+    if (!w || !Array.isArray(w.spawns) || !ps.bounties?.length) return null;
+    const key = `${m.round}|${ps.bounties.map((b) => b.id).join(',')}`;
+    const all = (slot.bfWave ||= new Map());
+    let bw = all.get(ps.playerId);
+    if (!bw || bw.key !== key || bw.src !== w) {
+      bw = { key, src: w, wave: { ...w, spawns: withBounties(m.gd, m.round, w, ps.bounties, ps.playerId) }, path: null };
+      all.set(ps.playerId, bw); this.bfStats.seatPreps++; slot.bfPreps = (slot.bfPreps || 0) + 1;
+    }
+    const sw = { wave: w, path: m._botPath, bw };
+    m.wave = bw.wave; m._botPath = bw.path; this.bfStats.swaps++; slot.bfSwaps = (slot.bfSwaps || 0) + 1;
+    return sw;
+  }
+
+  _bfRestore(m, sw) { sw.bw.path = m._botPath; m.wave = sw.wave; m._botPath = sw.path; }
+
+  // ---- action histogram (actLog, diagnostics) ----
+  _actRec(slot, pid) {
+    const all = (slot.act ||= new Map());
+    let x = all.get(pid);
+    if (!x) {
+      x = { refresh: 0, level: 0, freeze: 0, buy: { chess: 0, item: 0, other: 0 }, sell: { chess: 0, item: 0, other: 0 }, reward: { chess: 0, item: 0, other: 0 },
+        personal: {}, cards: {}, byRound: {}, rounds: [],
+        bounty: { cardBattles: 0, clean: 0, units: 0, leaked: 0, byPayout: {} },
+        items: { gained: 0, bought: 0, equipCalls: 0, equipBoard: 0, equipBench: 0, consumed: 0, boughtEquipped: 0, boughtEquippedBoard: 0 },
+        snap: { battles: 0, board: 0, bench: 0, loose: 0, looseEquip: 0 }, last: null, bought: new Map() };
+      all.set(pid, x);
+    }
+    return x;
+  }
+
+  _itemsOf(gd, ps) {
+    const out = { board: 0, bench: 0, loose: 0, looseEquip: 0, where: new Map() };
+    for (const [, p] of ps.board || []) if (p && p.items) for (const it of p.items) { out.board++; out.where.set(it.uid, 'board'); }
+    for (const arr of [ps.hand || [], ps.temp || []]) for (const p of arr) {
+      if (!p) continue;
+      if (p.kind === 'item') { out.loose++; out.where.set(p.uid, 'loose'); if (gd.item(p.id)?.itemType === 'EQUIP') out.looseEquip++; }
+      else if (p.items) for (const it of p.items) { out.bench++; out.where.set(it.uid, 'bench'); }
+    }
+    return out;
+  }
+
+  _looseItems(ps) {
+    const s = new Set();
+    for (const arr of [ps.hand || [], ps.temp || []]) for (const p of arr) if (p && p.kind === 'item') s.add(p.uid);
+    return s;
+  }
+
+  _actPre(slot, ps, a, dec) {
+    const gd = slot.m.gd, kindOf = (id) => (!id ? 'other' : gd.chess(id) ? 'chess' : gd.item(id) ? 'item' : 'other');
+    if (a === ACT.REFRESH) return { t: 'refresh' };
+    if (a === ACT.LEVEL) return { t: 'level' };
+    if (a === ACT.FREEZE) return { t: 'freeze' };
+    if (a >= ACT.BUY && a < ACT.SELL) return { t: 'buy', kind: kindOf(ps.shop?.slots?.[a - ACT.BUY]?.id), loose: this._looseItems(ps) };
+    if (a >= ACT.SELL && a < ACT.REWARD) { const p = dec.owned?.[a - ACT.SELL]; return { t: 'sell', kind: p ? kindOf(p.id) : 'other' }; }
+    if (a >= ACT.REWARD && a < ACT.PERSONAL) return { t: 'reward', kind: kindOf(ps.offers?.[0]?.slots?.[a - ACT.REWARD]?.id), loose: this._looseItems(ps) };
+    if (a >= ACT.PERSONAL && a < ACT.CARD) return { t: 'personal', kind: dec.own?.personalChoice?.cards?.[a - ACT.PERSONAL]?.kind || 'other' };
+    return null;
+  }
+
+  _actPost(slot, ps, a, pre) {
+    const m = slot.m, x = this._actRec(slot, ps.playerId);
+    const R = (x.byRound[m.round] ||= { refresh: 0, level: 0, freeze: 0, buyChess: 0, buyItem: 0, sell: 0, reward: 0 });
+    if (pre.t === 'refresh' || pre.t === 'level' || pre.t === 'freeze') { x[pre.t]++; R[pre.t]++; return; }
+    if (pre.t === 'sell') { x.sell[pre.kind]++; R.sell++; return; }
+    if (pre.t === 'personal') { x.personal[pre.kind] = (x.personal[pre.kind] || 0) + 1; return; }
+    x[pre.t][pre.kind]++;
+    if (pre.t === 'reward') R.reward++; else if (pre.kind === 'chess') R.buyChess++; else if (pre.kind === 'item') R.buyItem++;
+    for (const u of this._looseItems(ps)) {
+      if (pre.loose.has(u)) continue;
+      x.items.gained++;
+      if (pre.t === 'buy') { x.items.bought++; x.bought.set(u, { round: m.round, equipped: false, board: false, seenBoard: false, where: 'loose' }); }
+    }
+  }
+
+  _actCard(slot, ps, c) {
+    const x = this._actRec(slot, ps.playerId), k = c ? (c.kind || 'other') : 'fallback';
+    x.cards[k] = (x.cards[k] || 0) + 1;
+    if (c && c.kind === 'bounty') { const p = 'pick:' + (c.payout || 'kill'); x.cards[p] = (x.cards[p] || 0) + 1; }
+  }
+
+  _actInstrument(slot) {
+    const m = slot.m, env = this;
+    for (const ps of m.players.values()) {
+      if (!slot.rl.has(ps.playerId)) continue;
+      const base = ps.equip;
+      if (typeof base !== 'function') continue;
+      ps.equip = function (itemUid, targetUid, ...rest) {
+        const il = this.find(itemUid), tl = this.find(targetUid), id = il?.piece?.id;
+        const r = base.call(this, itemUid, targetUid, ...rest);
+        if (!(r && r.error) && il) {
+          const x = env._actRec(slot, ps.playerId), rec = m.gd.item(id);
+          x.items.equipCalls++;
+          if (typeof rec?.kind === 'string' && rec.kind.startsWith('consume_on_equip')) x.items.consumed++;
+          if (tl?.area === 'board') x.items.equipBoard++; else x.items.equipBench++;
+          const b = x.bought.get(itemUid);
+          if (b && !b.equipped) { b.equipped = true; x.items.boughtEquipped++; }
+          if (b && tl?.area === 'board' && !b.board) { b.board = true; x.items.boughtEquippedBoard++; }
+        }
+        return r;
+      };
+    }
+    const inner = m.settle.bind(m);
+    m.settle = (plan, ur) => {
+      if (!m.disposed && !m.ended && (m.phase === 'COMBAT' || m.phase === 'UNITE')) env._actSettle(slot);
+      return inner(plan, ur);
+    };
+  }
+
+  /** At a normal round's settlement: each RL seat's bounty units of its own battle (spawned, leaked), and its counted leaks. */
+  _actSettle(slot) {
+    const m = slot.m, gd = m.gd;
+    for (const ps of m.alivePlayers()) {
+      if (!slot.rl.has(ps.playerId)) continue;
+      const x = this._actRec(slot, ps.playerId), r = m.lastResults.get(ps.playerId), leaked = (r && r.leaked) || [];
+      const counted = leaked.filter((l) => l && l.counted !== false).length;
+      let bu = 0, bl = 0;
+      for (const b of ps.bounties || []) {
+        const c = b && b.card ? b.card : {};
+        if (!gd.enemy(c.enemyKey)) continue;
+        const units = Math.max(1, Math.min(20, Number.isInteger(c.count) ? c.count : 1));
+        const lk = Math.min(units, leaked.filter((l) => l && l.mods && l.mods.bountyId === b.id).length);
+        const P = (x.bounty.byPayout[c.payout || 'kill'] ||= { n: 0, clean: 0, units: 0, leaked: 0, perfect: 0 });
+        x.bounty.cardBattles++; x.bounty.units += units; x.bounty.leaked += lk; if (!lk) x.bounty.clean++;
+        P.n++; P.units += units; P.leaked += lk; if (!lk) P.clean++; if (counted === 0 && r && r.perfect !== false) P.perfect++;
+        bu += units; bl += lk;
+      }
+      x.rounds.push([m.round, bu, bl, counted]);
+    }
+  }
+
+  /** At each battle start: every RL seat's items (equipped on a board unit / on a bench unit / loose in hand or temp). */
+  _actBattle(slot) {
+    const m = slot.m, ph = m.phase;
+    slot.alPhase = ph; slot.alRound = m.round;
+    if (!(ph === 'COMBAT' || ph === 'FINAL_ASSAULT' || ph === 'HIDDEN_CORE')) return;
+    const alive = new Set(m.alivePlayers());
+    for (const pid of slot.rl) {
+      const ps = m.players.get(pid);
+      if (!ps || !alive.has(ps)) continue;
+      const x = this._actRec(slot, pid), it = this._itemsOf(m.gd, ps);
+      x.snap.battles++; x.snap.board += it.board; x.snap.bench += it.bench; x.snap.loose += it.loose; x.snap.looseEquip += it.looseEquip;
+      x.last = { r: m.round, ph, board: it.board, bench: it.bench, loose: it.loose, looseEquip: it.looseEquip };
+      for (const [u, b] of x.bought) { b.where = it.where.get(u) || 'gone'; if (b.where === 'board') b.seenBoard = true; }
+    }
+  }
+
+  _actSummary(slot) {
+    const m = slot.m, out = [];
+    for (const pid of slot.rl) {
+      const x = slot.act?.get(pid), ps = m.players.get(pid);
+      if (!x) { out.push({ pid, role: slot.role.get(pid), none: true }); continue; }
+      const { bought, ...rest } = x, bl = [...bought.values()];
+      const st = ps?.stats || {};
+      out.push({ pid, role: slot.role.get(pid), band: ps?.bandId ?? null, ...rest,
+        boughtItems: { n: bl.length, equipped: bl.filter((b) => b.equipped).length, onBoardAtBattle: bl.filter((b) => b.seenBoard).length,
+          neverEquippedLoose: bl.filter((b) => !b.equipped && b.where === 'loose').length, neverEquippedGone: bl.filter((b) => !b.equipped && b.where === 'gone').length,
+          endWhere: bl.reduce((o, b) => { o[b.where] = (o[b.where] || 0) + 1; return o; }, {}) },
+        stats: { buys: st.buys, sells: st.sells, refreshes: st.refreshes, merges: st.merges, leaks: st.leaks } });
+    }
+    return out;
+  }
+
   _guard(slot, msg) {
     this.stats.errors++; this.stats.guard = (this.stats.guard || 0) + 1;
     if (this.errorSamples.length < 20) this.errorSamples.push(`[seed ${slot.seed}] guard: ${msg}`);
@@ -613,7 +971,8 @@ export class SPEnv {
     if (!(ph === 'COMBAT' || ph === 'FINAL_ASSAULT' || ph === 'HIDDEN_CORE' || ph === 'UNITE')) return;
     slot.bl ||= new Map();
     const alive = new Set(m.alivePlayers());
-    for (const pid of slot.rl) {
+    // legacy mode (no RL seat): the legacy AI seats (not the human proxies) are logged instead (11-13, stacking metrics of legacy fill)
+    for (const pid of (this.mode === 'legacy' ? [...slot.role.keys()].filter((x) => slot.role.get(x) === 'legacy') : slot.rl)) {
       const ps = m.players.get(pid);
       if (!ps || !alive.has(ps)) continue;
       const rec = slot.bl.get(pid) || {};
@@ -701,6 +1060,7 @@ export class SPEnv {
       if (++slot.cb > 2e6) slot.failed = 'callbacks';
       if (this.metrics && slot.m.round !== slot.seenRound) this._sampleHumans(slot);
       if (this.bondLog && (slot.m.phase !== slot.blPhase || slot.m.round !== slot.blRound)) this._bondSample(slot);
+      if (this.actLog && (slot.m.phase !== slot.alPhase || slot.m.round !== slot.alRound)) this._actBattle(slot);
       if (this.rewardV === 2 && this.R2.layer > 0 && slot.m.phase !== slot.lhPhase) this._layerHook(slot);
       if (this.bandPolicy && slot.m.draft) this._bandStep(slot);
     }
@@ -728,13 +1088,17 @@ export class SPEnv {
         return { pid: p.playerId, role: slot.role.get(p.playerId), elim: p.eliminatedRound ?? null, win: p.victory ? 1 : 0, lp: p.lp, leaks: st.leaks, kills: st.kills, lpLost: st.lpLost, bossDamage: st.bossDamage, unite: slot.uniteKills?.get(p.playerId) || 0 }; }) } : null;
     const res = { config: slot.cfg.name, seed: slot.seed, failed: slot.failed, seats: [], yield: slot.yield, humans: slot.humans.size, faShare,
       ...(slot.fromSnapshot ? { fromSnapshot: slot.fromSnapshot } : {}),
-      ...(diag || {}), ...(this.tripLog ? { trips: slot.trips } : {}), ...(slot.names ? { names: slot.names.list, replay: slot.replay } : {}) };
+      ...(diag || {}), ...(this.tripLog ? { trips: slot.trips } : {}),
+      ...(this.forceAt ? { forced: { ...(slot.forced || { band: this.forceBand, how: 'none' }), got: m.players.get('ai_0')?.bandId ?? null } } : {}),
+      ...(this.picker ? { picker: slot.pick || { decisions: 0 } } : {}),
+      ...(this.forceTeam ? { team: (slot.team || []).map((t) => ({ ...t, got: m.players.get(t.seat)?.bandId ?? null })) } : {}),
+      ...(this.actLog ? { act: this._actSummary(slot) } : {}), ...(this.bountyField ? { bf: { preps: slot.bfPreps || 0, swaps: slot.bfSwaps || 0 } } : {}), ...(slot.names ? { names: slot.names.list, replay: slot.replay } : {}) };
     for (const p of rows) {
       const round = p.eliminatedRound ?? m.round;
       const rl = slot.rl.has(p.playerId);
       res.seats.push({ playerId: p.playerId, rl, role: slot.role.get(p.playerId), band: m.players.get(p.playerId)?.bandId ?? null, survivalRound: round, roundsPassed: p.roundsPassed,
         lp: p.lp, win: p.victory ? 1 : 0, mainTier: slot.humanTier.get(p.playerId)?.max ?? null,
-        ...(this.bondLog && rl ? (() => { const { last, lastRound, ...rs } = slot.bl?.get(p.playerId) || {}; return { bondLog: { ...rs, end: last || null, endRound: lastRound ?? null } }; })() : {}) });
+        ...(this.bondLog && (rl || (this.mode === 'legacy' && slot.role.get(p.playerId) === 'legacy')) ? (() => { const { last, lastRound, ...rs } = slot.bl?.get(p.playerId) || {}; return { bondLog: { ...rs, end: last || null, endRound: lastRound ?? null } }; })() : {}) });
       const s = slot.seat.get(p.playerId);
       if (!s) continue;
       // terminal shaping: γ·Φ(terminal = 0) − Φ(last decision), also for a seat eliminated earlier
@@ -747,9 +1111,11 @@ export class SPEnv {
         const own = pool && pool.maxHp > 0 ? Math.max(0, (pool.byPlayer && pool.byPlayer.get ? pool.byPlayer.get(p.playerId) : 0) || 0) / pool.maxHp : 0;
         const win = cleared ? R2.win : 0, faT = R2.faTeam * faShare, faO = R2.faOwn * own, elim = p.eliminatedRound != null && !p.victory ? -R2.elim : 0;
         c.win += win; c.faTeam += faT; c.faOwn += faO; c.elim += elim;
-        reward = base + win + faT + faO + elim + shapeEnd;
+        const nb = this.natPlan && s.plan ? this._natBonus(slot, p.playerId, faShare) : 0;
+        reward = base + win + faT + faO + elim + shapeEnd + nb;
         if (rl) res.seats[res.seats.length - 1].r2 = { ...c, shape: (s.shape || 0), ev: { ...s.ev, ownFa: own, eliminated: p.eliminatedRound ?? null, cleared } };
       } else reward = this._reward(s, m, round, Math.max(0, p.lp || 0)) + (p.victory ? R.win : 0) + R.fa * faShare + shapeEnd;
+      if (rl && this.natPlan && s.plan) res.seats[res.seats.length - 1].nat = { ...s.plan, fa: slot.natFA?.get(p.playerId) || null, bonus: this._natBonus(slot, p.playerId, faShare), phase: this.natPlan.phase };
       const t = { traj: s.traj, reward, win: p.victory ? 1 : 0, round, lp: p.lp || 0, config: slot.ci, steps: s.steps, faShare,
         rRound: s.cRound || 0, rLp: s.cLp || 0, shape: s.shape || 0, seedOffset: slot.seed - this.seed,
         ...(s.R2 ? { r2: [s.R2.win, s.R2.faTeam, s.R2.faOwn, s.R2.leak, s.R2.save, s.R2.lp, s.R2.elim, s.R2.layer, s.shape || 0] } : {}) };
@@ -770,6 +1136,7 @@ export class SPEnv {
     for (let k = 0; k < items.length; k++) {
       const dec = items[k], { slot, ps } = dec, m = slot.m;
       const s = this._seat(slot, ps);
+      if (this.natPlan && !s.plan && ps.bandId && !slot.humans.has(ps.playerId)) s.plan = this._assignPlan(slot, ps);
       this.rew[k] = this._reward(s, m, m.round, Math.max(0, ps.lp || 0));
       s.steps++;
       this.ids[k] = s.traj; this.kinds[k] = KIND[dec.kind] + (this.kindSeat ? 16 * (Number(String(dec.ps.playerId).split('_')[1]) || 0) : 0);
@@ -784,6 +1151,7 @@ export class SPEnv {
           planned: dec.planned, rerolls: seatPlanRerolls(ps) } : {}) },
         this.obs.subarray(k * D, (k + 1) * D), this.mask.subarray(k * A, (k + 1) * A));
       dec.own = r.own; dec.owned = r.owned;
+      if (this.natPlan && s.plan) this._planObs(r.own?.bonds, s.plan, this.obs, k * D + this.encoder.dim);
       if (this.infoGuard) {
         m._rlPath = null;
         const pub = r.pub || {}; if (this.visibleOnly && !(pub.hiddenRound && (pub.round || 0) >= pub.hiddenRound) && this.obs[k * D + this.encoder.lay.blocks.extra.offset + 2] !== 0) this.infoGuard.hiddenBoss++;
@@ -803,7 +1171,7 @@ export class SPEnv {
         t.encode += performance.now() - te0; t.decisions++; }
       if (this.shaping) {
         const { T, S } = bondTerms(m.gd, r.own.bonds, this.shaping.uncapped);
-        const phi = this.shaping.wTier * T + this.shaping.wStack * S;
+        const phi = this.shaping.wTier * T + this.shaping.wStack * S + (this.natPlan && s.plan ? this._natPhi(r.own.bonds, s.plan) : 0);
         if (s.phi !== undefined) { const sh = this.shaping.gamma * phi - s.phi; this.rew[k] += sh; s.shape = (s.shape || 0) + sh; }
         s.phi = phi;
       }
@@ -941,7 +1309,9 @@ export class SPEnv {
     if (dec.kind === 'band') {
       this._drop(dec);
       if (!d.valid()) return;
-      const j = a - ACT.BAND, bandId = a >= ACT.BAND && j < BANDS ? this.encoder.vocab.bandList[j] : null;
+      const j = a - ACT.BAND; let bandId = a >= ACT.BAND && j < BANDS ? this.encoder.vocab.bandList[j] : null;
+      if (this.forceAt && ps.playerId === 'ai_0') bandId = this._forcedBand(slot, ps, dec, mask, bandId);
+      else if (this.forceTeam && !slot.humans.has(ps.playerId)) bandId = this._teamBand(slot, ps, dec, mask, bandId);
       if (bandId) {
         const bc = bandConflicts(m.gd, m.publicView(), ps.playerId, slot.humans, dec.aiPicks);
         const tied = m.gd.bandBondIds(bandId);
@@ -957,7 +1327,8 @@ export class SPEnv {
       this._drop(dec);
       if (!d.valid()) return;
       const c = a >= ACT.CARD ? m.sp?.cards?.[a - ACT.CARD] : null;
-      if (c) { const r = m._handleSeatIntent(ps, { t: 'g.choice', idx: c.idx }); if (r?.error) this.stats.rejected++; }
+      if (c) { const r = m._handleSeatIntent(ps, { t: 'g.choice', idx: c.idx }); if (r?.error) this.stats.rejected++; else if (this.actLog) this._actCard(slot, ps, c); }
+      else if (this.actLog) this._actCard(slot, ps, null);
       if (!d.complete()) d.fallback();
       return;
     }
@@ -973,11 +1344,13 @@ export class SPEnv {
     else if (a < ACT.PERSONAL) intent = { t: 'g.reward', idx: a - ACT.REWARD };
     else if (a < ACT.CARD) { const pc = dec.own?.personalChoice; if (pc) intent = { t: 'g.choice', idx: a - ACT.PERSONAL, choiceId: pc.id }; }
     dec.actions++;
+    const pre = this.actLog && intent ? this._actPre(slot, ps, a, dec) : null;
     slot.acting = ps.playerId; // the trip log tells the policy's own sales from legacy's cleanup
     let r;
     try { r = intent ? m._handleSeatIntent(ps, intent) : { error: 'BAD_ACTION' }; } finally { slot.acting = null; }
     if (r?.error) this.stats.rejected++;
     else if (intent?.t === 'g.sell' && dec.soldBase) dec.soldBases.add(dec.soldBase);
+    if (pre && !r?.error) this._actPost(slot, ps, a, pre);
     dec.soldBase = null;
     if (dec.actions >= this.encoder.maxActions) this.stats.forcedEnd++; // the next mask offers END only
     if (!d.valid() || d.complete()) this._drop(dec);
@@ -1251,6 +1624,14 @@ export class SPEnv {
       x.roundTripsPerPrep = +(x.roundTrips / Math.max(1, x.preps)).toFixed(3);
     }
     return g;
+  }
+
+  /** Diagnostics: per-match prep steps whose Ready first runs readyHook (legacy seats and LAYOUT_ONLY seats). */
+  _hookSteps(slot) {
+    const env = this;
+    const ready = (ps) => { try { env.readyHook(slot.m, ps, slot); } catch (e) { env.stats.errors++; if (env.errorSamples.length < 20) env.errorSamples.push(`readyHook: ${e.stack?.slice(0, 200)}`); } try { ps.setReady(true); } catch { /* refused */ } };
+    return slot.hookSteps ||= { legacy: createBotPrepSteps({ ready }), layout: createBotPrepSteps({ takeOffers: noop, sellJunk: noop, buyLoopSteps: none, levelUp: noop,
+      advisorSpendSteps: none, spendDown: noop, maybeFreeze: noop, ready, ...(env.equipHook ? { equipItems: env.equipHook } : {}) }) };
   }
 
   close() { for (const slot of this.slots) if (slot) try { slot.m.dispose(); } catch { /* */ } }

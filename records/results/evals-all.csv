@@ -1,0 +1,212 @@
+record,eval,label,config,matches,win,fa,rehearsal,boss_rehearsal,seed_min,seed_max,natMain,natMainT2,anyNatT2,mainTier,mainLayers,secLayers,sumLayers,elites,topMain,picker_decisions,picker_sims,errors
+evals/action-log.json,act-coop4h1-240.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,240,0.345833,0.737271,0,0,587000000,587000239,,,,,,,,,,,,0
+evals/action-log.json,act-solo480.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.31875,0.783721,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/action-log.json,bf-coop4h1-240.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,240,0.3625,0.740174,0,0,587000000,587000239,,,,,,,,,,,,0
+evals/action-log.json,bf-solo480.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.320833,0.783184,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/flags-off-identity.json,id-coop4h1-240.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,240,0.345833,0.737271,0,0,587000000,587000239,,,,,,,,,,,,0
+evals/flags-off-identity.json,id-solo480.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.31875,0.783721,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/flags-off-identity.json,id-coop4h1-240.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,240,0.345833,0.737271,0,0,587000000,587000239,,,,,,,,,,,,0
+evals/flags-off-identity.json,id-solo480.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.31875,0.783721,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-KL.json,eval-30001408-solo480-b0.json,KL__30001408.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.277083,0.764781,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-KL.json,eval-30001408-solo480-b3.json,KL__30001408.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.31875,0.795759,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LEGACY.json,eval-legacy-coop240.json,legacy-live rehearsal 3,coop4h1:ABYSS,240,0.0708333,0.222983,3,,587000000,587000239,,,,,,,,,,,,0
+evals/lane-LEGACY.json,eval-legacy-coop240.json,legacy-live rehearsal 3,coop4h2:ABYSS,240,0.0333333,0.173363,3,,913000000,913000239,,,,,,,,,,,,0
+evals/lane-LEGACY.json,eval-legacy-coop240.json,legacy-live rehearsal 3,coop4h3:ABYSS,240,0.0333333,0.180798,3,,451000000,451000239,,,,,,,,,,,,0
+evals/lane-LEGACY.json,eval-legacy-coop240.json,legacy-live rehearsal 3,coop2h1:ABYSS,240,0.0166667,0.10014,3,,652000000,652000239,,,,,,,,,,,,0
+evals/lane-LEGACY.json,eval-legacy-solo480.json,legacy-live rehearsal 3,solo:ABYSS,480,0.0104167,0.220771,3,,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-35018176-coop240-b0.json,LIN__35018176__35000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,240,0.316667,0.747298,0,0,587000000,587000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-35018176-coop240-b0.json,LIN__35018176__35000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,240,0.183333,0.62559,0,0,913000000,913000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-35018176-coop240-b0.json,LIN__35018176__35000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,240,0.0625,0.378724,0,0,451000000,451000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-35018176-coop240-b0.json,LIN__35018176__35000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,240,0.0625,0.3859,0,0,652000000,652000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-35018176-solo480-b0.json,LIN__35018176__35000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.320833,0.781225,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-40027072-coop480-b0.json,LIN__40027072__40000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.391667,0.759368,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-40027072-coop480-b0.json,LIN__40027072__40000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.197917,0.602925,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-40027072-coop480-b0.json,LIN__40027072__40000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.05625,0.362017,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-40027072-coop480-b0.json,LIN__40027072__40000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.0833333,0.381354,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-40027072-coop4l240-b0.json,LIN__40027072__40000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.0958333,0.450857,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-40027072-solo480-b0.json,LIN__40027072__40000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.316667,0.778996,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-40027072-solo480-b3.json,LIN__40027072__40000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.366667,0.805993,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-45015424-solo480-b0.json,LIN__45015424__45000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.333333,0.779742,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-50002624-coop480-b0.json,LIN__50002624__50000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.4125,0.77717,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-50002624-coop480-b0.json,LIN__50002624__50000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.21875,0.61188,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-50002624-coop480-b0.json,LIN__50002624__50000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0729167,0.36086,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-50002624-coop480-b0.json,LIN__50002624__50000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.102083,0.432934,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-50002624-coop4l240-b0.json,LIN__50002624__50000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.1125,0.454682,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-50002624-solo480-b0.json,LIN__50002624__50000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.308333,0.777968,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-50002624-solo480-b3.json,LIN__50002624__50000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.35,0.802781,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-55054720-coop480-b0.json,LIN__55054720__55000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.41875,0.787302,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-55054720-coop480-b0.json,LIN__55054720__55000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.227083,0.621645,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-55054720-coop480-b0.json,LIN__55054720__55000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0916667,0.408374,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-55054720-coop480-b0.json,LIN__55054720__55000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.127083,0.476238,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-55054720-solo480-b0.json,LIN__55054720__55000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.308333,0.777898,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-60037120-coop480-b0.json,LIN__60037120__60000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.379167,0.759204,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-60037120-coop480-b0.json,LIN__60037120__60000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.25,0.622118,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-60037120-coop480-b0.json,LIN__60037120__60000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0708333,0.376731,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-60037120-coop480-b0.json,LIN__60037120__60000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.0958333,0.42669,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-60037120-coop4l240-b0.json,LIN__60037120__60000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.120833,0.459768,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-60037120-solo480-b0.json,LIN__60037120__60000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.322917,0.794692,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-60037120-solo480-b3.json,LIN__60037120__60000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.391667,0.820858,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-65023808-coop480-b0.json,LIN__65023808__65000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.38125,0.761271,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-65023808-coop480-b0.json,LIN__65023808__65000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.239583,0.618232,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-65023808-coop480-b0.json,LIN__65023808__65000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0666667,0.394564,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-65023808-coop480-b0.json,LIN__65023808__65000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.104167,0.403099,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-65023808-solo480-b0.json,LIN__65023808__65000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.310417,0.78017,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-70008960-coop480-b0.json,LIN__70008960__70000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.391667,0.79181,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-70008960-coop480-b0.json,LIN__70008960__70000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.239583,0.658851,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-70008960-coop480-b0.json,LIN__70008960__70000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.08125,0.387479,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-70008960-coop480-b0.json,LIN__70008960__70000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.102083,0.428479,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-70008960-coop4l240-b0.json,LIN__70008960__70000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.1125,0.447469,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-70008960-solo480-b0.json,LIN__70008960__70000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.327083,0.7959,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-70008960-solo480-b3.json,LIN__70008960__70000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.389583,0.826651,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-75062592-coop480-b0.json,LIN__75062592__75000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.404167,0.780802,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-75062592-coop480-b0.json,LIN__75062592__75000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.245833,0.636896,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-75062592-coop480-b0.json,LIN__75062592__75000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.10625,0.399393,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-75062592-coop480-b0.json,LIN__75062592__75000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.116667,0.459382,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LIN.json,eval-75062592-solo480-b0.json,LIN__75062592__75000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.333333,0.78609,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-60054400-coop480-b0.json,LINC__60054400__60000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.441667,0.798758,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-60054400-coop480-b0.json,LINC__60054400__60000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.24375,0.650874,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-60054400-coop480-b0.json,LINC__60054400__60000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.09375,0.415088,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-60054400-coop480-b0.json,LINC__60054400__60000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.1125,0.445488,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-60054400-coop4l240-b0.json,LINC__60054400__60000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.108333,0.449769,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-60054400-solo480-b0.json,LINC__60054400__60000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.333333,0.781605,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-60054400-solo480-b3.json,LINC__60054400__60000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.402083,0.816182,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-65037888-coop480-b0.json,LINC__65037888__65000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.4,0.794572,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-65037888-coop480-b0.json,LINC__65037888__65000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.24375,0.645896,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-65037888-coop480-b0.json,LINC__65037888__65000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0875,0.412992,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-65037888-coop480-b0.json,LINC__65037888__65000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.11875,0.466565,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-65037888-solo480-b0.json,LINC__65037888__65000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.347917,0.804629,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-70023104-coop480-b0.json,LINC__70023104__70000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.420833,0.790842,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-70023104-coop480-b0.json,LINC__70023104__70000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.252083,0.650019,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-70023104-coop480-b0.json,LINC__70023104__70000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0916667,0.400576,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-70023104-coop480-b0.json,LINC__70023104__70000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.1,0.442415,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-70023104-coop4l240-b0.json,LINC__70023104__70000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.1125,0.50395,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-70023104-solo480-b0.json,LINC__70023104__70000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.316667,0.775944,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-70023104-solo480-b3.json,LINC__70023104__70000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.377083,0.811558,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-LINC.json,eval-75008000-coop480-b0.json,LINC__75008000__75000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.4375,0.789333,0,0,587000000,587000479,0.0798611,0,0,1.85,112.577,108.268,324.553,5.96875,坚守:0.55 精准:0.3 谢拉格:0.07 突袭:0.05,,,0
+evals/lane-LINC.json,eval-75008000-coop480-b0.json,LINC__75008000__75000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.270833,0.658602,0,0,913000000,913000479,0.078125,0,0,1.85208,109.789,99.3448,297.773,5.96771,坚守:0.57 精准:0.28 谢拉格:0.07 突袭:0.05,,,0
+evals/lane-LINC.json,eval-75008000-coop480-b0.json,LINC__75008000__75000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.09375,0.408902,0,0,451000000,451000479,0.05625,0,0,1.85833,104.356,87.2979,265.098,5.97917,坚守:0.61 精准:0.25 突袭:0.04 谢拉格:0.03,,,0
+evals/lane-LINC.json,eval-75008000-coop480-b0.json,LINC__75008000__75000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.108333,0.456734,0,0,652000000,652000479,0.0666667,0,0,1.87083,106.979,99.9958,304.956,6.25625,坚守:0.61 精准:0.26 突袭:0.04 谢拉格:0.04,,,0
+evals/lane-LINC.json,eval-75008000-solo480-b0.json,LINC__75008000__75000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.33125,0.789547,0,0,9000000,9000479,0.0458333,0,0,1.89375,129.412,126.14,383.206,6.19375,坚守:0.6 精准:0.28 突袭:0.06 谢拉格:0.04,,,0
+evals/lane-S.json,eval-20029824-dr288.json,S__20029824.pt greedy rehearsal 0 boss 3,solo:ABYSS,288,0.309028,0.771456,0,3,9000000,9000287,,,,,,,,,,,,0
+evals/lane-S.json,eval-20029824-dr288.json,S__20029824.pt greedy rehearsal 0 boss 3,coop4l:ABYSS,288,0.131944,0.434873,0,3,198000000,198000287,,,,,,,,,,,,0
+evals/lane-S.json,eval-20029824-dr288.json,S__20029824.pt greedy rehearsal 0 boss 3,coop2l:ABYSS,288,0.118056,0.400915,0,3,795000000,795000287,,,,,,,,,,,,0
+evals/lane-S.json,eval-20029824-solo-b0-288.json,S__20029824.pt greedy rehearsal 0 boss 0,solo:ABYSS,288,0.267361,0.736066,0,0,9000000,9000287,,,,,,,,,,,,0
+evals/lane-S.json,eval-25015872-solo480-b0.json,S__25015872.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.252083,0.75609,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-S.json,eval-25015872-solo480-b3.json,S__25015872.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.316667,0.792758,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-S.json,eval-30001152-solo480-b0.json,S__30001152.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.291667,0.761603,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-S.json,eval-30001152-solo480-b3.json,S__30001152.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.345833,0.798295,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SC.json,eval-25018240-solo480-b0.json,SC__25018240.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.264583,0.743544,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SC.json,eval-25018240-solo480-b3.json,SC__25018240.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.31875,0.774678,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SC.json,eval-30002944-solo480-b0.json,SC__30002944.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.285417,0.753627,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SC.json,eval-30002944-solo480-b3.json,SC__30002944.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.35,0.788879,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-10006528-coop480-b0.json,SCR__10006528__10000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.00833333,0.100351,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-10006528-coop480-b0.json,SCR__10006528__10000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.00208333,0.0834283,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-10006528-coop480-b0.json,SCR__10006528__10000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.00833333,0.11325,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-10006528-coop480-b0.json,SCR__10006528__10000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.00208333,0.041525,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-10006528-coop4l240-b0.json,SCR__10006528__10000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.0125,0.113805,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-10006528-solo480-b0.json,SCR__10006528__10000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0,0.113644,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-10006528-solo480-b3.json,SCR__10006528__10000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0,0.122438,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-15010048-solo480-b0.json,SCR__15010048__15000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.00625,0.161365,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-coop480-b0.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.00208333,0.120489,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-coop480-b0.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.0104167,0.111192,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-coop480-b0.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0145833,0.12466,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-coop480-b0.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.0104167,0.0705958,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-coop4l240-b0.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.0125,0.129863,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-solo480-b0.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0,0.137417,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-solo480-b3.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0,0.145561,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SCR.json,eval-20062336-soloHARD480-b0.json,SCR__20062336__20000000.pt greedy rehearsal 0 boss 0,solo:HARD,480,0.625,0.88286,0,0,8000000,8000479,,,,,,,,,,,,0
+evals/lane-SK.json,eval-25019072-solo480-b0.json,SK__25019072.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.25625,0.735014,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SK.json,eval-25019072-solo480-b3.json,SK__25019072.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.304167,0.767403,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SK.json,eval-30004992-solo480-b0.json,SK__30004992.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.31875,0.783721,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SK.json,eval-30004992-solo480-b3.json,SK__30004992.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.39375,0.822642,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop240-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,240,0.345833,0.737271,0,0,587000000,587000239,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop240-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,240,0.1875,0.617984,0,0,913000000,913000239,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop240-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,240,0.0833333,0.395045,0,0,451000000,451000239,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop240-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,240,0.0791667,0.412823,0,0,652000000,652000239,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop480-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.358333,0.755754,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop480-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h2:ABYSS,480,0.20625,0.621997,0,0,913000000,913000479,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop480-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,480,0.0854167,0.383019,0,0,451000000,451000479,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop480-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop2h1:ABYSS,480,0.05625,0.391065,0,0,652000000,652000479,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-coop4l240-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4l:ABYSS,240,0.1125,0.463734,0,0,198000000,198000239,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-solo480-b0.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.31875,0.783721,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SK30.json,eval-30004992-solo480-b3.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.39375,0.822642,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SO1.json,eval-25018752-solo480-b0.json,SO1__25018752.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.29375,0.756813,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SO1.json,eval-25018752-solo480-b3.json,SO1__25018752.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.347917,0.784101,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SO1.json,eval-30005184-solo480-b0.json,SO1__30005184.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.272917,0.752666,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/lane-SO1.json,eval-30005184-solo480-b3.json,SO1__30005184.pt greedy rehearsal 0 boss 3,solo:ABYSS,480,0.33125,0.789634,0,3,9000000,9000479,,,,,,,,,,,,0
+evals/lane-m3s.json,eval-20000000-dr288.json,m3s__20000000.pt greedy rehearsal 0 boss 3,solo:ABYSS,288,0.284722,0.762752,0,3,9000000,9000287,,,,,,,,,,,,0
+evals/lane-m3s.json,eval-20000000-dr288.json,m3s__20000000.pt greedy rehearsal 0 boss 3,coop4l:ABYSS,288,0.121528,0.460711,0,3,198000000,198000287,,,,,,,,,,,,0
+evals/lane-m3s.json,eval-20000000-dr288.json,m3s__20000000.pt greedy rehearsal 0 boss 3,coop2l:ABYSS,288,0.0972222,0.387123,0,3,795000000,795000287,,,,,,,,,,,,0
+evals/lane-m3s.json,eval-20000000-solo-b0-288.json,m3s__20000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,288,0.225694,0.727679,0,0,9000000,9000287,,,,,,,,,,,,0
+evals/legacy-fill-stack.json,legacy-coop4h1-480.json,legacy-live rehearsal 3,coop4h1:ABYSS,480,0.05,0.187453,3,,587000000,587000479,0.789583,0.470139,0.470139,1.65556,55.6292,41.8931,131.026,2.27986,叙拉古:0.17 谢拉格:0.15 卡西米尔:0.12 萨尔贡:0.11,,,0
+evals/legacy-fill-stack.json,legacy-solo480.json,legacy-live rehearsal 3,solo:ABYSS,480,0.0104167,0.220771,3,,9000000,9000479,0.902083,0.779167,0.779167,1.87083,87.7875,53.7687,186.256,2.4375,叙拉古:0.23 谢拉格:0.18 卡西米尔:0.11 拉特兰:0.11,,,0
+evals/nat-arm.json,LINC-final-coop4h1-480.json,LINC-final.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.510417,0.850795,0,0,587000000,587000479,0.0909722,0,0,1.85069,110.79,108.403,322.837,6.25625,坚守:0.51 精准:0.33 谢拉格:0.07 突袭:0.04,1655,0,0
+evals/nat-arm.json,LINC-final-solo480.json,LINC-final.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.477083,0.855363,0,0,9000000,9000479,0.0666667,0,0,1.87708,124.783,126.781,381.877,6.54167,坚守:0.59 精准:0.28 谢拉格:0.06 突袭:0.04,639,0,0
+evals/nat-arm.json,NAT-81025920-coop4h1-480.json,model-81025920.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.527083,0.845153,0,0,587000000,587000479,0.0763889,0,0,1.83889,110.507,109.394,320.94,6.02153,坚守:0.5 精准:0.35 谢拉格:0.06 突袭:0.06,1673,0,0
+evals/nat-arm.json,NAT-81025920-solo480.json,model-81025920.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.472917,0.862161,0,0,9000000,9000479,0.0395833,0,0,1.90833,122.848,132.4,384.05,6.44375,坚守:0.55 精准:0.37 突袭:0.04 谢拉格:0.03,641,0,0
+evals/nat-arm.json,NAT-84059520-coop4h1-480.json,model-84059520.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.560417,0.866342,0,0,587000000,587000479,0.0979167,0,0,1.82986,109.255,110.034,327.238,6.17153,精准:0.42 坚守:0.41 谢拉格:0.08 突袭:0.05,1670,0,0
+evals/nat-arm.json,NAT-84059520-solo480.json,model-84059520.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.5,0.872578,0,0,9000000,9000479,0.05625,0,0,1.89792,121.044,127.21,386.946,6.64375,坚守:0.5 精准:0.4 谢拉格:0.04 突袭:0.04,650,0,0
+evals/nat-arm.json,NAT-86026624-coop4h1-480.json,model-86026624.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.579167,0.87262,0,0,587000000,587000479,0.106944,0,0,1.81389,107.419,106.531,320.078,6.32708,坚守:0.42 精准:0.41 谢拉格:0.07 突袭:0.04,1697,0,0
+evals/nat-arm.json,NAT-86026624-solo480.json,model-86026624.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.49375,0.874989,0,0,9000000,9000479,0.0645833,0,0,1.87292,119.138,122.66,380.173,6.66458,坚守:0.46 精准:0.42 谢拉格:0.06 突袭:0.04,629,0,0
+evals/nat-arm.json,NAT-88026048-coop4h1-480.json,model-88026048.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.58125,0.876946,0,0,587000000,587000479,0.0868056,0,0,1.83472,110.783,105.354,319.897,6.06806,精准:0.49 坚守:0.36 谢拉格:0.07 突袭:0.05,1694,0,0
+evals/nat-arm.json,NAT-88026048-solo480.json,model-88026048.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.595833,0.898062,0,0,9000000,9000479,0.0625,0,0,1.87708,116.11,124.333,374.89,6.61458,精准:0.52 坚守:0.35 谢拉格:0.06 突袭:0.04,643,0,0
+evals/picker-parity.json,pick-solo480.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.441667,0.839216,0,0,9000000,9000479,,,,,,,,,,627,0,0
+evals/proxy-plan-prob.json,def-h3.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,240,0.0833333,0.395045,0,0,451000000,451000239,,,,,,,,,,,,0
+evals/proxy-plan-prob.json,leg-h1.json,legacy-live rehearsal 3,coop4h1:ABYSS,48,0.104167,0.240404,3,,587000000,587000047,,,,,,,,,,,,0
+evals/proxy-plan-prob.json,leg-h3.json,legacy-live rehearsal 3,coop4h3:ABYSS,48,0.104167,0.240404,3,,587000000,587000047,,,,,,,,,,,,0
+evals/proxy-plan-prob.json,pp0-h1.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,240,0.341667,0.716846,0,0,587000000,587000239,,,,,,,,,,,,0
+evals/proxy-plan-prob.json,pp0-h3.json,SK30__30004992__30000000.pt greedy rehearsal 0 boss 0,coop4h3:ABYSS,240,0.1,0.401649,0,0,451000000,451000239,,,,,,,,,,,,0
+evals/width-arms.json,AT__46006080__5M-coop4h1-480-b0.json,AT__46006080__5M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.404167,0.775417,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/width-arms.json,AT__46006080__5M-solo480-b0.json,AT__46006080__5M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.30625,0.77074,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/width-arms.json,AT__51054336__10M-coop4h1-480-b0.json,AT__51054336__10M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.385417,0.75511,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/width-arms.json,AT__51054336__10M-solo480-b0.json,AT__51054336__10M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.285417,0.774186,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/width-arms.json,AT__55027072__15M-coop4h1-480-b0.json,AT__55027072__15M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.420833,0.776936,0,0,587000000,587000479,0.0625,0,0,1.88681,111.98,104.137,317.233,6.25278,坚守:0.57 精准:0.31 谢拉格:0.05 突袭:0.03,,,0
+evals/width-arms.json,AT__55027072__15M-solo480-b0.json,AT__55027072__15M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.322917,0.791803,0,0,9000000,9000479,0.0395833,0,0,1.91875,125.65,129.229,384.863,6.11458,坚守:0.58 精准:0.34 谢拉格:0.04 突袭:0.04,,,0
+evals/width-arms.json,W1__46000000__5M-coop4h1-480-b0.json,W1__46000000__5M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.395833,0.767129,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/width-arms.json,W1__46000000__5M-solo480-b0.json,W1__46000000__5M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.333333,0.779684,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/width-arms.json,W1__50064640__10M-coop4h1-480-b0.json,W1__50064640__10M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.395833,0.783824,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/width-arms.json,W1__50064640__10M-solo480-b0.json,W1__50064640__10M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.33125,0.786027,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/width-arms.json,W1__55027072__15M-coop4h1-480-b0.json,W1__55027072__15M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.429167,0.786422,0,0,587000000,587000479,0.0763889,0,0,1.85556,112.981,108.28,328.341,6.3375,坚守:0.56 精准:0.3 谢拉格:0.06 突袭:0.04,,,0
+evals/width-arms.json,W1__55027072__15M-solo480-b0.json,W1__55027072__15M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.325,0.785447,0,0,9000000,9000479,0.05,0,0,1.91458,126.504,129.219,386.34,6.36042,坚守:0.61 精准:0.3 谢拉格:0.04 突袭:0.03,,,0
+evals/width-arms.json,W2__46000704__5M-coop4h1-480-b0.json,W2__46000704__5M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.414583,0.76885,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/width-arms.json,W2__46000704__5M-solo480-b0.json,W2__46000704__5M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.31875,0.786597,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/width-arms.json,W2__51049536__10M-coop4h1-480-b0.json,W2__51049536__10M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.414583,0.76899,0,0,587000000,587000479,,,,,,,,,,,,0
+evals/width-arms.json,W2__51049536__10M-solo480-b0.json,W2__51049536__10M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.320833,0.77729,0,0,9000000,9000479,,,,,,,,,,,,0
+evals/width-arms.json,W2__55027072__15M-coop4h1-480-b0.json,W2__55027072__15M.pt greedy rehearsal 0 boss 0,coop4h1:ABYSS,480,0.458333,0.788698,0,0,587000000,587000479,0.0631944,0,0,1.86875,108.05,106.861,308.365,6.05208,坚守:0.59 精准:0.28 谢拉格:0.05 突袭:0.04,,,0
+evals/width-arms.json,W2__55027072__15M-solo480-b0.json,W2__55027072__15M.pt greedy rehearsal 0 boss 0,solo:ABYSS,480,0.333333,0.778042,0,0,9000000,9000479,0.0416667,0,0,1.90833,124.908,129.556,370.665,6.14167,坚守:0.64 精准:0.28 谢拉格:0.04 突袭:0.03,,,0
+scratch/evals/B1.json,eval-0.json,model-0.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.177083,0.520934,0,0,8000000,8000095,0.375,0.0104167,0.0104167,1.44792,64.625,69.4167,198.615,3.72917,精准:0.29 叙拉古:0.19 迅捷:0.14 助力:0.1,,,0
+scratch/evals/B1.json,eval-1054208.json,model-1054208.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.333333,0.669307,0,0,8000000,8000095,0.354167,0.0104167,0.0104167,1.54167,82.8333,87.2604,263.812,4.29167,精准:0.42 谢拉格:0.15 叙拉古:0.11 奥术:0.08,,,0
+scratch/evals/B1.json,eval-2038144.json,model-2038144.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.541667,0.818191,0,0,8000000,8000095,0.3125,0.0104167,0.0104167,1.66667,81.9792,91.7917,285.51,5.02083,精准:0.58 谢拉格:0.18 叙拉古:0.06 卡西米尔:0.06,,,0
+scratch/evals/B1.json,eval-3021440.json,model-3021440.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.625,0.879773,0,0,8000000,8000095,0.260417,0,0,1.71875,83.8229,105.333,318.938,5.38542,精准:0.58 谢拉格:0.17 卡西米尔:0.08 助力:0.07,,,0
+scratch/evals/B1.json,eval-4004480.json,model-4004480.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.6875,0.898907,0,0,8000000,8000095,0.322917,0.0208333,0.0208333,1.625,93.5938,107.562,325.188,5.97917,精准:0.52 谢拉格:0.18 卡西米尔:0.08 突袭:0.05,,,0
+scratch/evals/B1.json,eval-5000000.json,model-final.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.65625,0.894214,0,0,8000000,8000095,0.333333,0.0104167,0.0104167,1.59375,99.8125,118.271,342.573,5.95833,精准:0.53 谢拉格:0.21 卡西米尔:0.11 突袭:0.04,,,0
+scratch/evals/B2.json,eval-0.json,model-0.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.177083,0.520934,0,0,8000000,8000095,0.375,0.0104167,0.0104167,1.44792,64.625,69.4167,198.615,3.72917,精准:0.29 叙拉古:0.19 迅捷:0.14 助力:0.1,,,0
+scratch/evals/B2.json,eval-1054976.json,model-1054976.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.333333,0.704418,0,0,8000000,8000095,0.364583,0.03125,0.03125,1.55208,80.9375,79.8333,250.615,4.85417,精准:0.39 谢拉格:0.21 叙拉古:0.12 助力:0.07,,,0
+scratch/evals/B2.json,eval-2038080.json,model-2038080.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.510417,0.82968,0,0,8000000,8000095,0.322917,0.0416667,0.0416667,1.66667,81.3229,87.9792,286.406,5.16667,精准:0.55 谢拉格:0.22 助力:0.04 卡西米尔:0.04,,,0
+scratch/evals/B2.json,eval-3021440.json,model-3021440.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.666667,0.889603,0,0,8000000,8000095,0.34375,0.0104167,0.0104167,1.63542,94.0208,99.0104,309.406,5.34375,精准:0.54 谢拉格:0.26 助力:0.07 卡西米尔:0.06,,,0
+scratch/evals/B2.json,eval-4004416.json,model-4004416.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.729167,0.889075,0,0,8000000,8000095,0.302083,0,0,1.63542,88.2292,118.135,332.365,5.79167,精准:0.54 谢拉格:0.21 助力:0.08 卡西米尔:0.06,,,0
+scratch/evals/B2.json,eval-5000000.json,model-final.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.760417,0.937094,0,0,8000000,8000095,0.447917,0.0104167,0.0104167,1.52083,92.0625,116.646,337.26,6.01042,精准:0.45 谢拉格:0.3 卡西米尔:0.1 助力:0.05,,,0
+scratch/evals/LR3.json,eval-0.json,model-0.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.177083,0.520934,0,0,8000000,8000095,0.375,0.0104167,0.0104167,1.44792,64.625,69.4167,198.615,3.72917,精准:0.29 叙拉古:0.19 迅捷:0.14 助力:0.1,,,0
+scratch/evals/LR3.json,eval-1054976.json,model-1054976.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.364583,0.734695,0,0,8000000,8000095,0.28125,0.0104167,0.0104167,1.57292,80.1979,81.1875,259.552,4.38542,精准:0.41 谢拉格:0.17 迅捷:0.14 奥术:0.08,,,0
+scratch/evals/LR3.json,eval-2038208.json,model-2038208.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.645833,0.886043,0,0,8000000,8000095,0.1875,0,0,1.73958,92.0208,103.969,327.208,5.28125,精准:0.61 谢拉格:0.11 奥术:0.06 助力:0.06,,,0
+scratch/evals/LR3.json,eval-3021632.json,model-3021632.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.677083,0.900944,0,0,8000000,8000095,0.3125,0.0104167,0.0104167,1.64583,86,104.229,323.417,5.23958,精准:0.56 谢拉格:0.19 卡西米尔:0.07 助力:0.04,,,0
+scratch/evals/LR3.json,eval-4004736.json,model-4004736.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.760417,0.94227,0,0,8000000,8000095,0.302083,0,0,1.63542,91.3646,118.25,346.854,6.125,精准:0.55 谢拉格:0.15 卡西米尔:0.12 突袭:0.05,,,0
+scratch/evals/LR3.json,eval-5000000.json,model-final.pt greedy rehearsal 0 boss 0,solo:HARD,96,0.739583,0.932766,0,0,8000000,8000095,0.46875,0.0104167,0.0104167,1.5,95.1458,118.052,364.969,5.85417,精准:0.43 谢拉格:0.3 卡西米尔:0.17 助力:0.05,,,0
+width/evals/AT-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:NORMAL,24,0.916667,0.952688,0,0,7000000,7000023,,,,,,,,,,,,0
+width/evals/AT-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:HARD,24,0.875,0.984147,0,0,8000000,8000023,,,,,,,,,,,,0
+width/evals/AT-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:ABYSS,24,0.333333,0.746783,0,0,9000000,9000023,,,,,,,,,,,,0
+width/evals/AT-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:NORMAL,24,1,1,0,0,10000000,10000023,,,,,,,,,,,,0
+width/evals/AT-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:HARD,24,1,1,0,0,11000000,11000023,,,,,,,,,,,,0
+width/evals/AT-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:ABYSS,24,0.208333,0.536386,0,0,12000000,12000023,,,,,,,,,,,,0
+width/evals/W1-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:NORMAL,24,0.958333,0.973773,0,0,7000000,7000023,,,,,,,,,,,,0
+width/evals/W1-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:HARD,24,0.875,0.994301,0,0,8000000,8000023,,,,,,,,,,,,0
+width/evals/W1-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:ABYSS,24,0.375,0.785742,0,0,9000000,9000023,,,,,,,,,,,,0
+width/evals/W1-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:NORMAL,24,1,1,0,0,10000000,10000023,,,,,,,,,,,,0
+width/evals/W1-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:HARD,24,0.958333,0.992076,0,0,11000000,11000023,,,,,,,,,,,,0
+width/evals/W1-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:ABYSS,24,0.25,0.518182,0,0,12000000,12000023,,,,,,,,,,,,0
+width/evals/W2-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:NORMAL,24,0.916667,0.950808,0,0,7000000,7000023,,,,,,,,,,,,0
+width/evals/W2-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:HARD,24,0.916667,0.991999,0,0,8000000,8000023,,,,,,,,,,,,0
+width/evals/W2-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,solo:ABYSS,24,0.333333,0.788003,0,0,9000000,9000023,,,,,,,,,,,,0
+width/evals/W2-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:NORMAL,24,1,1,0,0,10000000,10000023,,,,,,,,,,,,0
+width/evals/W2-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:HARD,24,0.958333,0.983946,0,0,11000000,11000023,,,,,,,,,,,,0
+width/evals/W2-inrun.json,eval-55027072.json,model-final.pt greedy rehearsal 0 boss 0,coop4:ABYSS,24,0.291667,0.566977,0,0,12000000,12000023,,,,,,,,,,,,0

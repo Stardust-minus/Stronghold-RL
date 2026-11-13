@@ -1,0 +1,79 @@
+{
+ "what": "action histogram per RL seat per match (SK-30M, greedy, b0, RL r0, proxies r3)",
+ "configs": {
+  "solo:ABYSS": {
+   "file": "act-solo480.json",
+   "matches": 480,
+   "seats": 480,
+   "win": 0.31875,
+   "per_seat_match": {
+    "refresh": 52.6,
+    "level": 3.28125,
+    "freeze": 4.864583333333333,
+    "buy_chess": 28.560416666666665,
+    "buy_item": 2.15625,
+    "sell_chess": 12.252083333333333,
+    "reward_chess": 7.10625,
+    "reward_item": 0.0
+   },
+   "cards_per_seat_match": {
+    "bounty": 2.6125,
+    "pick:kill": 2.6125,
+    "item": 0.18125,
+    "tactic": 0.20625
+   },
+   "bounty": {
+    "cardBattles": 1734,
+    "clean": 1681,
+    "units": 1734,
+    "leaked": 53,
+    "unit_kill_rate": 0.9694348327566321
+   },
+   "bought_items": {
+    "n": 1059,
+    "equipped": 1031,
+    "onBoardAtBattle": 880,
+    "neverEquippedLoose": 0,
+    "neverEquippedGone": 28,
+    "equipped_share": 0.9735599622285175
+   }
+  },
+  "coop4h1:ABYSS": {
+   "file": "act-coop4h1-240.json",
+   "matches": 240,
+   "seats": 720,
+   "win": 0.3458333333333333,
+   "per_seat_match": {
+    "refresh": 53.63055555555555,
+    "level": 3.076388888888889,
+    "freeze": 5.175,
+    "buy_chess": 26.941666666666666,
+    "buy_item": 1.5652777777777778,
+    "sell_chess": 9.186111111111112,
+    "reward_chess": 7.529166666666667,
+    "reward_item": 0.008333333333333333
+   },
+   "cards_per_seat_match": {
+    "bounty": 2.638888888888889,
+    "pick:kill": 2.638888888888889,
+    "item": 0.19166666666666668,
+    "tactic": 0.16666666666666666
+   },
+   "bounty": {
+    "cardBattles": 2620,
+    "clean": 2440,
+    "units": 2620,
+    "leaked": 180,
+    "unit_kill_rate": 0.9312977099236641
+   },
+   "bought_items": {
+    "n": 1194,
+    "equipped": 1166,
+    "onBoardAtBattle": 986,
+    "neverEquippedLoose": 0,
+    "neverEquippedGone": 28,
+    "equipped_share": 0.9765494137353434
+   }
+  }
+ }
+}

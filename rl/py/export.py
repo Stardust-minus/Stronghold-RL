@@ -18,7 +18,7 @@ layout = {n: {'offset': o, 'count': c, 'width': w, 'ids': [[f, v] for f, v in id
               'numeric': getattr(net, f'num_{n}').tolist()} for n, (o, c, w, ids) in net.layout.items()}
 manifest = {'format': 'sp-policy/1', 'dataId': net.spec['dataId'], 'D': net.D, 'A': net.A, 'emb': EMB, 'entityOut': ENTITY_OUT,
             'pointer': getattr(net, 'pointer', POINTER), 'scalars': SCALARS, 'layout': layout, 'bondsAt': list(net.bonds_at), 'tensors': tensors,
-            'steps': ck.get('steps'), 'stage': ck.get('stage')}
+            'steps': ck.get('steps'), 'stage': ck.get('stage'), **({'cfg': net.cfg} if getattr(net, 'cfg', None) else {})}
 open(a.out + '.bin', 'wb').write(b''.join(chunks))
 json.dump(manifest, open(a.out + '.json', 'w'))
 print('exported', len(tensors), 'tensors', off, 'floats', round(off * 4 / 1e6, 2), 'MB')

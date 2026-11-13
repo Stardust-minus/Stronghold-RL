@@ -1,0 +1,206 @@
+{
+ "group": "legacy fill with bond logs (legacy mode, r3, mates r3)",
+ "evals": [
+  {
+   "file": "legacy-coop4h1-480.json",
+   "label": "legacy-live rehearsal 3",
+   "rehearsal": 3,
+   "bossRehearsal": null,
+   "seconds": 443.9,
+   "decisions": 0,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.05,
+     "faShare": 0.18745253340683518,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "human-legacy": {
+       "seats": 480,
+       "survival": 11.235416666666667,
+       "lp": 0.26458333333333334,
+       "win": 0.035416666666666666,
+       "humanMainTier": 1.3229166666666667
+      },
+      "rl": {
+       "seats": 1440,
+       "survival": 11.240972222222222,
+       "lp": 0.3263888888888889,
+       "win": 0.03263888888888889
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 69.35208333333334,
+       "yieldMainPerMatch": 4.404166666666667,
+       "yieldMergePerMatch": 2.5125,
+       "roundTripsPerPrep": 0.0440476925928214,
+       "violations": 3320.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.05,
+      "seats": 1440,
+      "natMain": 0.7895833333333333,
+      "natMainT2": 0.4701388888888889,
+      "anyNatT2": 0.4701388888888889,
+      "mainTier": 1.6555555555555554,
+      "mainLayers": 55.62916666666667,
+      "secLayers": 41.893055555555556,
+      "sumLayers": 131.0263888888889,
+      "elites": 2.279861111111111,
+      "winNatT2": 0.08714918759231906,
+      "winOther": 0.01703800786369594,
+      "topMain": [
+       [
+        "叙拉古",
+        0.17
+       ],
+       [
+        "谢拉格",
+        0.15
+       ],
+       [
+        "卡西米尔",
+        0.12
+       ],
+       [
+        "萨尔贡",
+        0.11
+       ]
+      ],
+      "topSec": [
+       [
+        "迅捷",
+        0.23
+       ],
+       [
+        "精准",
+        0.17
+       ],
+       [
+        "坚守",
+        0.14
+       ]
+      ],
+      "r9": {
+       "natMain": 0.6164688427299704,
+       "sumLayers": 73.42655786350149,
+       "elites": 1.9636498516320475
+      },
+      "r12": {
+       "natMain": 0.8703125,
+       "sumLayers": 148.878125,
+       "elites": 2.51875
+      }
+     },
+     "byBand": {},
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     }
+    }
+   }
+  },
+  {
+   "file": "legacy-solo480.json",
+   "label": "legacy-live rehearsal 3",
+   "rehearsal": 3,
+   "bossRehearsal": null,
+   "seconds": 194.7,
+   "decisions": 0,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.010416666666666666,
+     "faShare": 0.2207714053000359,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 13.308333333333334,
+       "lp": 0.07708333333333334,
+       "win": 0.010416666666666666
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 27.685416666666665,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.057608015028177834,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 480,
+      "win": 0.010416666666666666,
+      "seats": 480,
+      "natMain": 0.9020833333333333,
+      "natMainT2": 0.7791666666666667,
+      "anyNatT2": 0.7791666666666667,
+      "mainTier": 1.8708333333333333,
+      "mainLayers": 87.7875,
+      "secLayers": 53.76875,
+      "sumLayers": 186.25625,
+      "elites": 2.4375,
+      "winNatT2": 0.013368983957219251,
+      "winOther": 0.0,
+      "topMain": [
+       [
+        "叙拉古",
+        0.23
+       ],
+       [
+        "谢拉格",
+        0.18
+       ],
+       [
+        "卡西米尔",
+        0.11
+       ],
+       [
+        "拉特兰",
+        0.11
+       ]
+      ],
+      "topSec": [
+       [
+        "迅捷",
+        0.22
+       ],
+       [
+        "精准",
+        0.2
+       ],
+       [
+        "助力",
+        0.12
+       ]
+      ],
+      "r9": {
+       "natMain": 0.5768421052631579,
+       "sumLayers": 76.88631578947368,
+       "elites": 2.0
+      },
+      "r12": {
+       "natMain": 0.8154897494305239,
+       "sumLayers": 143.4373576309795,
+       "elites": 2.3963553530751707
+      }
+     },
+     "byBand": {},
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  }
+ ]
+}

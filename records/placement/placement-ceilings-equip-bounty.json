@@ -1,0 +1,1189 @@
+{
+ "what": "placement track results: equipment and bounty-round ceilings",
+ "dirs": {
+  "equipment-ceiling": {
+   "coop4h1/eq-F6all": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 10,
+    "n": 240,
+    "seedRange": [
+     51000000,
+     51000239
+    ],
+    "seconds": 5783.2,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7739833333333334,
+     "kjerag": 6.683333333333334,
+     "nation": 8.2625,
+     "potential": 0.0,
+     "win": 0.36666666666666664
+    },
+    "prep": {
+     "preps": 10078,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 363,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 1594,
+      "changed": 501,
+      "cands": 9538,
+      "ms": 2714092.201384002,
+      "normal": 1054,
+      "normalChanged": 216,
+      "boss": 540,
+      "bossChanged": 285
+     }
+    },
+    "paired": {
+     "vs": "coop4h1/eq-base",
+     "n": 240,
+     "d_win": -0.0042,
+     "se_win": 0.011,
+     "d_fa": 0.0104,
+     "se_fa": 0.0041
+    }
+   },
+   "coop4h1/eq-F6boss": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 10,
+    "n": 240,
+    "seedRange": [
+     51000000,
+     51000239
+    ],
+    "seconds": 4633.0,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7665691666666666,
+     "kjerag": 6.679166666666666,
+     "nation": 8.2625,
+     "potential": 0.0,
+     "win": 0.375
+    },
+    "prep": {
+     "preps": 10068,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 359,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 519,
+      "changed": 272,
+      "cands": 3114,
+      "ms": 1664138.8903680008,
+      "boss": 519,
+      "bossChanged": 272
+     }
+    },
+    "paired": {
+     "vs": "coop4h1/eq-base",
+     "n": 240,
+     "d_win": 0.0042,
+     "se_win": 0.0042,
+     "d_fa": 0.003,
+     "se_fa": 0.0015
+    }
+   },
+   "coop4h1/eq-F6normal": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 10,
+    "n": 240,
+    "seedRange": [
+     51000000,
+     51000239
+    ],
+    "seconds": 4163.6,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7724291666666667,
+     "kjerag": 6.691666666666666,
+     "nation": 8.270833333333334,
+     "potential": 0.0,
+     "win": 0.36666666666666664
+    },
+    "prep": {
+     "preps": 10081,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 365,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 1054,
+      "changed": 216,
+      "cands": 6298,
+      "ms": 1004338.7722900008,
+      "normal": 1054,
+      "normalChanged": 216
+     }
+    },
+    "paired": {
+     "vs": "coop4h1/eq-base",
+     "n": 240,
+     "d_win": -0.0042,
+     "se_win": 0.011,
+     "d_fa": 0.0089,
+     "se_fa": 0.0041
+    }
+   },
+   "coop4h1/eq-L6all": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 10,
+    "n": 240,
+    "seedRange": [
+     51000000,
+     51000239
+    ],
+    "seconds": 5389.6,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7673904166666666,
+     "kjerag": 6.695833333333334,
+     "nation": 8.279166666666667,
+     "potential": 0.0,
+     "win": 0.38333333333333336
+    },
+    "prep": {
+     "preps": 10086,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 366,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 1595,
+      "changed": 502,
+      "cands": 9544,
+      "ms": 2529217.0460629994,
+      "normal": 1050,
+      "normalChanged": 220,
+      "boss": 545,
+      "bossChanged": 282
+     }
+    },
+    "paired": {
+     "vs": "coop4h1/eq-base",
+     "n": 240,
+     "d_win": 0.0125,
+     "se_win": 0.0125,
+     "d_fa": 0.0038,
+     "se_fa": 0.0029
+    }
+   },
+   "coop4h1/eq-L6boss": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 10,
+    "n": 240,
+    "seedRange": [
+     51000000,
+     51000239
+    ],
+    "seconds": 4255.7,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7666133333333334,
+     "kjerag": 6.679166666666666,
+     "nation": 8.2625,
+     "potential": 0.0,
+     "win": 0.38333333333333336
+    },
+    "prep": {
+     "preps": 10068,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 359,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 518,
+      "changed": 270,
+      "cands": 3108,
+      "ms": 1505090.2118439998,
+      "boss": 518,
+      "bossChanged": 270
+     }
+    },
+    "paired": {
+     "vs": "coop4h1/eq-base",
+     "n": 240,
+     "d_win": 0.0125,
+     "se_win": 0.0072,
+     "d_fa": 0.003,
+     "se_fa": 0.0014
+    }
+   },
+   "coop4h1/eq-L6normal": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 10,
+    "n": 240,
+    "seedRange": [
+     51000000,
+     51000239
+    ],
+    "seconds": 4068.2,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7684075,
+     "kjerag": 6.683333333333334,
+     "nation": 8.266666666666667,
+     "potential": 0.0,
+     "win": 0.37083333333333335
+    },
+    "prep": {
+     "preps": 10083,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 368,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 1050,
+      "changed": 220,
+      "cands": 6274,
+      "ms": 978460.1180819992,
+      "normal": 1050,
+      "normalChanged": 220
+     }
+    },
+    "paired": {
+     "vs": "coop4h1/eq-base",
+     "n": 240,
+     "d_win": 0.0,
+     "se_win": 0.0102,
+     "d_fa": 0.0048,
+     "se_fa": 0.003
+    }
+   },
+   "coop4h1/eq-base": {
+    "kind": "posvalue",
+    "arm": "legacy",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 10,
+    "n": 240,
+    "seedRange": [
+     51000000,
+     51000239
+    ],
+    "seconds": 3241.8,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7635633333333334,
+     "kjerag": 6.679166666666666,
+     "nation": 8.2625,
+     "potential": 12.041666666666666,
+     "win": 0.37083333333333335
+    },
+    "prep": {
+     "preps": 10068,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 362,
+     "battleAfter": 362,
+     "potential": 2890,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0
+    }
+   },
+   "solo/eq-F6all": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 2622.6,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7898445833333333,
+     "kjerag": 3.2104166666666667,
+     "nation": 3.4125,
+     "potential": 0.0,
+     "win": 0.3333333333333333
+    },
+    "prep": {
+     "preps": 6824,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 306,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 1216,
+      "changed": 326,
+      "cands": 7289,
+      "ms": 1327585.5088239997,
+      "normal": 588,
+      "normalChanged": 24,
+      "boss": 628,
+      "bossChanged": 302
+     }
+    },
+    "paired": {
+     "vs": "solo/eq-base",
+     "n": 480,
+     "d_win": 0.0146,
+     "se_win": 0.0062,
+     "d_fa": 0.0061,
+     "se_fa": 0.0015
+    }
+   },
+   "solo/eq-F6boss": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 2134.9,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7884764583333334,
+     "kjerag": 3.2104166666666667,
+     "nation": 3.4125,
+     "potential": 0.0,
+     "win": 0.3333333333333333
+    },
+    "prep": {
+     "preps": 6824,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 306,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 626,
+      "changed": 297,
+      "cands": 3756,
+      "ms": 883853.756442,
+      "boss": 626,
+      "bossChanged": 297
+     }
+    },
+    "paired": {
+     "vs": "solo/eq-base",
+     "n": 480,
+     "d_win": 0.0146,
+     "se_win": 0.0062,
+     "d_fa": 0.0048,
+     "se_fa": 0.0015
+    }
+   },
+   "solo/eq-F6normal": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 1872.2,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7844650000000001,
+     "kjerag": 3.2083333333333335,
+     "nation": 3.410416666666667,
+     "potential": 0.0,
+     "win": 0.31875
+    },
+    "prep": {
+     "preps": 6820,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 301,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 588,
+      "changed": 24,
+      "cands": 3521,
+      "ms": 450648.346489,
+      "normal": 588,
+      "normalChanged": 24
+     }
+    },
+    "paired": {
+     "vs": "solo/eq-base",
+     "n": 480,
+     "d_win": 0.0,
+     "se_win": 0.0,
+     "d_fa": 0.0007,
+     "se_fa": 0.0006
+    }
+   },
+   "solo/eq-L6all": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 2596.0,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.79163375,
+     "kjerag": 3.214583333333333,
+     "nation": 3.4166666666666665,
+     "potential": 0.0,
+     "win": 0.33541666666666664
+    },
+    "prep": {
+     "preps": 6826,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 305,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 1214,
+      "changed": 343,
+      "cands": 7277,
+      "ms": 1316179.2793430001,
+      "normal": 586,
+      "normalChanged": 29,
+      "boss": 628,
+      "bossChanged": 314
+     }
+    },
+    "paired": {
+     "vs": "solo/eq-base",
+     "n": 480,
+     "d_win": 0.0167,
+     "se_win": 0.0066,
+     "d_fa": 0.0079,
+     "se_fa": 0.0015
+    }
+   },
+   "solo/eq-L6boss": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 2183.3,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7894404166666668,
+     "kjerag": 3.2125,
+     "nation": 3.4145833333333333,
+     "potential": 0.0,
+     "win": 0.33125
+    },
+    "prep": {
+     "preps": 6825,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 306,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 627,
+      "changed": 313,
+      "cands": 3762,
+      "ms": 905344.1946050001,
+      "boss": 627,
+      "bossChanged": 313
+     }
+    },
+    "paired": {
+     "vs": "solo/eq-base",
+     "n": 480,
+     "d_win": 0.0125,
+     "se_win": 0.0066,
+     "d_fa": 0.0057,
+     "se_fa": 0.0015
+    }
+   },
+   "solo/eq-L6normal": {
+    "kind": "posvalue",
+    "arm": "equip",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 1800.6,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7850572916666666,
+     "kjerag": 3.2104166666666667,
+     "nation": 3.4125,
+     "potential": 0.0,
+     "win": 0.32083333333333336
+    },
+    "prep": {
+     "preps": 6821,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 299,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "equip": {
+      "decisions": 586,
+      "changed": 29,
+      "cands": 3509,
+      "ms": 433012.8947190001,
+      "normal": 586,
+      "normalChanged": 29
+     }
+    },
+    "paired": {
+     "vs": "solo/eq-base",
+     "n": 480,
+     "d_win": 0.0021,
+     "se_win": 0.0021,
+     "d_fa": 0.0013,
+     "se_fa": 0.0007
+    }
+   },
+   "solo/eq-base": {
+    "kind": "posvalue",
+    "arm": "legacy",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 1469.0,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.783719375,
+     "kjerag": 3.2083333333333335,
+     "nation": 3.410416666666667,
+     "potential": 4.55,
+     "win": 0.31875
+    },
+    "prep": {
+     "preps": 6820,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 302,
+     "battleAfter": 302,
+     "potential": 2184,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0
+    }
+   }
+  },
+  "bounty-round-ceiling": {
+   "coop4h1/b-base": {
+    "kind": "posvalue",
+    "arm": "legacy",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     51000000,
+     51000479
+    ],
+    "seconds": 6200.1,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.7564575,
+     "kjerag": 6.260416666666667,
+     "lp": 5.777083333333334,
+     "nation": 7.752083333333333,
+     "potential": 11.614583333333334,
+     "win": 0.33958333333333335
+    },
+    "prep": {
+     "preps": 20099,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 785,
+     "battleAfter": 785,
+     "potential": 5575,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "bounty": {
+      "rounds": 5178,
+      "picks": 0,
+      "nonDefault": 0,
+      "leaks0": 0,
+      "leaks1": 0,
+      "ms": 0
+     }
+    }
+   },
+   "coop4h1/b-bountyF6": {
+    "kind": "posvalue",
+    "arm": "bountyPick",
+    "config": "coop4h1:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     51000000,
+     51000479
+    ],
+    "seconds": 8371.0,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 2.7958333333333334,
+     "fa": 0.7617579166666667,
+     "kjerag": 6.21875,
+     "lp": 6.225,
+     "nation": 7.66875,
+     "potential": 0.0,
+     "win": 0.35
+    },
+    "prep": {
+     "preps": 20177,
+     "changed": 1342,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 791,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "bounty": {
+      "rounds": 5183,
+      "picks": 5183,
+      "nonDefault": 1342,
+      "leaks0": 7876,
+      "leaks1": 3632,
+      "ms": 2828815.370230999
+     }
+    },
+    "paired": {
+     "vs": "coop4h1/b-base",
+     "n": 480,
+     "d_win": 0.0104,
+     "se_win": 0.0194,
+     "d_fa": 0.0053,
+     "se_fa": 0.0102
+    }
+   },
+   "solo/b-base": {
+    "kind": "posvalue",
+    "arm": "legacy",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 1426.5,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.0,
+     "fa": 0.783719375,
+     "kjerag": 3.2083333333333335,
+     "lp": 1.5541666666666667,
+     "nation": 3.410416666666667,
+     "potential": 4.55,
+     "win": 0.31875
+    },
+    "prep": {
+     "preps": 6820,
+     "changed": 0,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 302,
+     "battleAfter": 302,
+     "potential": 2184,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "bounty": {
+      "rounds": 1734,
+      "picks": 0,
+      "nonDefault": 0,
+      "leaks0": 0,
+      "leaks1": 0,
+      "ms": 0
+     }
+    }
+   },
+   "solo/b-bountyF6": {
+    "kind": "posvalue",
+    "arm": "bountyPick",
+    "config": "solo:ABYSS",
+    "econ": "SK-30M-js",
+    "plan": null,
+    "band": null,
+    "rehearsal": 0,
+    "chunks": 20,
+    "n": 480,
+    "seedRange": [
+     9000000,
+     9000479
+    ],
+    "seconds": 2105.2,
+    "errors": 0,
+    "violations": 0,
+    "mean": {
+     "changed": 0.36041666666666666,
+     "fa": 0.7906529166666666,
+     "kjerag": 3.254166666666667,
+     "lp": 1.4708333333333334,
+     "nation": 3.4125,
+     "potential": 0.0,
+     "win": 0.3125
+    },
+    "prep": {
+     "preps": 6825,
+     "changed": 173,
+     "predFin": 0,
+     "exactFin": 0,
+     "predStart": 0,
+     "gifts": 0,
+     "battleBefore": 275,
+     "battleAfter": 0,
+     "potential": 0,
+     "oracle": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0
+     },
+     "search": {
+      "runs": 0,
+      "improved": 0,
+      "candidates": 0,
+      "rehearsals": 0,
+      "ms": 0,
+      "msMax": 0
+     },
+     "forecastErrors": 0,
+     "bounty": {
+      "rounds": 1734,
+      "picks": 1734,
+      "nonDefault": 173,
+      "leaks0": 660,
+      "leaks1": 209,
+      "ms": 840652.0121880001
+     }
+    },
+    "paired": {
+     "vs": "solo/b-base",
+     "n": 480,
+     "d_win": -0.0063,
+     "se_win": 0.0149,
+     "d_fa": 0.0069,
+     "se_fa": 0.0061
+    }
+   }
+  }
+ },
+ "recipes": {
+  "rec1": "kjerag-freeze",
+  "rec2": "kazimierz-redeploy",
+  "rec3": "siracusa",
+  "rec4": "egir",
+  "rec5": "sargon",
+  "rec6": "yan",
+  "rec7": "victoria",
+  "rec8": "laterano"
+ }
+}

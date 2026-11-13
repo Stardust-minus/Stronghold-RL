@@ -1,0 +1,932 @@
+{
+ "group": "eval lane (SCR)",
+ "evals": [
+  {
+   "file": "eval-10006528-coop480-b0.json",
+   "label": "SCR__10006528__10000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 596.4,
+   "decisions": 326999,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.008333333333333333,
+     "faShare": 0.10035092004692944,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 1440,
+       "survival": 11.064583333333333,
+       "lp": 0.005555555555555556,
+       "win": 0.0020833333333333333
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 11.672916666666667,
+       "lp": 0.125,
+       "win": 0.008333333333333333,
+       "humanMainTier": 1.2479166666666666
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 70.22083333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.012929140777003703,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_cathy": {
+       "n": 473,
+       "win": 0.008456659619450317,
+       "fa": 0.0981154789359682
+      },
+      "band_emperor": {
+       "n": 457,
+       "win": 0.006564551422319475,
+       "fa": 0.09696156030016038
+      },
+      "band_pepe": {
+       "n": 438,
+       "win": 0.00684931506849315,
+       "fa": 0.09961860326240919
+      },
+      "band_doberm": {
+       "n": 62,
+       "win": 0.03225806451612903,
+       "fa": 0.13222498499212382
+      },
+      "band_lmlee": {
+       "n": 9,
+       "win": 0.0,
+       "fa": 0.20287605124571018
+      },
+      "band_kirara": {
+       "n": 1,
+       "win": 0.0,
+       "fa": 0.12848851403384232
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     }
+    },
+    "coop4h2:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.0020833333333333333,
+     "faShare": 0.083428336703458,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 960,
+       "survival": 10.364583333333334,
+       "lp": 0.0,
+       "win": 0.0
+      },
+      "human-legacy": {
+       "seats": 960,
+       "survival": 11.164583333333333,
+       "lp": 0.0010416666666666667,
+       "win": 0.0010416666666666667,
+       "humanMainTier": 1.178125
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 41.229166666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.011155778894472362,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_cathy": {
+       "n": 469,
+       "win": 0.0021321961620469083,
+       "fa": 0.08523660410106045
+      },
+      "band_pepe": {
+       "n": 415,
+       "win": 0.0024096385542168677,
+       "fa": 0.08718869806985566
+      },
+      "band_emperor": {
+       "n": 68,
+       "win": 0.0,
+       "fa": 0.04306737133098677
+      },
+      "band_doberm": {
+       "n": 7,
+       "win": 0.0,
+       "fa": 0.1296366503476965
+      },
+      "band_lmlee": {
+       "n": 1,
+       "win": 0.0,
+       "fa": 0.09588840999128512
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 913000000,
+      "max": 913000479
+     }
+    },
+    "coop4h3:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.008333333333333333,
+     "faShare": 0.11325000686255736,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 10.083333333333334,
+       "lp": 0.022916666666666665,
+       "win": 0.0020833333333333333
+      },
+      "human-legacy": {
+       "seats": 1440,
+       "survival": 11.099305555555556,
+       "lp": 0.05277777777777778,
+       "win": 0.00625,
+       "humanMainTier": 1.1430555555555555
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 18.560416666666665,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.0128099173553719,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 351,
+       "win": 0.011396011396011397,
+       "fa": 0.10653484669437441
+      },
+      "band_cathy": {
+       "n": 120,
+       "win": 0.0,
+       "fa": 0.1315944719447875
+      },
+      "band_emperor": {
+       "n": 8,
+       "win": 0.0,
+       "fa": 0.1468669338659528
+      },
+      "band_doberm": {
+       "n": 1,
+       "win": 0.0,
+       "fa": 0.0
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 451000000,
+      "max": 451000479
+     }
+    },
+    "coop2h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.0020833333333333333,
+     "faShare": 0.04152504499797825,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 10.577083333333333,
+       "lp": 0.00625,
+       "win": 0.0020833333333333333
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 11.233333333333333,
+       "lp": 0.016666666666666666,
+       "win": 0.0020833333333333333,
+       "humanMainTier": 1.1375
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 23.385416666666668,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.01004530234390388,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 438,
+       "win": 0.00228310502283105,
+       "fa": 0.04405495171962439
+      },
+      "band_cathy": {
+       "n": 42,
+       "win": 0.0,
+       "fa": 0.015141732043668431
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 652000000,
+      "max": 652000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-10006528-coop4l240-b0.json",
+   "label": "SCR__10006528__10000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 144.9,
+   "decisions": 23019,
+   "configs": {
+    "coop4l:ABYSS": {
+     "matches": 240,
+     "teamWin": 0.0125,
+     "faShare": 0.1138048654146985,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 240,
+       "survival": 10.558333333333334,
+       "lp": 0.058333333333333334,
+       "win": 0.0125
+      },
+      "human-legacy": {
+       "seats": 358,
+       "survival": 11.318435754189943,
+       "lp": 0.025139664804469275,
+       "win": 0.008379888268156424,
+       "humanMainTier": 1.2067039106145252
+      },
+      "legacy": {
+       "seats": 362,
+       "survival": 11.290055248618785,
+       "lp": 0.12154696132596685,
+       "win": 0.008287292817679558
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 22.304166666666667,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.015390686661404893,
+       "violations": 0.0
+      },
+      "legacy": {
+       "buysPerMatch": 48.03389830508475,
+       "yieldMainPerMatch": 1.6836158192090396,
+       "yieldMergePerMatch": 1.1299435028248588,
+       "roundTripsPerPrep": 0.04477611940298507,
+       "violations": 498.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 201,
+       "win": 0.014925373134328358,
+       "fa": 0.12189236282517553
+      },
+      "band_cathy": {
+       "n": 36,
+       "win": 0.0,
+       "fa": 0.06858673248597391
+      },
+      "band_emperor": {
+       "n": 3,
+       "win": 0.0,
+       "fa": 0.11456013405743148
+      }
+     },
+     "seeds": {
+      "n": 240,
+      "min": 198000000,
+      "max": 198000239
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-10006528-solo480-b0.json",
+   "label": "SCR__10006528__10000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 89.0,
+   "decisions": 61970,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.0,
+     "faShare": 0.11364375794828874,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 13.097916666666666,
+       "lp": 0.0,
+       "win": 0.0
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 28.833333333333332,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.014792428821377445,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 480,
+       "win": 0.0,
+       "fa": 0.11364375794828868
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-10006528-solo480-b3.json",
+   "label": "SCR__10006528__10000000.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 126.0,
+   "decisions": 61970,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.0,
+     "faShare": 0.12243785551837637,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 13.097916666666666,
+       "lp": 0.0,
+       "win": 0.0
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 28.833333333333332,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.014792428821377445,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 480,
+       "win": 0.0,
+       "fa": 0.12243785551837634
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-15010048-solo480-b0.json",
+   "label": "SCR__15010048__15000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 67.4,
+   "decisions": 63863,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.00625,
+     "faShare": 0.16136514123793913,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 13.36875,
+       "lp": 0.029166666666666667,
+       "win": 0.00625
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 38.53333333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.157238585008571,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 480,
+       "win": 0.00625,
+       "fa": 0.16136514123793907
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-20062336-coop480-b0.json",
+   "label": "SCR__20062336__20000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 590.4,
+   "decisions": 365404,
+   "configs": {
+    "coop4h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.0020833333333333333,
+     "faShare": 0.12048859420525586,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 1440,
+       "survival": 11.778472222222222,
+       "lp": 0.0020833333333333333,
+       "win": 0.001388888888888889
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 11.964583333333334,
+       "lp": 0.0125,
+       "win": 0.0020833333333333333,
+       "humanMainTier": 1.2791666666666666
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 113.62916666666666,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.2242792288190555,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_emperor": {
+       "n": 473,
+       "win": 0.0021141649048625794,
+       "fa": 0.12045669123932841
+      },
+      "band_cathy": {
+       "n": 473,
+       "win": 0.0021141649048625794,
+       "fa": 0.11999423080726634
+      },
+      "band_pepe": {
+       "n": 438,
+       "win": 0.00228310502283105,
+       "fa": 0.1242020431707524
+      },
+      "band_lmlee": {
+       "n": 28,
+       "win": 0.0,
+       "fa": 0.06889131007603956
+      },
+      "band_doberm": {
+       "n": 23,
+       "win": 0.0,
+       "fa": 0.10563040846784998
+      },
+      "band_kirara": {
+       "n": 5,
+       "win": 0.0,
+       "fa": 0.20226770836998034
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 587000000,
+      "max": 587000479
+     }
+    },
+    "coop4h2:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.010416666666666666,
+     "faShare": 0.11119221066465443,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 960,
+       "survival": 11.382291666666667,
+       "lp": 0.016666666666666666,
+       "win": 0.004166666666666667
+      },
+      "human-legacy": {
+       "seats": 960,
+       "survival": 11.49375,
+       "lp": 0.058333333333333334,
+       "win": 0.007291666666666667,
+       "humanMainTier": 1.1947916666666667
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 70.70208333333333,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.15530337695616364,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_cathy": {
+       "n": 469,
+       "win": 0.008528784648187633,
+       "fa": 0.10981471753662779
+      },
+      "band_pepe": {
+       "n": 415,
+       "win": 0.007228915662650603,
+       "fa": 0.10762427542607664
+      },
+      "band_emperor": {
+       "n": 67,
+       "win": 0.04477611940298507,
+       "fa": 0.15127177255149132
+      },
+      "band_kirara": {
+       "n": 4,
+       "win": 0.0,
+       "fa": 0.11053416265453359
+      },
+      "band_lmlee": {
+       "n": 4,
+       "win": 0.0,
+       "fa": 0.0
+      },
+      "band_doberm": {
+       "n": 1,
+       "win": 0.0,
+       "fa": 0.0
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 913000000,
+      "max": 913000479
+     }
+    },
+    "coop4h3:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.014583333333333334,
+     "faShare": 0.12466046086989832,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 11.322916666666666,
+       "lp": 0.05,
+       "win": 0.0125
+      },
+      "human-legacy": {
+       "seats": 1440,
+       "survival": 11.347222222222221,
+       "lp": 0.0798611111111111,
+       "win": 0.011805555555555555,
+       "humanMainTier": 1.1979166666666667
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 34.139583333333334,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.14112235510579577,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_cathy": {
+       "n": 357,
+       "win": 0.008403361344537815,
+       "fa": 0.12103428997357071
+      },
+      "band_pepe": {
+       "n": 114,
+       "win": 0.03508771929824561,
+       "fa": 0.1365848852715459
+      },
+      "band_emperor": {
+       "n": 8,
+       "win": 0.0,
+       "fa": 0.13213784700377754
+      },
+      "band_kirara": {
+       "n": 1,
+       "win": 0.0,
+       "fa": 0.0
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 451000000,
+      "max": 451000479
+     }
+    },
+    "coop2h1:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.010416666666666666,
+     "faShare": 0.07059582087712846,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 11.6625,
+       "lp": 0.05625,
+       "win": 0.00625
+      },
+      "human-legacy": {
+       "seats": 480,
+       "survival": 11.620833333333334,
+       "lp": 0.052083333333333336,
+       "win": 0.008333333333333333,
+       "humanMainTier": 1.2375
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 37.5875,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.1832797427652733,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_cathy": {
+       "n": 420,
+       "win": 0.011904761904761904,
+       "fa": 0.0738624772026264
+      },
+      "band_pepe": {
+       "n": 60,
+       "win": 0.0,
+       "fa": 0.04772922659864268
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 652000000,
+      "max": 652000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-20062336-coop4l240-b0.json",
+   "label": "SCR__20062336__20000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 148.6,
+   "decisions": 27334,
+   "configs": {
+    "coop4l:ABYSS": {
+     "matches": 240,
+     "teamWin": 0.0125,
+     "faShare": 0.12986250299442734,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 240,
+       "survival": 11.775,
+       "lp": 0.004166666666666667,
+       "win": 0.004166666666666667
+      },
+      "human-legacy": {
+       "seats": 358,
+       "survival": 11.46368715083799,
+       "lp": 0.0,
+       "win": 0.0,
+       "humanMainTier": 1.2430167597765363
+      },
+      "legacy": {
+       "seats": 362,
+       "survival": 11.464088397790055,
+       "lp": 0.08011049723756906,
+       "win": 0.011049723756906077
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 37.641666666666666,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.2402689313517339,
+       "violations": 0.0
+      },
+      "legacy": {
+       "buysPerMatch": 48.045197740113,
+       "yieldMainPerMatch": 1.807909604519774,
+       "yieldMergePerMatch": 1.3276836158192091,
+       "roundTripsPerPrep": 0.0491566265060241,
+       "violations": 555.0
+      }
+     },
+     "byBand": {
+      "band_cathy": {
+       "n": 191,
+       "win": 0.005235602094240838,
+       "fa": 0.12528490910068532
+      },
+      "band_pepe": {
+       "n": 46,
+       "win": 0.043478260869565216,
+       "fa": 0.15733876261807983
+      },
+      "band_emperor": {
+       "n": 3,
+       "win": 0.0,
+       "fa": 0.0
+      }
+     },
+     "seeds": {
+      "n": 240,
+      "min": 198000000,
+      "max": 198000239
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-20062336-solo480-b0.json",
+   "label": "SCR__20062336__20000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 97.3,
+   "decisions": 66304,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.0,
+     "faShare": 0.1374174502557142,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 13.370833333333334,
+       "lp": 0.0,
+       "win": 0.0
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.635416666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.2472732938610159,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 480,
+       "win": 0.0,
+       "fa": 0.13741745025571409
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-20062336-solo480-b3.json",
+   "label": "SCR__20062336__20000000.pt greedy rehearsal 0 boss 3",
+   "rehearsal": 0,
+   "bossRehearsal": 3,
+   "seconds": 123.8,
+   "decisions": 66304,
+   "configs": {
+    "solo:ABYSS": {
+     "matches": 480,
+     "teamWin": 0.0,
+     "faShare": 0.14556141086123683,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 13.370833333333334,
+       "lp": 0.0,
+       "win": 0.0
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.635416666666664,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.2472732938610159,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 480,
+       "win": 0.0,
+       "fa": 0.14556141086123678
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 9000000,
+      "max": 9000479
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-20062336-soloHARD480-b0.json",
+   "label": "SCR__20062336__20000000.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 62.2,
+   "decisions": 53921,
+   "configs": {
+    "solo:HARD": {
+     "matches": 480,
+     "teamWin": 0.625,
+     "faShare": 0.8828602280464322,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 480,
+       "survival": 14.310416666666667,
+       "lp": 6.085416666666666,
+       "win": 0.625
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 31.41875,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.019799097394089388,
+       "violations": 0.0
+      }
+     },
+     "byBand": {
+      "band_pepe": {
+       "n": 480,
+       "win": 0.625,
+       "fa": 0.8828602280464319
+      }
+     },
+     "seeds": {
+      "n": 480,
+      "min": 8000000,
+      "max": 8000479
+     }
+    }
+   }
+  }
+ ]
+}

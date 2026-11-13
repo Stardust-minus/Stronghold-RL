@@ -1,0 +1,176 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "S-20M.pt",
+   "params": 1507627,
+   "thresholds": {},
+   "args": {
+    "init": "S-20M.pt",
+    "out": "SO1",
+    "procs": 25,
+    "envs": 64,
+    "rollout": 32768,
+    "epochs": 3,
+    "minibatch": 4096,
+    "lr": 0.0001,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 200000000.0,
+    "hours": 24.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 10000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.3,
+    "node": "node",
+    "eval_matches": 96,
+    "eval_chunks": 4,
+    "eval_configs": "solo:ABYSS,coop4l:ABYSS,coop2l:ABYSS,coop4ai:ABYSS,solo:HARD,coop4l:HARD,coop4:ABYSS",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{\"round\":0.05,\"fa\":1.5}",
+    "vf_warmup": 20,
+    "learner_cpus": "48,49",
+    "env_cpus": "50,51,52,53,54,55,56,57,58,59,60,61,62,63,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175",
+    "check": true,
+    "eval_baselines": "init6=init6f-6014976-r0b3-96.json,ppo2=ppo2-15M-c4-r0b3-96.json,m3_10M=eval-10023168.json",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "ppo2-15M-v3-ref.pt",
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "solo:ABYSS,coop4l:ABYSS,coop2l:ABYSS",
+    "eval2_boss_rehearsal": 0,
+    "mix": "solo1",
+    "reward_by": "{}",
+    "freeze_band": true,
+    "lr_warmup": 20,
+    "start_steps": 20029824.0,
+    "seed_offset": 16000000,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 0,
+    "mem_frac": 0.12,
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.3,
+    "snap_collect": 0.25,
+    "band_policy": 0.7,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 3,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3
+   },
+   "learner_cpus": 2,
+   "env_cpus": 30,
+   "unit_cpus": 32,
+   "stages": [
+    "mixsolo1"
+   ],
+   "t": 1794527363.6
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.302,
+     "survival": 14.26,
+     "fa": 0.773,
+     "rt": 0.167
+    },
+    "coop4l:ABYSS": {
+     "win": 0.115,
+     "survival": 13.46,
+     "fa": 0.421,
+     "rt": 0.08
+    },
+    "coop2l:ABYSS": {
+     "win": 0.146,
+     "survival": 13.53,
+     "fa": 0.446,
+     "rt": 0.131
+    }
+   },
+   "t": 1794539022.2,
+   "file": "eval-30005184-b0.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.344,
+     "survival": 14.29,
+     "fa": 0.796,
+     "rt": 0.166
+    },
+    "coop4l:ABYSS": {
+     "win": 0.135,
+     "survival": 13.46,
+     "fa": 0.443,
+     "rt": 0.08
+    },
+    "coop2l:ABYSS": {
+     "win": 0.146,
+     "survival": 13.53,
+     "fa": 0.458,
+     "rt": 0.131
+    },
+    "coop4ai:ABYSS": {
+     "win": 0.656,
+     "survival": 14.35,
+     "fa": 0.87,
+     "rt": 0.084
+    },
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.44,
+     "fa": 0.978,
+     "rt": 0.047
+    },
+    "coop4l:HARD": {
+     "win": 0.844,
+     "survival": 14.08,
+     "fa": 0.964,
+     "rt": 0.017
+    },
+    "coop4:ABYSS": {
+     "win": 0.25,
+     "survival": 13.91,
+     "fa": 0.539,
+     "rt": 0.073
+    }
+   },
+   "t": 1794539361.5,
+   "file": "eval-30005184.json"
+  }
+ ],
+ "end": []
+}

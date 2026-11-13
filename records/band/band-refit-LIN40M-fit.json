@@ -1,0 +1,185 @@
+{
+ "what": "band-head refit (bandfit2) on LIN 40M: total-variation distance of the band head to the table target, before / after; non-band logits unchanged",
+ "heads": {
+  "arm head (LIN 40M)": {
+   "fit": {
+    "n": 3092,
+    "ce_before": 3.641,
+    "ce_after": 2.926,
+    "non_band_logit_change": 0.0
+   },
+   "by_config": [
+    {
+     "config": "coop2h1:ABYSS",
+     "rows": 239,
+     "tv_old": 0.62,
+     "tv_new": 0.143,
+     "new_top5": {
+      "sarkazb": 0.39,
+      "amedic": 0.12,
+      "ioleta": 0.1,
+      "amiya": 0.1,
+      "ermengard": 0.05
+     },
+     "target_top5": {
+      "sarkazb": 0.47,
+      "amiya": 0.09,
+      "ioleta": 0.09,
+      "ermengard": 0.06,
+      "amedic": 0.06
+     }
+    },
+    {
+     "config": "coop4h:ABYSS",
+     "rows": 1314,
+     "tv_old": 0.654,
+     "tv_new": 0.074,
+     "new_top5": {
+      "makiri": 0.09,
+      "paganini": 0.08,
+      "sarkazb": 0.07,
+      "amedic": 0.06,
+      "cannot": 0.06
+     },
+     "target_top5": {
+      "makiri": 0.09,
+      "paganini": 0.08,
+      "sarkazb": 0.07,
+      "cannot": 0.06,
+      "doberm": 0.05
+     }
+    },
+    {
+     "config": "solo:ABYSS",
+     "rows": 200,
+     "tv_old": 0.227,
+     "tv_new": 0.016,
+     "new_top5": {
+      "ioleta": 0.63,
+      "amiya": 0.1,
+      "bldsk": 0.06,
+      "doberm": 0.05,
+      "amedic": 0.02
+     },
+     "target_top5": {
+      "ioleta": 0.63,
+      "amiya": 0.1,
+      "bldsk": 0.06,
+      "doberm": 0.05,
+      "amedic": 0.02
+     }
+    },
+    {
+     "config": "None",
+     "rows": 1339,
+     "tv_old": 0.0,
+     "tv_new": 0.101,
+     "new_top5": {
+      "amedic": 0.14,
+      "ioleta": 0.13,
+      "amiya": 0.07,
+      "cannot": 0.06,
+      "narant": 0.06
+     },
+     "target_top5": {
+      "amedic": 0.18,
+      "ioleta": 0.15,
+      "amiya": 0.08,
+      "narant": 0.06,
+      "cannot": 0.06
+     }
+    }
+   ]
+  },
+  "KL-ref head": {
+   "fit": {
+    "n": 3092,
+    "ce_before": 3.726,
+    "ce_after": 2.928,
+    "non_band_logit_change": 0.0
+   },
+   "by_config": [
+    {
+     "config": "coop2h1:ABYSS",
+     "rows": 239,
+     "tv_old": 0.638,
+     "tv_new": 0.169,
+     "new_top5": {
+      "sarkazb": 0.36,
+      "amedic": 0.13,
+      "ioleta": 0.11,
+      "amiya": 0.1,
+      "ermengard": 0.04
+     },
+     "target_top5": {
+      "sarkazb": 0.47,
+      "amiya": 0.09,
+      "ioleta": 0.09,
+      "ermengard": 0.06,
+      "amedic": 0.06
+     }
+    },
+    {
+     "config": "coop4h:ABYSS",
+     "rows": 1314,
+     "tv_old": 0.678,
+     "tv_new": 0.071,
+     "new_top5": {
+      "makiri": 0.08,
+      "paganini": 0.08,
+      "sarkazb": 0.07,
+      "amedic": 0.06,
+      "cannot": 0.06
+     },
+     "target_top5": {
+      "makiri": 0.09,
+      "paganini": 0.08,
+      "sarkazb": 0.07,
+      "cannot": 0.06,
+      "doberm": 0.05
+     }
+    },
+    {
+     "config": "solo:ABYSS",
+     "rows": 200,
+     "tv_old": 0.189,
+     "tv_new": 0.028,
+     "new_top5": {
+      "ioleta": 0.64,
+      "amiya": 0.1,
+      "bldsk": 0.06,
+      "doberm": 0.04,
+      "amedic": 0.01
+     },
+     "target_top5": {
+      "ioleta": 0.63,
+      "amiya": 0.1,
+      "bldsk": 0.06,
+      "doberm": 0.05,
+      "amedic": 0.02
+     }
+    },
+    {
+     "config": "None",
+     "rows": 1339,
+     "tv_old": 0.144,
+     "tv_new": 0.12,
+     "new_top5": {
+      "ioleta": 0.14,
+      "amedic": 0.13,
+      "amiya": 0.07,
+      "narant": 0.06,
+      "cannot": 0.06
+     },
+     "target_top5": {
+      "amedic": 0.18,
+      "ioleta": 0.15,
+      "amiya": 0.08,
+      "narant": 0.06,
+      "cannot": 0.06
+     }
+    }
+   ]
+  }
+ }
+}

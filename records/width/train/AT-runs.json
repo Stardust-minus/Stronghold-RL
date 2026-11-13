@@ -1,0 +1,153 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "AT.pt",
+   "params": 1848907,
+   "thresholds": {},
+   "args": {
+    "init": "AT.pt",
+    "out": "AT",
+    "procs": 19,
+    "envs": 64,
+    "rollout": 65536,
+    "epochs": 3,
+    "minibatch": 8192,
+    "lr": 0.0001,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 55027072.0,
+    "hours": 40.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 1000000000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.0,
+    "node": "node",
+    "eval_matches": 24,
+    "eval_chunks": 2,
+    "eval_configs": "solo:NORMAL,solo:HARD,solo:ABYSS,coop4:NORMAL,coop4:HARD,coop4:ABYSS",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{\"round\":0.05,\"fa\":1.5}",
+    "vf_warmup": 10,
+    "learner_cpus": "42-44",
+    "env_cpus": "45-63",
+    "check": true,
+    "eval_baselines": "",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "ppo2-15M-v3-ref.pt",
+    "strict_preview": false,
+    "visible_only": false,
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "",
+    "eval2_boss_rehearsal": 0,
+    "mix": "mp1",
+    "reward_by": "{}",
+    "freeze_band": true,
+    "lr_warmup": 20,
+    "start_steps": 40027072.0,
+    "seed_offset": 20000000,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 4096,
+    "mem_frac": 0.35,
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.3,
+    "snap_collect": 0.25,
+    "band_policy": 0.7,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 0,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3
+   },
+   "learner_cpus": 3,
+   "env_cpus": 19,
+   "unit_cpus": 22,
+   "stages": [
+    "mixmp1"
+   ],
+   "t": 1794546486.9
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:NORMAL": {
+     "win": 0.917,
+     "survival": 14.04,
+     "fa": 0.953,
+     "rt": 0.0
+    },
+    "solo:HARD": {
+     "win": 0.875,
+     "survival": 14.29,
+     "fa": 0.984,
+     "rt": 0.029
+    },
+    "solo:ABYSS": {
+     "win": 0.333,
+     "survival": 14.12,
+     "fa": 0.747,
+     "rt": 0.103
+    },
+    "coop4:NORMAL": {
+     "win": 1.0,
+     "survival": 14.0,
+     "fa": 1.0,
+     "rt": 0.0
+    },
+    "coop4:HARD": {
+     "win": 1.0,
+     "survival": 14.48,
+     "fa": 1.0,
+     "rt": 0.01
+    },
+    "coop4:ABYSS": {
+     "win": 0.208,
+     "survival": 13.94,
+     "fa": 0.536,
+     "rt": 0.054
+    }
+   },
+   "t": 1794557663.4,
+   "file": "eval-55027072.json"
+  }
+ ],
+ "end": [
+  {
+   "event": "end",
+   "steps": 55027072,
+   "hours": 3.085,
+   "stage": "mixmp1",
+   "t": 1794557592.3
+  }
+ ]
+}

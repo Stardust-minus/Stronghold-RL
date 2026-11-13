@@ -1,0 +1,207 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "bc-fresh.pt",
+   "params": 1507627,
+   "thresholds": {},
+   "args": {
+    "init": "bc-fresh.pt",
+    "out": "LR3",
+    "procs": 19,
+    "envs": 64,
+    "rollout": 65536,
+    "epochs": 3,
+    "minibatch": 8192,
+    "lr": 0.0003,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 5000000.0,
+    "hours": 8.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 1000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.0,
+    "node": "node",
+    "eval_matches": 96,
+    "eval_chunks": 4,
+    "eval_configs": "solo:HARD",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{}",
+    "vf_warmup": 5,
+    "learner_cpus": "42-43",
+    "env_cpus": "44-62",
+    "check": true,
+    "eval_baselines": "",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "bc-fresh.pt",
+    "strict_preview": false,
+    "picker_head": null,
+    "picker_trunk": null,
+    "picker_k": 8,
+    "visible_only": false,
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "",
+    "eval2_boss_rehearsal": 0,
+    "mix": "hard1",
+    "reward_by": "{}",
+    "freeze_band": false,
+    "lr_warmup": 20,
+    "start_steps": 0.0,
+    "seed_offset": 31000000,
+    "bc_kl_from": null,
+    "lr_final": null,
+    "lr_anneal_start": null,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 0,
+    "mem_frac": 0.3,
+    "ent_final": null,
+    "log_diag": true,
+    "eval_at": "0",
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.0,
+    "snap_collect": 0.25,
+    "band_policy": 0.0,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 0,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3
+   },
+   "learner_cpus": 2,
+   "env_cpus": 19,
+   "unit_cpus": 21,
+   "stages": [
+    "mixhard1"
+   ],
+   "t": 1794559310.9
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.177,
+     "survival": 13.95,
+     "fa": 0.521,
+     "rt": 0.06
+    }
+   },
+   "t": 1794559392.4,
+   "file": "eval-0.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.365,
+     "survival": 14.09,
+     "fa": 0.735,
+     "rt": 0.096
+    }
+   },
+   "t": 1794559912.9,
+   "file": "eval-1054976.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.646,
+     "survival": 14.26,
+     "fa": 0.886,
+     "rt": 0.061
+    }
+   },
+   "t": 1794560348.1,
+   "file": "eval-2038208.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.677,
+     "survival": 14.3,
+     "fa": 0.901,
+     "rt": 0.034
+    }
+   },
+   "t": 1794560761.2,
+   "file": "eval-3021632.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.76,
+     "survival": 14.39,
+     "fa": 0.942,
+     "rt": 0.019
+    }
+   },
+   "t": 1794561159.4,
+   "file": "eval-4004736.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.74,
+     "survival": 14.44,
+     "fa": 0.933,
+     "rt": 0.033
+    }
+   },
+   "t": 1794561525.1,
+   "file": "eval-5000000.json"
+  }
+ ],
+ "end": [
+  {
+   "event": "end",
+   "steps": 5000000,
+   "hours": 0.608,
+   "stage": "mixhard1",
+   "t": 1794561499.0
+  }
+ ]
+}

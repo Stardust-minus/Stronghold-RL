@@ -1,0 +1,833 @@
+{
+ "group": "scratch batch 1 arm B1: in-run evals (BC init, 5M PPO)",
+ "evals": [
+  {
+   "file": "eval-0.json",
+   "label": "model-0.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 46.1,
+   "decisions": 9967,
+   "configs": {
+    "solo:HARD": {
+     "matches": 96,
+     "teamWin": 0.17708333333333334,
+     "faShare": 0.5209343575211741,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 96,
+       "survival": 13.947916666666666,
+       "lp": 3.3333333333333335,
+       "win": 0.17708333333333334
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 24.989583333333332,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.060492905153099324,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 96,
+      "win": 0.17708333333333334,
+      "seats": 96,
+      "natMain": 0.375,
+      "natMainT2": 0.010416666666666666,
+      "anyNatT2": 0.010416666666666666,
+      "mainTier": 1.4479166666666667,
+      "mainLayers": 64.625,
+      "secLayers": 69.41666666666667,
+      "sumLayers": 198.61458333333334,
+      "elites": 3.7291666666666665,
+      "winNatT2": 0.0,
+      "winOther": 0.17894736842105263,
+      "topMain": [
+       [
+        "精准",
+        0.29
+       ],
+       [
+        "叙拉古",
+        0.19
+       ],
+       [
+        "迅捷",
+        0.14
+       ],
+       [
+        "助力",
+        0.1
+       ]
+      ],
+      "topSec": [
+       [
+        "迅捷",
+        0.47
+       ],
+       [
+        "精准",
+        0.12
+       ],
+       [
+        "奥术",
+        0.08
+       ]
+      ],
+      "r9": {
+       "natMain": 0.23958333333333334,
+       "sumLayers": 65.125,
+       "elites": 2.3333333333333335
+      },
+      "r12": {
+       "natMain": 0.375,
+       "sumLayers": 136.78125,
+       "elites": 3.4270833333333335
+      }
+     },
+     "byBand": {
+      "band_sarkazb": {
+       "n": 21,
+       "win": 0.19047619047619047,
+       "fa": 0.5878210402515094
+      },
+      "band_orchid": {
+       "n": 6,
+       "win": 0.0,
+       "fa": 0.1962129630035836
+      },
+      "band_duyaoy": {
+       "n": 5,
+       "win": 0.0,
+       "fa": 0.310377258278505
+      },
+      "band_malkie": {
+       "n": 4,
+       "win": 0.5,
+       "fa": 0.7641670851131963
+      },
+      "band_quintus": {
+       "n": 4,
+       "win": 0.0,
+       "fa": 0.42867203783278074
+      },
+      "band_qalaisa": {
+       "n": 3,
+       "win": 0.3333333333333333,
+       "fa": 0.745505158535048
+      },
+      "band_humus": {
+       "n": 3,
+       "win": 0.3333333333333333,
+       "fa": 0.6827020995339489
+      },
+      "band_kirara": {
+       "n": 3,
+       "win": 0.0,
+       "fa": 0.2510480714748509
+      }
+     },
+     "seeds": {
+      "n": 96,
+      "min": 8000000,
+      "max": 8000095
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-1054208.json",
+   "label": "model-1054208.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 44.9,
+   "decisions": 10051,
+   "configs": {
+    "solo:HARD": {
+     "matches": 96,
+     "teamWin": 0.3333333333333333,
+     "faShare": 0.6693073487222492,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 96,
+       "survival": 14.072916666666666,
+       "lp": 4.8125,
+       "win": 0.3333333333333333
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 30.239583333333332,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.10066617320503331,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 96,
+      "win": 0.3333333333333333,
+      "seats": 96,
+      "natMain": 0.3541666666666667,
+      "natMainT2": 0.010416666666666666,
+      "anyNatT2": 0.010416666666666666,
+      "mainTier": 1.5416666666666667,
+      "mainLayers": 82.83333333333333,
+      "secLayers": 87.26041666666667,
+      "sumLayers": 263.8125,
+      "elites": 4.291666666666667,
+      "winNatT2": 0.0,
+      "winOther": 0.3368421052631579,
+      "topMain": [
+       [
+        "精准",
+        0.42
+       ],
+       [
+        "谢拉格",
+        0.15
+       ],
+       [
+        "叙拉古",
+        0.11
+       ],
+       [
+        "奥术",
+        0.08
+       ]
+      ],
+      "topSec": [
+       [
+        "迅捷",
+        0.36
+       ],
+       [
+        "精准",
+        0.21
+       ],
+       [
+        "奥术",
+        0.11
+       ]
+      ],
+      "r9": {
+       "natMain": 0.2708333333333333,
+       "sumLayers": 83.34375,
+       "elites": 2.5833333333333335
+      },
+      "r12": {
+       "natMain": 0.3333333333333333,
+       "sumLayers": 180.07291666666666,
+       "elites": 3.8125
+      }
+     },
+     "byBand": {
+      "band_sarkazb": {
+       "n": 21,
+       "win": 0.42857142857142855,
+       "fa": 0.7430663064949962
+      },
+      "band_orchid": {
+       "n": 6,
+       "win": 0.5,
+       "fa": 0.7185373592548161
+      },
+      "band_duyaoy": {
+       "n": 5,
+       "win": 0.0,
+       "fa": 0.44052267712275495
+      },
+      "band_malkie": {
+       "n": 4,
+       "win": 0.25,
+       "fa": 0.7593021813079055
+      },
+      "band_quintus": {
+       "n": 4,
+       "win": 0.25,
+       "fa": 0.6586143516827776
+      },
+      "band_humus": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.7309063342644974
+      },
+      "band_qalaisa": {
+       "n": 3,
+       "win": 0.3333333333333333,
+       "fa": 0.6412920503953123
+      },
+      "band_kirara": {
+       "n": 3,
+       "win": 0.0,
+       "fa": 0.26071359169022007
+      }
+     },
+     "seeds": {
+      "n": 96,
+      "min": 8000000,
+      "max": 8000095
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-2038144.json",
+   "label": "model-2038144.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 42.6,
+   "decisions": 10594,
+   "configs": {
+    "solo:HARD": {
+     "matches": 96,
+     "teamWin": 0.5416666666666666,
+     "faShare": 0.8181912559160311,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 96,
+       "survival": 14.1875,
+       "lp": 8.552083333333334,
+       "win": 0.5416666666666666
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 33.833333333333336,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.0565345080763583,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 96,
+      "win": 0.5416666666666666,
+      "seats": 96,
+      "natMain": 0.3125,
+      "natMainT2": 0.010416666666666666,
+      "anyNatT2": 0.010416666666666666,
+      "mainTier": 1.6666666666666667,
+      "mainLayers": 81.97916666666667,
+      "secLayers": 91.79166666666667,
+      "sumLayers": 285.5104166666667,
+      "elites": 5.020833333333333,
+      "winNatT2": 0.0,
+      "winOther": 0.5473684210526316,
+      "topMain": [
+       [
+        "精准",
+        0.58
+       ],
+       [
+        "谢拉格",
+        0.18
+       ],
+       [
+        "叙拉古",
+        0.06
+       ],
+       [
+        "卡西米尔",
+        0.06
+       ]
+      ],
+      "topSec": [
+       [
+        "精准",
+        0.21
+       ],
+       [
+        "迅捷",
+        0.18
+       ],
+       [
+        "谢拉格",
+        0.15
+       ]
+      ],
+      "r9": {
+       "natMain": 0.23958333333333334,
+       "sumLayers": 87.41666666666667,
+       "elites": 3.03125
+      },
+      "r12": {
+       "natMain": 0.3333333333333333,
+       "sumLayers": 193.47916666666666,
+       "elites": 4.302083333333333
+      }
+     },
+     "byBand": {
+      "band_sarkazb": {
+       "n": 21,
+       "win": 0.5714285714285714,
+       "fa": 0.8209595423841402
+      },
+      "band_orchid": {
+       "n": 6,
+       "win": 0.3333333333333333,
+       "fa": 0.7787603459771605
+      },
+      "band_duyaoy": {
+       "n": 5,
+       "win": 0.2,
+       "fa": 0.7105214867836434
+      },
+      "band_malkie": {
+       "n": 4,
+       "win": 0.75,
+       "fa": 0.9267111972700335
+      },
+      "band_quintus": {
+       "n": 4,
+       "win": 0.0,
+       "fa": 0.5495144523230127
+      },
+      "band_qalaisa": {
+       "n": 3,
+       "win": 0.3333333333333333,
+       "fa": 0.6481099305007385
+      },
+      "band_kirara": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.9340978854489093
+      },
+      "band_humus": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.6764913530240001
+      }
+     },
+     "seeds": {
+      "n": 96,
+      "min": 8000000,
+      "max": 8000095
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-3021440.json",
+   "label": "model-3021440.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 41.2,
+   "decisions": 10834,
+   "configs": {
+    "solo:HARD": {
+     "matches": 96,
+     "teamWin": 0.625,
+     "faShare": 0.8797729706813708,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 96,
+       "survival": 14.28125,
+       "lp": 10.989583333333334,
+       "win": 0.625
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.65625,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.05105762217359591,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 96,
+      "win": 0.625,
+      "seats": 96,
+      "natMain": 0.2604166666666667,
+      "natMainT2": 0.0,
+      "anyNatT2": 0.0,
+      "mainTier": 1.71875,
+      "mainLayers": 83.82291666666667,
+      "secLayers": 105.33333333333333,
+      "sumLayers": 318.9375,
+      "elites": 5.385416666666667,
+      "winNatT2": null,
+      "winOther": 0.625,
+      "topMain": [
+       [
+        "精准",
+        0.58
+       ],
+       [
+        "谢拉格",
+        0.17
+       ],
+       [
+        "卡西米尔",
+        0.08
+       ],
+       [
+        "助力",
+        0.07
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.38
+       ],
+       [
+        "精准",
+        0.18
+       ],
+       [
+        "迅捷",
+        0.12
+       ]
+      ],
+      "r9": {
+       "natMain": 0.20833333333333334,
+       "sumLayers": 88.52083333333333,
+       "elites": 3.1770833333333335
+      },
+      "r12": {
+       "natMain": 0.22916666666666666,
+       "sumLayers": 207.57291666666666,
+       "elites": 4.645833333333333
+      }
+     },
+     "byBand": {
+      "band_sarkazb": {
+       "n": 21,
+       "win": 0.6190476190476191,
+       "fa": 0.8904470014949084
+      },
+      "band_orchid": {
+       "n": 6,
+       "win": 0.16666666666666666,
+       "fa": 0.6908061508199704
+      },
+      "band_duyaoy": {
+       "n": 5,
+       "win": 0.2,
+       "fa": 0.7482697597545085
+      },
+      "band_malkie": {
+       "n": 4,
+       "win": 0.75,
+       "fa": 0.9407813378989041
+      },
+      "band_quintus": {
+       "n": 4,
+       "win": 0.25,
+       "fa": 0.6516857521298209
+      },
+      "band_qalaisa": {
+       "n": 3,
+       "win": 1.0,
+       "fa": 1.0
+      },
+      "band_humus": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.8939011530219667
+      },
+      "band_kirara": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.8169307592380317
+      }
+     },
+     "seeds": {
+      "n": 96,
+      "min": 8000000,
+      "max": 8000095
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-4004480.json",
+   "label": "model-4004480.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 39.6,
+   "decisions": 11323,
+   "configs": {
+    "solo:HARD": {
+     "matches": 96,
+     "teamWin": 0.6875,
+     "faShare": 0.898906914322137,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 96,
+       "survival": 14.354166666666666,
+       "lp": 10.270833333333334,
+       "win": 0.6875
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 37.302083333333336,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.055152394775036286,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 96,
+      "win": 0.6875,
+      "seats": 96,
+      "natMain": 0.3229166666666667,
+      "natMainT2": 0.020833333333333332,
+      "anyNatT2": 0.020833333333333332,
+      "mainTier": 1.625,
+      "mainLayers": 93.59375,
+      "secLayers": 107.5625,
+      "sumLayers": 325.1875,
+      "elites": 5.979166666666667,
+      "winNatT2": 1.0,
+      "winOther": 0.6808510638297872,
+      "topMain": [
+       [
+        "精准",
+        0.52
+       ],
+       [
+        "谢拉格",
+        0.18
+       ],
+       [
+        "卡西米尔",
+        0.08
+       ],
+       [
+        "突袭",
+        0.05
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.47
+       ],
+       [
+        "精准",
+        0.17
+       ],
+       [
+        "迅捷",
+        0.12
+       ]
+      ],
+      "r9": {
+       "natMain": 0.1875,
+       "sumLayers": 82.0,
+       "elites": 3.34375
+      },
+      "r12": {
+       "natMain": 0.2604166666666667,
+       "sumLayers": 202.23958333333334,
+       "elites": 5.208333333333333
+      }
+     },
+     "byBand": {
+      "band_sarkazb": {
+       "n": 21,
+       "win": 0.6190476190476191,
+       "fa": 0.8862675486106555
+      },
+      "band_orchid": {
+       "n": 6,
+       "win": 0.3333333333333333,
+       "fa": 0.9005038215080944
+      },
+      "band_duyaoy": {
+       "n": 5,
+       "win": 0.2,
+       "fa": 0.6804662853757805
+      },
+      "band_malkie": {
+       "n": 4,
+       "win": 0.75,
+       "fa": 0.9380009316300796
+      },
+      "band_quintus": {
+       "n": 4,
+       "win": 0.0,
+       "fa": 0.735700288600927
+      },
+      "band_humus": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.846647897543734
+      },
+      "band_qalaisa": {
+       "n": 3,
+       "win": 1.0,
+       "fa": 1.0
+      },
+      "band_kirara": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.8940801235333344
+      }
+     },
+     "seeds": {
+      "n": 96,
+      "min": 8000000,
+      "max": 8000095
+     }
+    }
+   }
+  },
+  {
+   "file": "eval-5000000.json",
+   "label": "model-final.pt greedy rehearsal 0 boss 0",
+   "rehearsal": 0,
+   "bossRehearsal": 0,
+   "seconds": 24.1,
+   "decisions": 11461,
+   "configs": {
+    "solo:HARD": {
+     "matches": 96,
+     "teamWin": 0.65625,
+     "faShare": 0.8942135899251035,
+     "errors": 0,
+     "rejected": 0,
+     "roles": {
+      "rl": {
+       "seats": 96,
+       "survival": 14.354166666666666,
+       "lp": 10.34375,
+       "win": 0.65625
+      }
+     },
+     "ai": {
+      "rl": {
+       "buysPerMatch": 35.739583333333336,
+       "yieldMainPerMatch": 0.0,
+       "yieldMergePerMatch": 0.0,
+       "roundTripsPerPrep": 0.03555878084179971,
+       "violations": 0.0
+      }
+     },
+     "stack": {
+      "matches": 96,
+      "win": 0.65625,
+      "seats": 96,
+      "natMain": 0.3333333333333333,
+      "natMainT2": 0.010416666666666666,
+      "anyNatT2": 0.010416666666666666,
+      "mainTier": 1.59375,
+      "mainLayers": 99.8125,
+      "secLayers": 118.27083333333333,
+      "sumLayers": 342.5729166666667,
+      "elites": 5.958333333333333,
+      "winNatT2": 0.0,
+      "winOther": 0.6631578947368421,
+      "topMain": [
+       [
+        "精准",
+        0.53
+       ],
+       [
+        "谢拉格",
+        0.21
+       ],
+       [
+        "卡西米尔",
+        0.11
+       ],
+       [
+        "突袭",
+        0.04
+       ]
+      ],
+      "topSec": [
+       [
+        "突袭",
+        0.57
+       ],
+       [
+        "精准",
+        0.14
+       ],
+       [
+        "迅捷",
+        0.08
+       ]
+      ],
+      "r9": {
+       "natMain": 0.20833333333333334,
+       "sumLayers": 88.55208333333333,
+       "elites": 3.3645833333333335
+      },
+      "r12": {
+       "natMain": 0.3125,
+       "sumLayers": 214.375,
+       "elites": 4.947916666666667
+      }
+     },
+     "byBand": {
+      "band_sarkazb": {
+       "n": 21,
+       "win": 0.7142857142857143,
+       "fa": 0.897115031636087
+      },
+      "band_orchid": {
+       "n": 6,
+       "win": 0.3333333333333333,
+       "fa": 0.724381641254073
+      },
+      "band_duyaoy": {
+       "n": 5,
+       "win": 0.6,
+       "fa": 0.8893284357954355
+      },
+      "band_malkie": {
+       "n": 4,
+       "win": 1.0,
+       "fa": 1.0
+      },
+      "band_quintus": {
+       "n": 4,
+       "win": 0.75,
+       "fa": 0.9181239526037919
+      },
+      "band_qalaisa": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.9134846264954289
+      },
+      "band_humus": {
+       "n": 3,
+       "win": 0.6666666666666666,
+       "fa": 0.9003997189562538
+      },
+      "band_kirara": {
+       "n": 3,
+       "win": 1.0,
+       "fa": 1.0
+      }
+     },
+     "seeds": {
+      "n": 96,
+      "min": 8000000,
+      "max": 8000095
+     }
+    }
+   }
+  }
+ ]
+}
