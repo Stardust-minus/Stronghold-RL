@@ -761,19 +761,32 @@ either ≥ +0.02; at most two runs (one MLP and one v5 may each take a slot).
   0.91, natMainT2 0.81, Σ 296, elites 5.6 (60 M: 0.88 / 0.66 / 253 / 4.9).
 - FIN-MLP-s1, FIN-V5-s1 (lr 1e-4) and FIN-V5-s2: see `records/final/coopgate.csv`.
 
-### Held-out confirmation (`--seed 200000000`, setting b, 476 + 476 seeds; status 11-14 05:00 UTC)
+<!-- pick:BEGIN heldout -->
+### Held-out confirmation (`--seed 200000000`, setting b, 476 + 476 seeds)
 
-| candidate | solo | coop4h1 | mean | paired vs FIN-MLP-s2-70M (solo / coop) |
-|---|---|---|---|---|
-| FIN-MLP-s2-70M | 0.784 | 0.737 | 0.761 | |
-| FIN-V5-s2-60M | 0.723 | 0.639 | 0.681 | −0.061 ± 0.026 / −0.099 ± 0.025 |
-| CB10 (seed 0, 30 M + co-op stage) | 0.704 | 0.616 | 0.660 | −0.080 ± 0.025 / −0.122 ± 0.025 |
+The leading candidates on the milestone seeds went to the held-out set as the runs finished, 11 in all (CB10
+included). From 06:55 the rule was: the current pick stays unless a candidate beats it there, paired (paired mean Δ >
+0, both ≥ 0.50). Final table: [RESULTS.md](RESULTS.md) A1 and `records/final/heldout-paired.md`.
 
-FIN-V5-s2-60M read 0.754 / 0.662 on the milestone seeds and 0.723 / 0.639 held-out: the selection bias the held-out set
-is there to remove.
+- Selection bias again: FIN-V5X-s1-80M, 1st on the milestone seeds (0.805 / 0.712), read 0.756 / 0.685; FIN-V5-s2-60M
+  0.754 / 0.662 → 0.723 / 0.639. FIN-MLP-s2-70M went the other way: 10th (0.723 / 0.702) → 0.784 / 0.737.
+<!-- pick:END heldout -->
 
 ### Final pick
 
-<!-- FINAL: pick, extension outcomes, held-out of the top candidates; filled from records/final/ after the pick -->
-*Placeholder: the final pick, the extension and co-op stage outcomes and the held-out numbers of the top candidates go
-here once the pick is made. The tables are in `records/final/` (`ranking.csv`, `coopgate.csv`, `heldout.csv`).*
+<!-- pick:BEGIN pick -->
+- **Extensions:** FIN-MLPX-s2 stopped at 80 M (S1 −0.041; best milestone 70 M). FIN-V5X-s2 and FIN-V5X-s1 ran to 90 M
+  (V5X-s1: S1 +0.052 / +0.012 / −0.002 at 70 / 80 / 90 M). XC, the co-op stage on FIN-MLPX-s2 70 M, failed its gate
+  (setting b solo −0.052 ± 0.024).
+- **Co-op stage:** adopted on both MLP seeds. On v5 it failed (V5-s2) or barely moved co-op (V5-s1, setting b co-op
+  +0.011), so the extended v5 runs did not take it (`records/final/coopgate.csv`).
+- **By the win rule (09:00):** FIN-V5X-s1-90M. It beat FIN-MLP-s2-70M on held-out, paired (Δ mean +0.018 ± 0.017; solo
+  +0.004 ± 0.024, co-op +0.032 ± 0.023), led on the milestone seeds too, and pooled +0.031 ± 0.012.
+- **Released (the owner's choice): FIN-MLP-s2-70M**, held-out 0.784 / 0.737. It was chosen for its inference cost. The
+  v5 run FIN-V5X-s1-90M scored a little higher on the held-out seeds (0.788 / 0.769; Δ mean +0.018 ± 0.017, about one
+  standard error; +0.031 ± 0.012 pooled with the milestone seeds), but its policy costs 23 ms per decision in JS
+  against 1.8 ms for the MLP.
+- Stacking of FIN-MLP-s2-70M, held-out (solo / co-op): natMain 0.99 / 0.91, natMainT2 0.97 / 0.81, Σ layers 331 / 295,
+  elites 5.7 / 5.6; main bonds 拉特兰 0.63, 维多利亚 0.26, secondaries 灵巧 0.46, 坚守 0.22, 精准 0.20.
+- **Confirmation on a fresh seed set** (`--seed 300000000`, same protocol): running at the time of writing.
+<!-- pick:END pick -->

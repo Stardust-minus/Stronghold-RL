@@ -221,6 +221,153 @@
    },
    "t": 1794631152.5,
    "file": "eval-70039296.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.12,
+     "fa": 0.983,
+     "rt": 0.016
+    },
+    "solo:ABYSS": {
+     "win": 0.552,
+     "survival": 14.15,
+     "fa": 0.842,
+     "rt": 0.03
+    }
+   },
+   "t": 1794631905.5,
+   "file": "eval-72006976.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.906,
+     "survival": 14.12,
+     "fa": 0.982,
+     "rt": 0.011
+    },
+    "solo:ABYSS": {
+     "win": 0.594,
+     "survival": 13.97,
+     "fa": 0.83,
+     "rt": 0.02
+    }
+   },
+   "t": 1794632700.6,
+   "file": "eval-74037056.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.1,
+     "fa": 0.987,
+     "rt": 0.017
+    },
+    "solo:ABYSS": {
+     "win": 0.615,
+     "survival": 14.11,
+     "fa": 0.849,
+     "rt": 0.036
+    }
+   },
+   "t": 1794633475.3,
+   "file": "eval-76003840.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.969,
+     "survival": 14.14,
+     "fa": 0.992,
+     "rt": 0.017
+    },
+    "solo:ABYSS": {
+     "win": 0.667,
+     "survival": 14.11,
+     "fa": 0.864,
+     "rt": 0.03
+    }
+   },
+   "t": 1794634274.8,
+   "file": "eval-78036480.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.958,
+     "survival": 14.15,
+     "fa": 0.994,
+     "rt": 0.024
+    },
+    "solo:ABYSS": {
+     "win": 0.583,
+     "survival": 14.1,
+     "fa": 0.835,
+     "rt": 0.023
+    }
+   },
+   "t": 1794635050.5,
+   "file": "eval-80003392.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.958,
+     "survival": 14.11,
+     "fa": 0.996,
+     "rt": 0.025
+    },
+    "solo:ABYSS": {
+     "win": 0.594,
+     "survival": 14.15,
+     "fa": 0.843,
+     "rt": 0.027
+    }
+   },
+   "t": 1794635844.2,
+   "file": "eval-82036288.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.948,
+     "survival": 14.16,
+     "fa": 0.985,
+     "rt": 0.036
+    },
+    "solo:ABYSS": {
+     "win": 0.542,
+     "survival": 13.91,
+     "fa": 0.83,
+     "rt": 0.04
+    }
+   },
+   "t": 1794636610.6,
+   "file": "eval-84002624.json"
   }
  ],
  "other": [

@@ -307,8 +307,14 @@ bond. Until 11-13 the models played the elite-merge route instead (national main
 
 - **v5 at lr 1e-4, not 3e-4.** On the NH2s recipe v5 was −0.036 ± 0.018 vs the MLP at 3e-4 (KL to its BC 0.46–0.60 at
   2 M vs 0.19: it drifts away from the BC fast) and +0.035 ± 0.017 at 1e-4 over three seeds. The MLP is fine at 3e-4.
-- **No edge on the final recipe at 5 M** (−0.014 ± 0.019), and the final runs are close: v5 led co-op at 30 M with the
-  pickers, the MLP with the co-op stage leads held-out (EXPERIMENTS Phase 8).
+<!-- pick:BEGIN arch -->
+- **Final runs: v5 slightly ahead, at 13× the policy cost.** The best v5 checkpoint (FIN-V5X-s1-90M, extended to 90 M)
+  led the best MLP (FIN-MLP-s2-70M, with the co-op stage) on the held-out seeds by +0.018 ± 0.017 on the mean (+0.031
+  ± 0.012 pooled with the milestone seeds). In JS the v5 policy costs 23 ms per decision against 1.8 ms. The c9 picker
+  (about 772 ms per normal-round decision) dominates a match's model time with either policy: 10.6 s vs 11.9 s per
+  solo:ABYSS match. FIN-MLP-s2-70M is the released model. On the final recipe at 5 M v5 had shown no edge (−0.014 ±
+  0.019).
+<!-- pick:END arch -->
 - **Bigger was slower, not better.** v5 d192 × 3: −0.079 ± 0.023 at 5 M. 2× MLP width: +0.019 ± 0.015 after 15 M, not
   pursued.
 - **Memory.** A zero-initialised recurrent branch (LSTM / GRU) stayed unused (zeroing it changes the policy by KL 0.0005)
@@ -322,6 +328,11 @@ bond. Until 11-13 the models played the elite-merge route instead (national main
 - **The winner's curse.** A candidate picked as the best of many on one seed set reads high on that set. NMA 30 M was
   picked on the milestone seeds, and all four final runs trailed it by 0.05–0.09 on solo at 30 M: NMA 30 M was an
   above-average seed. FIN-V5-s2-60M read 0.754 / 0.662 on the milestone seeds and 0.723 / 0.639 held-out.
+- **On the final candidates** the milestone ranking barely predicted the held-out one. FIN-V5X-s1-80M, 1st of 19 on the
+  milestone seeds (0.805 / 0.712), read 0.756 / 0.685 held-out. FIN-MLP-s2-70M, 10th (0.723 / 0.702), read 0.784 /
+  0.737, 2nd of 11. Paired gaps between the top candidates were 1–2 standard errors on either set.
+- **The held-out set gets used up too.** Once 11 candidates had been compared on it, its maximum carries the same bias,
+  so the final model is confirmed on a third seed set.
 - **Protocol.** Picks use the milestone seed set (`--seed 7000000`). The top candidates are then re-run on a fresh set
   (`--seed 200000000`) that no eval base, record seed or training seed reaches, and the held-out number is reported.
 - **96 seeds still mislead** (§9): every decision in the final pipeline used 476 paired seeds per cell.

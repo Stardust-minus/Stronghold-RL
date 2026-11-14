@@ -11,32 +11,85 @@ for a rate, sd / √n of the per-seed differences for a paired Δ.
 
 ## Final result
 
-<!-- FINAL:BEGIN results table. Fill from records/final/heldout.csv and ranking.csv after the pick. -->
-*Placeholder: filled after the final pick.*
+<!-- pick:BEGIN results -->
+The released model is **FIN-MLP-s2-70M**: MLP (`rl/py/model.py`), 1.55 M parameters, 70 M steps; MLP BC (PB5) → NM to
+5 M → NMA (auto1) to 60 M → co-op stage (arm CB, seed offset 73,000,000) to 70 M. It was chosen for its inference
+cost. The v5 run FIN-V5X-s1-90M scored a little higher on the held-out seeds (0.788 / 0.769; Δ mean +0.018 ± 0.017,
+about one standard error; +0.031 ± 0.012 pooled with the milestone seeds), but its policy costs 23 ms per decision in
+JS against 1.8 ms for the MLP. The normal-round picker c9 dominates a match's model time with either policy (about 772
+ms per normal-round decision).
+
+*Provisional: the headline will be the confirmation on a fresh seed set (`--seed 300000000`, 476 seeds per config,
+same protocol). Until it is in, the held-out numbers stand in.*
 
 | | solo:ABYSS | coop4h1:ABYSS |
 |---|---|---|
-| final model: `<name>` (`<arch>`, `<steps>`), setting b, held-out (476 seeds each) | TBD ± TBD | TBD ± TBD |
-| same, milestone seed set | TBD | TBD |
-| picker lift b − a (milestone seeds, paired) | TBD ± TBD | TBD ± TBD |
-| natMain / natMainT2 | TBD / TBD | TBD / TBD |
-| main / secondary / Σ layers | TBD | TBD |
-| elites | TBD | TBD |
+| FIN-MLP-s2-70M, setting b, held-out (`--seed 200000000`, 476 each) | 0.784 ± 0.019 | 0.737 ± 0.020 |
+| same, milestone seeds (`--seed 7000000`; 10th of 19 on the b mean) | 0.723 ± 0.021 | 0.702 ± 0.021 |
+| same, milestone + held-out pooled (952 seeds each) | 0.753 | 0.720 |
+| setting a (no pickers), milestone seeds | 0.595 | 0.508 |
+| picker lift b − a (milestone seeds, paired) | +0.128 ± 0.022 | +0.193 ± 0.025 |
+| natMain / natMainT2 (held-out) | 0.99 / 0.97 | 0.91 / 0.81 |
+| main tier (held-out) | 1.98 | 1.88 |
+| main / secondary / Σ layers (held-out) | 197 / 82 / 331 | 178 / 74 / 295 |
+| elites (held-out) | 5.7 | 5.6 |
+| not shipped: FIN-V5X-s1-90M (v5, 90 M), setting b, held-out | 0.788 ± 0.019 | 0.769 ± 0.019 |
+| FIN-V5X-s1-90M − FIN-MLP-s2-70M, held-out, paired | +0.004 ± 0.024 | +0.032 ± 0.023 |
+| same, milestone + held-out pooled, paired | +0.033 ± 0.018 | +0.029 ± 0.017 |
 | reference: NMA 30 M (seed 0), setting b, milestone seeds | 0.679 | 0.540 |
 | reference: NAT 88 M + boss picker (elite route, not the target play) | 0.596 | 0.581 |
 | legacy fill (every model seat legacy; 11-13 protocol, b0, 480 seeds) | 0.010 | 0.071 |
-<!-- FINAL:END -->
 
-## A1. Held-out confirmation (`--seed 200000000`, setting b; status 11-14 05:00 UTC)
+- FIN-MLP-s2-70M on the held-out seeds plays the national route: main bonds 拉特兰 0.63, 维多利亚 0.26 (solo), secondaries 灵巧
+  0.46, 坚守 0.22, 精准 0.20. No drift toward the elite route. FIN-V5X-s1-90M: natMain 1.00 / 0.91, Σ layers 349 / 295,
+  elites 5.5 / 4.7.
+- Deploy cost, measured on the release check matches (8 + 8 per model, `parity.json` of each export; the pickers build
+  no battles, sims = 0):
 
-| candidate | solo:ABYSS | coop4h1:ABYSS | mean | paired vs FIN-MLP-s2-70M (solo / coop) |
-|---|---|---|---|---|
-| FIN-MLP-s2-70M | 0.784 ± 0.019 | 0.737 ± 0.020 | 0.761 | |
-| FIN-V5-s2-60M | 0.723 ± 0.021 | 0.639 ± 0.022 | 0.681 | −0.061 ± 0.026 / −0.099 ± 0.025 |
-| CB10 | 0.704 ± 0.021 | 0.616 ± 0.022 | 0.660 | −0.080 ± 0.025 / −0.122 ± 0.025 |
+| one pinned core, JS, release check matches | FIN-MLP-s2-70M (MLP) | FIN-V5X-s1-90M (v5) |
+|---|---|---|
+| policy, ms per decision | 1.9 | 21 |
+| c9 (normal rounds), ms per decision | 772 | 714 |
+| xboss-v3 (boss rounds), ms per decision | 191 | 191 |
+| model time per solo:ABYSS match, s (policy + c9 + xboss-v3) | 10.6 | 11.9 |
+| of which the policy, s | 0.2 | 2.3 |
+| model time per coop4h1:ABYSS match, s (three model seats) | 31.5 | 33.3 |
 
-The pick itself is made on the milestone seeds (A2); the held-out set removes the selection bias
-([FINDINGS.md](FINDINGS.md) §13). `records/final/heldout.csv` is the current table.
+The v5 export passed the same parity gate (`docs/RUNBOOK.md` §6) but is not released.
+<!-- pick:END results -->
+
+<!-- pick:BEGIN heldout -->
+## A1. Held-out confirmation (`--seed 200000000`, setting b, 476 seeds per cell)
+
+The leading candidates on the milestone seeds were re-run on a fresh seed set as the runs finished: 11 in all, CB10
+included. Paired Δ vs FIN-MLP-s2-70M, the pick at the time the round ran. The table with the held-out stacking and the
+pooled view: `records/final/heldout-paired.md` (`rl/final/hopair.py`).
+
+| candidate | solo:ABYSS | coop4h1:ABYSS | mean | Δ solo | Δ coop | Δ mean |
+|---|---|---|---|---|---|---|
+| FIN-V5X-s1-90M | 0.788 | 0.769 | 0.778 | +0.004 ± 0.024 | +0.032 ± 0.023 | +0.018 ± 0.017 |
+| **FIN-MLP-s2-70M** | 0.784 | 0.737 | 0.761 |  |  |  |
+| FIN-V5X-s2-80M | 0.773 | 0.712 | 0.743 | −0.011 ± 0.024 | −0.025 ± 0.025 | −0.018 ± 0.017 |
+| FIN-V5X-s2-90M | 0.765 | 0.714 | 0.739 | −0.019 ± 0.024 | −0.023 ± 0.025 | −0.021 ± 0.017 |
+| FIN-V5X-s1-70M | 0.769 | 0.708 | 0.738 | −0.015 ± 0.025 | −0.029 ± 0.026 | −0.022 ± 0.018 |
+| FIN-MLPX-s2-70M | 0.765 | 0.704 | 0.734 | −0.019 ± 0.026 | −0.034 ± 0.026 | −0.026 ± 0.018 |
+| FIN-MLP-s1-70M | 0.744 | 0.714 | 0.729 | −0.040 ± 0.024 | −0.023 ± 0.025 | −0.032 ± 0.017 |
+| FIN-V5-s1-70M | 0.725 | 0.718 | 0.722 | −0.059 ± 0.025 | −0.019 ± 0.023 | −0.039 ± 0.017 |
+| FIN-V5X-s1-80M | 0.756 | 0.685 | 0.721 | −0.027 ± 0.026 | −0.053 ± 0.026 | −0.040 ± 0.018 |
+| FIN-V5-s2-60M | 0.723 | 0.639 | 0.681 | −0.061 ± 0.026 | −0.099 ± 0.025 | −0.080 ± 0.018 |
+| CB10 | 0.704 | 0.616 | 0.660 | −0.080 ± 0.025 | −0.122 ± 0.025 | −0.101 ± 0.018 |
+
+- The held-out set removes the selection bias ([FINDINGS.md](FINDINGS.md) §13). FIN-V5X-s1-80M ranked 1st on the
+  milestone seeds (0.805 / 0.712) and read 0.756 / 0.685 here. FIN-MLP-s2-70M ranked 10th (0.723 / 0.702) and read
+  0.784 / 0.737.
+- FIN-V5X-s1-90M is the only candidate ahead of FIN-MLP-s2-70M on both seed sets: pooled (952 seeds per cell) +0.033 ±
+  0.018 solo, +0.029 ± 0.017 co-op, +0.031 ± 0.012 on the mean. Its held-out lead is about one standard error, and it
+  is the maximum of 11 held-out runs, so the pooled number is the conservative one.
+
+### A1b. Fresh-seed confirmation (`--seed 300000000`, setting b, 476 seeds per cell)
+
+*Running at the time of writing; the table goes here.*
+<!-- pick:END heldout -->
 
 ## A2. Milestones of the final runs (476 paired seeds, `--seed 7000000`)
 

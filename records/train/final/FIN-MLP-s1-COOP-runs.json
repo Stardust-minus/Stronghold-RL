@@ -200,8 +200,37 @@
    },
    "t": 1794631621.3,
    "file": "eval-68012800.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.583,
+     "survival": 14.15,
+     "fa": 0.846,
+     "rt": 0.012
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.625,
+     "survival": 13.24,
+     "fa": 0.753,
+     "rt": 0.035
+    }
+   },
+   "t": 1794632721.2,
+   "file": "eval-70000000.json"
   }
  ],
- "other": [],
+ "other": [
+  {
+   "event": "end",
+   "steps": 70000000,
+   "hours": 1.765,
+   "stage": "mixmp2",
+   "t": 1794632559.3
+  }
+ ],
  "every_kth_update": 1
 }

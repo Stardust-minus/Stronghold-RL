@@ -179,8 +179,58 @@
    },
    "t": 1794630853.3,
    "file": "eval-66006080.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.5,
+     "survival": 13.93,
+     "fa": 0.79,
+     "rt": 0.023
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.385,
+     "survival": 12.76,
+     "fa": 0.646,
+     "rt": 0.038
+    }
+   },
+   "t": 1794631975.7,
+   "file": "eval-68036608.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.594,
+     "survival": 14.0,
+     "fa": 0.806,
+     "rt": 0.029
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.406,
+     "survival": 12.81,
+     "fa": 0.619,
+     "rt": 0.032
+    }
+   },
+   "t": 1794632889.7,
+   "file": "eval-70000512.json"
   }
  ],
- "other": [],
+ "other": [
+  {
+   "event": "end",
+   "steps": 70000512,
+   "hours": 1.436,
+   "stage": "mixmp2",
+   "t": 1794632783.4
+  }
+ ],
  "every_kth_update": 1
 }

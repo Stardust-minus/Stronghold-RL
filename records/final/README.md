@@ -11,6 +11,7 @@ are published: the eval JSONs hold them.
 | `coopgate.csv` | the co-op stage (and extension) gate: the stage output vs its start, settings a and b |
 | `ranking.csv` | the pick rule: both setting-b wins ≥ 0.50, ranked by their mean; paired Δ vs rank 1 |
 | `heldout.csv` | the held-out confirmation (`--seed 200000000`), setting b |
+| `heldout-paired.md` | the same held-out runs with full stacking, paired Δ vs FIN-MLP-s2-70M and the pooled view (milestone + held-out seeds); `rl/final/hopair.py` |
 | `repro-gate.csv` | the eval trees reproduce the reference evals match by match |
 | `summary.md` | the milestone table as markdown |
 
@@ -86,7 +87,8 @@ base used by the project reaches these seeds.
 - **Selection bias (winner's curse).** The pick takes the best of many candidates on the milestone seeds. Its milestone
   number is biased upward. NMA 30 M, the reference, was itself picked on the same seeds. The held-out set measures the
   pick without that bias, and **the held-out number is the one to report**. Example: FIN-V5-s2-60M read 0.754 / 0.662 on
-  the milestone seeds and 0.723 / 0.639 held-out.
+  the milestone seeds and 0.723 / 0.639 held-out. Comparing 11 candidates on the held-out set used it up in turn, so
+  the released model's headline comes from a third set (`--seed 300000000`).
 - **In-run evals** (`docs/curves/final.csv`, 96 seeds, SE ≈ ±0.05) show trends only.
 - **Stacking is a trend, not a gate.** The pick is by win. The stacking columns are reported next to every win to check
   that the model plays the national main + stacked secondary route, not the elite-merge route (many elites, class main

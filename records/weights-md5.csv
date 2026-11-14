@@ -28,3 +28,22 @@ coop arm CB model-final.pt (= CB10),476ae0a3a45ec2e437a019c6f804c40f,co-op stage
 coop arm CM2 model-final.pt,836fb83866eb4afe66212a205a3d10c6,co-op stage on FIN-MLP-s1 30M (+10M),co-op stage arms
 coop arm CV5 model-final.pt,8c696c2ecbd631870f49e6e290a16bdf,co-op stage on FIN-V5-s1 30M (+10M; lr 1e-4),co-op stage arms
 coop arm CV5b model-final.pt,99e20e3c7264caa469a0482702f096da,co-op stage on FIN-V5-s1 30M (+10M; lr 3e-4),co-op stage arms
+FIN-MLP-s1-70M,c26e60c2f75e7e2464bc4d5544f06e66,co-op stage end (70M); held-out candidate,FIN-MLP-s1
+FIN-V5-s1-70M,efd19787fb36d55863740fd558a3a14d,co-op stage end (70M); held-out candidate,FIN-V5-s1
+FIN-V5-s2-70M,dae1687170fded17609c4b626d6b66af,co-op stage end (70M; gate failed),FIN-V5-s2
+FIN-MLPX-s2-80M,1fb6ebfb3817de3ca4edde7c84ed048b,extension milestone checkpoint 80003392 (extension stopped here),FIN-MLPX-s2
+FIN-MLPXC-s2-80M,5a68ca38413582ac1d4b6a8b85dc6510,"co-op stage XC on FIN-MLPX-s2 70M, end 80018816 (gate failed)",FIN-MLPX-s2
+FIN-V5X-s1-70M,fb569cb0d7a45cdbc694119d6d05ff6e,extension milestone checkpoint 70015424; held-out candidate,FIN-V5X-s1
+FIN-V5X-s1-80M,5f747201338d43cb79c33df40efca0aa,extension milestone checkpoint 80045760; held-out candidate,FIN-V5X-s1
+FIN-V5X-s1/EXT/model-final.pt (= FIN-V5X-s1-90M),1e19b8aa8773e043f6646d736dda3f59,extension end (90001280); best held-out; not released (v5 inference cost),FIN-V5X-s1
+FIN-V5X-s2-70M,d85faa7388c6bc87f39350d850af31da,extension milestone checkpoint 70018816,FIN-V5X-s2
+FIN-V5X-s2-80M,902e4426dad9ddc3b2104118b0810441,extension milestone checkpoint 80057024; held-out candidate,FIN-V5X-s2
+FIN-V5X-s2/EXT/model-final.pt (= FIN-V5X-s2-90M),93caaea8927dd7feff6b896f68308df4,extension end (90M); held-out candidate,FIN-V5X-s2
+stronghold-rl-FIN-MLP-s2-70M.tar.gz,4d535b73d8fba3c932bcd1720d11efeb,release asset (the released model FIN-MLP-s2-70M = FIN-MLP-s2/COOP/model-final.pt + c9 + xboss-v3),release FIN-MLP-s2-70M
+FIN-MLP-s2-70M/policy/policy.json,aed90d9a631daea1ca29c70555b3b140,"released policy, JS (infer2.mjs, sp-policy/1)",release FIN-MLP-s2-70M
+FIN-MLP-s2-70M/policy/policy.bin,5ae8eb679de5459e75fd99143d14fb89,"released policy, JS tensors",release FIN-MLP-s2-70M
+FIN-MLP-s2-70M/policy/model.pt,885b98b664423504ea4c4efad2b2d5de,"released policy, PyTorch (514db10d with host paths in args scrubbed; same tensors)",release FIN-MLP-s2-70M
+FIN-MLP-s2-70M/pickers/c9/c9-js.json,7cc8dbbee94fe59d0468927128ea88b5,released c9 head (35c6b24d with metadata paths scrubbed; same weights),release FIN-MLP-s2-70M
+FIN-MLP-s2-70M/pickers/xboss-v3/dw.json,3a5b96f1d362f3daf92f8cfe712e5726,released xboss-v3 Dw (e4d1c23d scrubbed; same weights),release FIN-MLP-s2-70M
+FIN-MLP-s2-70M/pickers/xboss-v3/g3b.json,7cd6a15596fcc73e3e3eee5aa5a09a7c,released xboss-v3 g3b (6fc155f1 scrubbed; same weights),release FIN-MLP-s2-70M
+FIN-MLP-s2-70M/pickers/xboss-v3/xplace.json,fb4773c5e2f285d9ea166e4a645fa2e7,released xboss-v3 options (file names relative to the release),release FIN-MLP-s2-70M

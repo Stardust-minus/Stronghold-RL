@@ -72,21 +72,30 @@ B=$PWD/work ROOT=$PWD/work/FINAL bash work/FINAL/launch.sh rl      # NM -> NMA -
 
 ## Final results
 
-<!-- FINAL:BEGIN headline. Fill from records/final/heldout.csv, ranking.csv and milestones.csv after the final pick. -->
-*Placeholder: filled after the final pick.*
+<!-- pick:BEGIN headline -->
+The released model is **FIN-MLP-s2-70M**: the MLP (1.55 M parameters), seed 2, NM 5 M → NMA 60 M → co-op stage 70 M.
+It was chosen for its inference cost. The v5 run FIN-V5X-s1-90M scored a little higher on the held-out seeds (0.788 /
+0.769; Δ mean +0.018 ± 0.017, about one standard error; +0.031 ± 0.012 pooled with the milestone seeds), but its
+policy costs 23 ms per decision in JS against 1.8 ms for the MLP.
+
+*Provisional: the headline will be the confirmation on a fresh seed set (`--seed 300000000`, 476 seeds per config,
+same protocol). Until it is in, the held-out numbers stand in.*
 
 | | solo:ABYSS | coop4h1:ABYSS |
 |---|---|---|
-| **final model** `<name>`, deploy setting (both pickers), held-out seeds | **TBD ± TBD** | **TBD ± TBD** |
-| natMain / natMainT2 (national main bond; at tier ≥ 2) | TBD / TBD | TBD / TBD |
-| main / secondary / Σ layers, elites | TBD, TBD | TBD, TBD |
-| without the pickers (milestone seeds) | TBD | TBD |
+| **FIN-MLP-s2-70M**, deploy setting (both pickers), held-out seeds (`--seed 200000000`, 476 each) | **0.784 ± 0.019** | **0.737 ± 0.020** |
+| natMain / natMainT2 (national main bond; at tier ≥ 2), held-out | 0.99 / 0.97 | 0.91 / 0.81 |
+| main / secondary / Σ layers, elites, held-out | 197 / 82 / 331, 5.7 | 178 / 74 / 295, 5.6 |
+| without the pickers (milestone seeds) | 0.595 | 0.508 |
+| not shipped: FIN-V5X-s1-90M (v5), deploy setting, held-out seeds | 0.788 ± 0.019 | 0.769 ± 0.019 |
 | reference: the legacy rule AI in the model seats (11-13 protocol, b0) | 0.010 | 0.071 |
 | reference: NAT 88M + boss picker (elite-merge route, not the target play) | 0.596 | 0.581 |
 
-The target was ≥ 0.50 on both. Held-out = 476 fresh seeds per config, never used to choose anything. ± is one standard
-error. Every candidate, milestone and gate: [docs/RESULTS.md](docs/RESULTS.md) Part A and `records/final/`.
-<!-- FINAL:END -->
+The target was ≥ 0.50 on both. ± is one standard error; stacking is averaged over the model seats. Held-out = 476
+seeds per config that no training run or milestone eval reaches; the last choice between candidates was made on them,
+so a second fresh set confirms the result. Every candidate, milestone and gate: [docs/RESULTS.md](docs/RESULTS.md)
+Part A and `records/final/`.
+<!-- pick:END headline -->
 
 ## Hardware
 
@@ -137,6 +146,6 @@ is the environments, which run on CPU. One GPU is enough for the learner.
 
 ## Licence
 
-Code: GPL-3.0-or-later ([LICENSE](LICENSE)), as for the game repository. Released model files: see
-[RELEASE.md](RELEASE.md). Arknights names, art, audio, text and data are © their owners and are not covered by this
+Code: GPL-3.0-or-later ([LICENSE](LICENSE)), as for the game repository. The released model files are under the same
+licence ([RELEASE.md](RELEASE.md)). Arknights names, art, audio, text and data are © their owners and are not covered by this
 licence. This project is not affiliated with or endorsed by Hypergryph or Yostar.

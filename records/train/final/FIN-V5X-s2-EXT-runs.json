@@ -179,6 +179,258 @@
    },
    "t": 1794631648.8,
    "file": "eval-66014592.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.99,
+     "survival": 14.18,
+     "fa": 0.999,
+     "rt": 0.026
+    },
+    "solo:ABYSS": {
+     "win": 0.646,
+     "survival": 14.07,
+     "fa": 0.819,
+     "rt": 0.035
+    }
+   },
+   "t": 1794632580.5,
+   "file": "eval-68049664.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.896,
+     "survival": 14.14,
+     "fa": 0.976,
+     "rt": 0.018
+    },
+    "solo:ABYSS": {
+     "win": 0.542,
+     "survival": 14.0,
+     "fa": 0.787,
+     "rt": 0.022
+    }
+   },
+   "t": 1794633491.5,
+   "file": "eval-70018816.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.15,
+     "fa": 0.979,
+     "rt": 0.02
+    },
+    "solo:ABYSS": {
+     "win": 0.552,
+     "survival": 13.92,
+     "fa": 0.775,
+     "rt": 0.028
+    }
+   },
+   "t": 1794634436.1,
+   "file": "eval-72051392.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.906,
+     "survival": 14.15,
+     "fa": 0.975,
+     "rt": 0.014
+    },
+    "solo:ABYSS": {
+     "win": 0.448,
+     "survival": 14.04,
+     "fa": 0.795,
+     "rt": 0.02
+    }
+   },
+   "t": 1794635349.1,
+   "file": "eval-74020096.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.938,
+     "survival": 14.2,
+     "fa": 0.987,
+     "rt": 0.015
+    },
+    "solo:ABYSS": {
+     "win": 0.604,
+     "survival": 13.99,
+     "fa": 0.813,
+     "rt": 0.034
+    }
+   },
+   "t": 1794636291.5,
+   "file": "eval-76055040.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.906,
+     "survival": 14.18,
+     "fa": 0.983,
+     "rt": 0.025
+    },
+    "solo:ABYSS": {
+     "win": 0.562,
+     "survival": 14.11,
+     "fa": 0.839,
+     "rt": 0.03
+    }
+   },
+   "t": 1794637191.9,
+   "file": "eval-78023424.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.14,
+     "fa": 0.975,
+     "rt": 0.015
+    },
+    "solo:ABYSS": {
+     "win": 0.562,
+     "survival": 14.0,
+     "fa": 0.789,
+     "rt": 0.032
+    }
+   },
+   "t": 1794638110.8,
+   "file": "eval-80057024.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.906,
+     "survival": 14.18,
+     "fa": 0.972,
+     "rt": 0.02
+    },
+    "solo:ABYSS": {
+     "win": 0.625,
+     "survival": 14.14,
+     "fa": 0.837,
+     "rt": 0.029
+    }
+   },
+   "t": 1794639015.0,
+   "file": "eval-82025216.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.17,
+     "fa": 0.985,
+     "rt": 0.024
+    },
+    "solo:ABYSS": {
+     "win": 0.615,
+     "survival": 14.09,
+     "fa": 0.873,
+     "rt": 0.032
+    }
+   },
+   "t": 1794639947.1,
+   "file": "eval-84058688.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.938,
+     "survival": 14.18,
+     "fa": 0.984,
+     "rt": 0.021
+    },
+    "solo:ABYSS": {
+     "win": 0.615,
+     "survival": 13.95,
+     "fa": 0.812,
+     "rt": 0.023
+    }
+   },
+   "t": 1794640839.3,
+   "file": "eval-86025280.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.948,
+     "survival": 14.26,
+     "fa": 0.986,
+     "rt": 0.024
+    },
+    "solo:ABYSS": {
+     "win": 0.615,
+     "survival": 14.16,
+     "fa": 0.824,
+     "rt": 0.031
+    }
+   },
+   "t": 1794641760.7,
+   "file": "eval-88059520.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.21,
+     "fa": 0.983,
+     "rt": 0.018
+    },
+    "solo:ABYSS": {
+     "win": 0.708,
+     "survival": 14.15,
+     "fa": 0.883,
+     "rt": 0.04
+    }
+   },
+   "t": 1794642593.5,
+   "file": "eval-90000064.json"
   }
  ],
  "other": [
@@ -187,6 +439,13 @@
    "steps": 60287552,
    "reason": "HARD rolling win 0.937 >= 0.60",
    "t": 1794628914.0
+  },
+  {
+   "event": "end",
+   "steps": 90000064,
+   "hours": 3.83,
+   "stage": "mixauto1",
+   "t": 1794642556.4
   }
  ],
  "every_kth_update": 1

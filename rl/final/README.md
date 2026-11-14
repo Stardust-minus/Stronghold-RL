@@ -123,7 +123,14 @@ Decided per run once its 50M and 60M evals are in:
 | FIN-V5-s1 | +.012 ± .019 | +.027 | .696 | qualified; extended later as FIN-V5X-s1 (66,500,000) when a slot freed up |
 | FIN-V5-s2 | +.045 ± .019 | +.041 | .708 | yes: FIN-V5X-s2 (68,500,000) |
 
-<!-- FINAL: the extension outcomes (where each run stopped and why) -->
+<!-- pick:BEGIN extension -->
+Outcomes (milestone rows in `records/final/milestones.csv`, gates in `coopgate.csv`):
+
+- FIN-MLPX-s2: stopped at 80M (S1 −.041 at 80M). Its best milestone is 70M.
+- FIN-V5X-s2: ran to 90M (S1 +.022 at 80M, +.028 at 90M).
+- FIN-V5X-s1: ran to 90M (S1 +.052 / +.012 / −.002 at 70 / 80 / 90M; S2 +.022 at 80M and 90M).
+- XC, the co-op stage on FIN-MLPX-s2 70M (`ext/coop-launch.sh`): failed its gate, setting b solo −.052 ± .024.
+<!-- pick:END extension -->
 
 `ext/launch.sh` builds the argument list as:
 
@@ -191,13 +198,27 @@ own 70M gate passes. FIN-MLP-s2's stage passed (b coop +.101 ± .027, b solo −
 - Rule: rank by setting b. solo:ABYSS and coop4h1 must both be ≥ .50. Their mean breaks ties. Stacking metrics are
   reported next to every win.
 - Held-out confirmation (winner's curse): the pick uses the milestone seeds, and NMA was selected on them too. So
-  the top 2–3 candidates are re-run on a fresh set with `--seed 200000000`, setting b, solo:ABYSS 480 + coop4h1 480.
+  the leading candidates are re-run on a fresh set with `--seed 200000000`, setting b, solo:ABYSS 480 + coop4h1 480.
   - Match seed = `--seed` + config index × 1M + chunk × 17 + i. coop4h1:ABYSS has config index 580.
   - The held-out seeds are solo:ABYSS 202,000,000–202,000,475 and coop4h1:ABYSS 780,000,000–780,000,475.
   - No earlier eval base or record seed reaches them. Training env seeds start at 1.01e9.
-  - The reported number is the held-out one.
+  - The reported number is the held-out one. The final choice between the held-out candidates was itself made on
+    these seeds, so the released model is confirmed on a third set, `--seed 300000000` (below).
 - `rl/final/records_final.py` regenerates `records/final/` from the eval outputs; `records/final/README.md` defines the
   columns.
 - The chosen checkpoint and its pickers are exported with `rl/release/export_release.py` ([RELEASE.md](../../RELEASE.md)).
 
-<!-- FINAL: the pick (candidate, held-out numbers) -->
+<!-- pick:BEGIN pick -->
+What ran:
+
+- 11 candidates reached the held-out set: the leaders on the milestone seeds as the runs finished, and CB10.
+- From 06:55 the rule was: the current pick stays unless a candidate beats it on held-out, paired (paired mean Δ > 0,
+  both ≥ .50). `hopair.py` prints that table with the held-out stacking and the pooled view
+  (`records/final/heldout-paired.md`).
+- By that rule: FIN-V5X-s1-90M (`1e19b8aa`), held-out .788 / .769, Δ mean vs FIN-MLP-s2-70M +.018 ± .017.
+- **Released: FIN-MLP-s2-70M** (`514db10d`), held-out .784 / .737 (the owner's choice: the MLP for its inference cost,
+  policy 1.8 vs 23 ms per decision in JS). Lineage metas: `records/meta/FIN-MLP-s2-NM-meta.json`,
+  `FIN-MLP-s2-NMA-meta.json`, `FIN-MLP-s2-COOP-meta.json`.
+- Confirmation on a fresh seed set, `--seed 300000000`, same protocol: running at the time of writing.
+- Export: `rl/release/export_release.py` ([RELEASE.md](../../RELEASE.md)).
+<!-- pick:END pick -->

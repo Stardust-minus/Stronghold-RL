@@ -116,7 +116,121 @@
    "t": 1794631125.5
   }
  ],
- "evals": [],
- "other": [],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.594,
+     "survival": 14.06,
+     "fa": 0.836,
+     "rt": 0.051
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.521,
+     "survival": 12.94,
+     "fa": 0.721,
+     "rt": 0.092
+    }
+   },
+   "t": 1794632656.0,
+   "file": "eval-62004928.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.479,
+     "survival": 14.0,
+     "fa": 0.789,
+     "rt": 0.045
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.49,
+     "survival": 13.02,
+     "fa": 0.691,
+     "rt": 0.073
+    }
+   },
+   "t": 1794633924.2,
+   "file": "eval-64035456.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.583,
+     "survival": 14.16,
+     "fa": 0.845,
+     "rt": 0.036
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.542,
+     "survival": 13.12,
+     "fa": 0.73,
+     "rt": 0.051
+    }
+   },
+   "t": 1794635116.9,
+   "file": "eval-66004480.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.656,
+     "survival": 14.12,
+     "fa": 0.864,
+     "rt": 0.032
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.49,
+     "survival": 13.23,
+     "fa": 0.723,
+     "rt": 0.057
+    }
+   },
+   "t": 1794636389.5,
+   "file": "eval-68036736.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.656,
+     "survival": 14.16,
+     "fa": 0.85,
+     "rt": 0.054
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.49,
+     "survival": 13.16,
+     "fa": 0.719,
+     "rt": 0.066
+    }
+   },
+   "t": 1794637418.0,
+   "file": "eval-70001024.json"
+  }
+ ],
+ "other": [
+  {
+   "event": "end",
+   "steps": 70001024,
+   "hours": 1.708,
+   "stage": "mixmp2",
+   "t": 1794637275.8
+  }
+ ],
  "every_kth_update": 1
 }

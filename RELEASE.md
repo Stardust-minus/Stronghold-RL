@@ -4,10 +4,12 @@ The trained models are published as GitHub release assets, not in git. One relea
 two deploy pickers it was evaluated with. `rl/release/export_release.py` builds the release directory from the
 checkpoints and checks it ([docs/RUNBOOK.md](docs/RUNBOOK.md) §6).
 
-<!-- FINAL:BEGIN release name. Fill after the final pick. -->
-*Placeholder: the first release (`<name>`, `<arch>`, `<steps>` steps, repository commit `<sha>`) and its asset name
-`stronghold-rl-<name>.tar.gz` go here.*
-<!-- FINAL:END -->
+<!-- pick:BEGIN release -->
+**First release: `FIN-MLP-s2-70M`**: MLP, 1.55 M parameters, 70,000,000 steps (NM 5 M → NMA 60 M → co-op stage 70 M).
+Asset `stronghold-rl-FIN-MLP-s2-70M.tar.gz` (17.1 MB, md5 `4d535b73d8fba3c932bcd1720d11efeb`). Repository commit
+`f3e0730` (`repoCommit` in `manifest.json`); the files it runs on (`manifest.json` → `code`) are unchanged in later
+commits. Numbers and the choice of model: [docs/RESULTS.md](docs/RESULTS.md) "Final result".
+<!-- pick:END release -->
 
 ## Asset layout
 
@@ -18,7 +20,8 @@ checkpoints and checks it ([docs/RUNBOOK.md](docs/RUNBOOK.md) §6).
   MD5SUMS                              md5sum -c MD5SUMS
   parity.json                          JS vs torch on the decisions of the check matches, picker counters, ms per decision
   policy/policy.json + policy.bin      the policy for the JS forward: infer2.mjs (MLP, format sp-policy/1) or infer5.mjs
-                                       (v5, sp-policy5/1); float32 little-endian tensors; the critic is not included
+                                       (v5, sp-policy5/1); float32 little-endian tensors; v5's separate critic is not
+                                       included (the MLP's small value head is, 33k parameters, unused at play)
   policy/model.pt                      the PyTorch checkpoint (eval.py, fine-tuning); plain tensors and strings, so it loads
                                        with torch.load(..., weights_only=True); training-host paths in its args are
                                        replaced by <work>/...
@@ -98,8 +101,7 @@ boss. No search, no simulation, no layout rehearsal and no live battle seed at d
 ## Licence and attribution
 
 - Code in this repository: GPL-3.0-or-later ([LICENSE](LICENSE)).
-- Model files: <!-- FINAL: licence of the released model files, decided by the owner --> *to be stated with the
-  release.*
+- Model files (the release assets): GPL-3.0-or-later, the same licence as the code.
 - The model files contain weights and layout metadata (catalogue ids, block layouts), no game art, text, audio or data
   files. They were trained on simulated matches of Stronghold Protocol, an unofficial, non-commercial fan remake of the
   Arknights auto-chess mode. Arknights names and data are © their owners. This project is not affiliated with or
