@@ -1,0 +1,6 @@
+arm,runs,win,natMain,natMainT2,mainLayers,secLayers,sumLayers,elites,updates/5M
+MLP bc-fresh (B1/B2),2,0.758,0.40,0.015,94,122,346,5.9,76
+MLP converged BC (MLPbs31/32),2,0.735 (0.719/0.752),0.72,0.469,99,96,296,4.2,76
+V5,2,0.733 (0.721/0.746),0.86,0.727,108,98,280,4.1,70
+V5 + LSTM (LSTMs31),1,0.621,0.87,0.748,84,73,217,3.0,53
+V5 + GRU (GRUs31),1,0.627,0.85,0.731,93,79,243,3.5,52

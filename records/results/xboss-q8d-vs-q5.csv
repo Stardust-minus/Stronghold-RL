@@ -1,0 +1,5 @@
+board / config,q5 alone,q8d alone,Δ in game,"win-utility Δ (bake set, n)"
+NH2sA solo:ABYSS (476),0.574,0.609,+0.036±0.015,"+5.37±1.66 (bake1, 185)"
+NH2sA coop4h1 (480),0.400,0.404,+0.004±0.007,"-1.70±1.52 (bake1, 53)"
+NMA solo:ABYSS (476),0.597,0.613,+0.017±0.010,"+2.96±1.20 (bakeM, 206)"
+NMA coop4h1,running (chainV2),,,"+0.82±0.52 (bakeM, 120)"

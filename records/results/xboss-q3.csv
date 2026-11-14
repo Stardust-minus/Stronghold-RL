@@ -1,0 +1,5 @@
+arm,solo:HARD,Δ vs legacy,solo:ABYSS,Δ
+legacy placement,0.635,,0.052,
+q3 boss only (K12 legacy cands),0.688,+0.052±0.034,0.062,+0.010±0.018
+P boss picker (SK-30M head),0.646,+0.010±0.038,0.062,+0.010±0.018
+q3 all rounds (normal margin 0.5),0.698,+0.062±0.049,0.052,+0.000±0.015

@@ -1,0 +1,235 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "<work>/FIN2/runs/FIN-MLPX-s2/EXT/model-60000000.pt",
+   "params": 1547115,
+   "thresholds": {},
+   "args": {
+    "init": "<work>/FIN2/runs/FIN-MLPX-s2/EXT/model-60000000.pt",
+    "out": "<work>/FIN2/runs/FIN-MLPX-s2/EXT",
+    "procs": 50,
+    "envs": 64,
+    "rollout": 65536,
+    "epochs": 3,
+    "minibatch": 8192,
+    "lr": 0.0003,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 90000000.0,
+    "hours": 24.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 2000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.0,
+    "node": "<work>/prefix/node/bin/node",
+    "eval_matches": 96,
+    "eval_chunks": 4,
+    "eval_configs": "solo:HARD,solo:ABYSS",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{}",
+    "vf_warmup": 5,
+    "learner_cpus": "25,137",
+    "env_cpus": "26-49,138-161",
+    "check": true,
+    "eval_baselines": "",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "<work>/FIN2/bc/mlp/bc.pt",
+    "strict_preview": false,
+    "picker_head": null,
+    "picker_trunk": null,
+    "picker_k": 8,
+    "nat_plan": "{\"slots\":true,\"live\":true,\"assign\":\"auto\",\"band\":true,\"focus\":true,\"pairS\":true}",
+    "visible_only": false,
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "",
+    "eval2_boss_rehearsal": 0,
+    "human_proxy": null,
+    "mix": "auto1",
+    "reward_by": "{}",
+    "freeze_band": false,
+    "lr_warmup": 20,
+    "start_steps": 60000000.0,
+    "seed_offset": 64500000,
+    "bc_kl_from": null,
+    "lr_final": null,
+    "lr_anneal_start": null,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 0,
+    "mem_frac": 0.06,
+    "ent_final": null,
+    "auto_hard_gate": 0.6,
+    "auto_target": 0.35,
+    "auto_smin": 0.85,
+    "auto_smax": 0.85,
+    "auto_step": 0.02,
+    "auto_nfloor": 0.05,
+    "log_diag": true,
+    "eval_at": "",
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.0,
+    "snap_collect": 0.25,
+    "band_policy": 0.0,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 0,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3,
+    "amp": false,
+    "fwd_chunk": 8192,
+    "seq_len": 32,
+    "burn_in": 16,
+    "clip_sep": false
+   },
+   "learner_cpus": 2,
+   "env_cpus": 48,
+   "unit_cpus": 50,
+   "stages": [
+    "mixauto1"
+   ],
+   "t": 1794627267.4
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.906,
+     "survival": 14.07,
+     "fa": 0.985,
+     "rt": 0.021
+    },
+    "solo:ABYSS": {
+     "win": 0.531,
+     "survival": 13.9,
+     "fa": 0.793,
+     "rt": 0.034
+    }
+   },
+   "t": 1794628192.6,
+   "file": "eval-62040640.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.948,
+     "survival": 14.12,
+     "fa": 0.982,
+     "rt": 0.027
+    },
+    "solo:ABYSS": {
+     "win": 0.531,
+     "survival": 14.19,
+     "fa": 0.823,
+     "rt": 0.028
+    }
+   },
+   "t": 1794628822.4,
+   "file": "eval-64006912.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.948,
+     "survival": 14.09,
+     "fa": 0.982,
+     "rt": 0.02
+    },
+    "solo:ABYSS": {
+     "win": 0.625,
+     "survival": 14.17,
+     "fa": 0.85,
+     "rt": 0.033
+    }
+   },
+   "t": 1794629609.2,
+   "file": "eval-66040960.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.938,
+     "survival": 14.1,
+     "fa": 0.994,
+     "rt": 0.019
+    },
+    "solo:ABYSS": {
+     "win": 0.604,
+     "survival": 14.21,
+     "fa": 0.822,
+     "rt": 0.027
+    }
+   },
+   "t": 1794630360.0,
+   "file": "eval-68008000.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.979,
+     "survival": 14.12,
+     "fa": 0.995,
+     "rt": 0.021
+    },
+    "solo:ABYSS": {
+     "win": 0.719,
+     "survival": 14.18,
+     "fa": 0.901,
+     "rt": 0.036
+    }
+   },
+   "t": 1794631152.5,
+   "file": "eval-70039296.json"
+  }
+ ],
+ "other": [
+  {
+   "event": "mix-gate",
+   "steps": 60268992,
+   "reason": "HARD rolling win 0.973 >= 0.60",
+   "t": 1794627399.0
+  }
+ ],
+ "every_kth_update": 1
+}

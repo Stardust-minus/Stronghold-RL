@@ -1,0 +1,6 @@
+arm,win,Δ vs legacy,Δ vs P boss picker
+legacy,0.360,,
+P boss picker,0.452,+0.092±0.017,
+q4b boss (K12),0.452,+0.092±0.016,+0.000±0.013
+"ensemble q4b + P picker (ens 1, K8)",0.460,+0.100±0.017,+0.008±0.009
+q3 boss (K12),0.460,+0.100±0.017,+0.008±0.009

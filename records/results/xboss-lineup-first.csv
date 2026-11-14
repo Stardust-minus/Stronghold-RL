@@ -1,0 +1,4 @@
+arm,win,Δ,fa,natMain / natT2,main / sec / Σ layers,elites
+"legacy (b0, evM5)",0.323,,,,131 / 70 / 245,
+"placement oracle, legacy lineup ('place')",0.500,+0.177±0.047 vs b0,+0.129,0.99 / 0.95,159 / 72 / 274,5.88
+lineup + placement oracle ('lineup'),0.531,+0.031±0.052 vs place,+0.069,0.96 / 0.92,167 / 73 / 289,5.68

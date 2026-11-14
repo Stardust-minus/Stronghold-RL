@@ -1,0 +1,4 @@
+arm,runs,win,natMain,natMainT2,mainLayers,secLayers,sumLayers,elites
+MLP from bc-fresh (scratch B1/B2),2,0.758 (0.744/0.773),0.402,0.015,93.6,122.4,345.7,5.91
+MLP from converged BC (MLPbs31),1,0.719,0.644,0.375,89.8,88.4,288.8,4.06
+"V5 (v5-lite, BC 8 ep)",2,0.733 (0.721/0.746),0.857,0.727,107.5,98.5,280.3,4.14

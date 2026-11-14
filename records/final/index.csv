@@ -1,0 +1,8 @@
+file,what
+milestones.csv,"every milestone eval of the final runs (476 paired seeds, seed set 7000000), paired deltas, stacking"
+candidates.csv,"final candidates, settings a and b"
+coopgate.csv,co-op stage gate: stage output vs its start
+ranking.csv,"pick rule: both b >= .50, ranked by the b mean"
+heldout.csv,"held-out confirmation (--seed 200000000), setting b"
+repro-gate.csv,eval trees reproduce the NMA 30M reference evals per match
+summary.md,the milestone table as markdown

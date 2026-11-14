@@ -2,6 +2,7 @@
 // legacy moves on; refused calls are never recorded), every executed call stored as the env action it equals.
 //   node tools/rl/record.mjs --out data --tag s1 --matches 400 --seed 100000 [--envs 8]
 //     [--configs solo:NORMAL,...] [--humans random] [--rehearsal 0] [--obs 3|4] [--boss-rehearsal n] [--seat-plan 1|0]
+//     [--obs-ext '{"board":1,"hist":1}']  (A1: version 3 extension blocks, off by default)
 // Writes <out>/<dataId>/<tag>.bin (fixed records), <tag>.terms.jsonl (trajectory ends) and <tag>.meta.json.
 // Record: f16 obs[D] · u8 mask bits[ceil(A/8)] · u8 action · u8 kind · u16 0 · u32 traj · f32 reward (since the
 // trajectory's previous record: it belongs to the previous transition) — little endian, no padding beyond that.
@@ -36,8 +37,9 @@ const recorder = {
 };
 const env = new SPEnv({ envs, configs, seed, envSeed: seed, maxMatches: matches, mode: 'teacher', enforce: true, recorder,
   humans: humansArg === 'random' ? 'random' : Number(humansArg), legacyMates: Number(arg('mates', 0)), rehearsal: Number(arg('rehearsal', 0)),
-  obsVersion: Number(arg('obs', 3)), ...(arg('boss-rehearsal') !== undefined ? { bossRehearsal: Number(arg('boss-rehearsal')) } : {}),
+  obsVersion: Number(arg('obs', 3)), ...(arg('obs-ext') ? { obsExt: JSON.parse(arg('obs-ext')) } : {}), ...(arg('boss-rehearsal') !== undefined ? { bossRehearsal: Number(arg('boss-rehearsal')) } : {}),
   seatPlan: arg('seat-plan', '1') !== '0', placementLabels: arg('labels', '0') === '1',
+  ...(arg('nat-plan') ? { natPlan: JSON.parse(arg('nat-plan')) } : {}), // (N1) e.g. {"slots":true,"hindsight":true}
   ...(arg('econ') ? { econPolicy: { base: arg('econ'), temp: Number(arg('econ-temp', 1)) } } : {}) });
 // the encoder exists once the first matches are open; set the layout before any sample (samples start in collect())
 const spec = env.spec();

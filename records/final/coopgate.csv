@@ -1,0 +1,6 @@
+run,candidate,vs,b_solo_d,se,b_coop_d,se,a_solo_d,se,a_coop_d,se,adopt_b,adopt_a
+FIN-MLP-s1,FIN-MLP-s1-70M,FIN-MLP-s1-60M,,,,,,,,,,
+FIN-MLP-s2,FIN-MLP-s2-70M,FIN-MLP-s2-60M,-0.019,0.026,+0.101,0.027,+0.025,0.028,+0.084,0.026,yes,yes
+FIN-V5-s1,FIN-V5-s1-70M,FIN-V5-s1-60M,,,,,,,,,,
+FIN-V5-s2,FIN-V5-s2-70M,FIN-V5-s2-60M,,,,,,,,,,
+NMA/CB10,CB10,NMA-30M,+0.008,0.026,+0.080,0.028,+0.015,0.028,+0.069,0.025,yes,yes

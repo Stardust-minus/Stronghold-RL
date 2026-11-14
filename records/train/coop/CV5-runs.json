@@ -1,0 +1,236 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "<work>/C/inputs/FV30/model.pt",
+   "params": 2719295,
+   "thresholds": {},
+   "args": {
+    "init": "<work>/C/inputs/FV30/model.pt",
+    "out": "<work>/C/runs/CV5",
+    "procs": 50,
+    "envs": 64,
+    "rollout": 65536,
+    "epochs": 3,
+    "minibatch": 8192,
+    "lr": 0.0001,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 40036800.0,
+    "hours": 24.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 2000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.0,
+    "node": "<work>/prefix/node/bin/node",
+    "eval_matches": 96,
+    "eval_chunks": 4,
+    "eval_configs": "solo:ABYSS,coop4h1:ABYSS",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{}",
+    "vf_warmup": 5,
+    "learner_cpus": "56,168",
+    "env_cpus": "57-90,169-202",
+    "check": true,
+    "eval_baselines": "",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "<work>/C/inputs/FV30/model.pt",
+    "strict_preview": false,
+    "picker_head": null,
+    "picker_trunk": null,
+    "picker_k": 8,
+    "nat_plan": "{\"slots\":true,\"live\":true,\"assign\":\"auto\",\"band\":true,\"focus\":true,\"pairS\":true}",
+    "visible_only": false,
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "",
+    "eval2_boss_rehearsal": 0,
+    "human_proxy": "{\"kinds\":[\"mix:nat:lateranoShip=0.25|nat:kjeragShip=0.25|nat:rand=0.2|legacy=0.15|class=0.1|noisy:50=0.05\"],\"announce\":\"own\"}",
+    "mix": "mp2",
+    "reward_by": "{}",
+    "freeze_band": false,
+    "lr_warmup": 20,
+    "start_steps": 30036800.0,
+    "seed_offset": 73000000,
+    "bc_kl_from": null,
+    "lr_final": null,
+    "lr_anneal_start": null,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 1024,
+    "mem_frac": 0.035,
+    "ent_final": null,
+    "auto_hard_gate": 0.6,
+    "auto_target": 0.35,
+    "auto_smin": 0.1,
+    "auto_smax": 0.85,
+    "auto_step": 0.02,
+    "auto_nfloor": 0.05,
+    "log_diag": true,
+    "eval_at": "1e12",
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.0,
+    "snap_collect": 0.25,
+    "band_policy": 0.0,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 0,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3,
+    "amp": true,
+    "fwd_chunk": 2048,
+    "seq_len": 32,
+    "burn_in": 16,
+    "clip_sep": true
+   },
+   "learner_cpus": 2,
+   "env_cpus": 68,
+   "unit_cpus": 70,
+   "stages": [
+    "mixmp2"
+   ],
+   "t": 1794618037.8
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.406,
+     "survival": 13.93,
+     "fa": 0.748,
+     "rt": 0.025
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.323,
+     "survival": 12.6,
+     "fa": 0.557,
+     "rt": 0.099
+    }
+   },
+   "t": 1794619161.8,
+   "file": "eval-32050752.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.49,
+     "survival": 14.04,
+     "fa": 0.799,
+     "rt": 0.023
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.365,
+     "survival": 12.65,
+     "fa": 0.583,
+     "rt": 0.056
+    }
+   },
+   "t": 1794620072.6,
+   "file": "eval-34008448.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.396,
+     "survival": 13.9,
+     "fa": 0.712,
+     "rt": 0.031
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.427,
+     "survival": 13.08,
+     "fa": 0.667,
+     "rt": 0.066
+    }
+   },
+   "t": 1794621072.4,
+   "file": "eval-36048832.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.396,
+     "survival": 13.95,
+     "fa": 0.753,
+     "rt": 0.025
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.344,
+     "survival": 12.8,
+     "fa": 0.564,
+     "rt": 0.044
+    }
+   },
+   "t": 1794622030.9,
+   "file": "eval-38008832.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:ABYSS": {
+     "win": 0.427,
+     "survival": 13.85,
+     "fa": 0.75,
+     "rt": 0.014
+    },
+    "coop4h1:ABYSS": {
+     "win": 0.417,
+     "survival": 12.76,
+     "fa": 0.581,
+     "rt": 0.049
+    }
+   },
+   "t": 1794622888.6,
+   "file": "eval-40036800.json"
+  }
+ ],
+ "other": [
+  {
+   "event": "end",
+   "steps": 40036800,
+   "hours": 1.314,
+   "stage": "mixmp2",
+   "t": 1794622766.4
+  }
+ ],
+ "every_kth_update": 1
+}

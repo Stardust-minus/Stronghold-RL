@@ -1,0 +1,4 @@
+run,win,Δ vs B1 / B2 / LR3,natMain,natMainT2,main / sec / Σ layers,elites,secondary (top types),sec == S / S >= 40 at FA
+"NM 5M (PB5 nat-bot BC + auto plan + band + focus + pairS, NAT terms, lr 3e-4)",0.797,+.115±.039 / +.073±.039 / +.052±.036,1.00,1.00,121 / 68 / 223,4.3,"精准 .33 (85 layers), 奥术 .22 (55), 灵巧 .19 (69)",.62 / .67
+"NA 5M (A MLP40 no plan, lr 3e-4)",0.766,+.083 / +.042 / +.021,0.75,0.50 (drift .81 -> .50),105 / 115 / 314,4.7,突袭 .61 (144),
+NH 5M (PB4 head R3),0.641,-.042 / -.083 / -.104,.99,.99,98 / 66 / 208,4.1,"精准 .31, 突袭 .20",.42 / .48

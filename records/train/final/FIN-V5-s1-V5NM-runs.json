@@ -1,0 +1,221 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "<work>/FINAL/v5/bc/bc.pt",
+   "params": 2719295,
+   "thresholds": {},
+   "args": {
+    "init": "<work>/FINAL/v5/bc/bc.pt",
+    "out": "<work>/FINAL/runs/FIN-V5-s1/V5NM",
+    "procs": 50,
+    "envs": 64,
+    "rollout": 65536,
+    "epochs": 3,
+    "minibatch": 8192,
+    "lr": 0.0001,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 5000000.0,
+    "hours": 24.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 1000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.0,
+    "node": "<work>/prefix/node/bin/node",
+    "eval_matches": 96,
+    "eval_chunks": 4,
+    "eval_configs": "solo:HARD",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{}",
+    "vf_warmup": 5,
+    "learner_cpus": "28,140",
+    "env_cpus": "29-55,141-167",
+    "check": true,
+    "eval_baselines": "",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "<work>/FINAL/v5/bc/bc.pt",
+    "strict_preview": false,
+    "picker_head": null,
+    "picker_trunk": null,
+    "picker_k": 8,
+    "nat_plan": "{\"slots\":true,\"live\":true,\"assign\":\"auto\",\"band\":true,\"focus\":true,\"pairS\":true}",
+    "visible_only": false,
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "",
+    "eval2_boss_rehearsal": 0,
+    "human_proxy": null,
+    "mix": "hard1",
+    "reward_by": "{}",
+    "freeze_band": false,
+    "lr_warmup": 20,
+    "start_steps": 0.0,
+    "seed_offset": 65000000,
+    "bc_kl_from": null,
+    "lr_final": null,
+    "lr_anneal_start": null,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 1024,
+    "mem_frac": 0.05,
+    "ent_final": null,
+    "auto_hard_gate": 0.6,
+    "auto_target": 0.35,
+    "auto_smin": 0.1,
+    "auto_smax": 0.85,
+    "auto_step": 0.02,
+    "auto_nfloor": 0.05,
+    "log_diag": true,
+    "eval_at": "0",
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.0,
+    "snap_collect": 0.25,
+    "band_policy": 0.0,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 0,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3,
+    "amp": true,
+    "fwd_chunk": 2048,
+    "seq_len": 32,
+    "burn_in": 16,
+    "clip_sep": true
+   },
+   "learner_cpus": 2,
+   "env_cpus": 54,
+   "unit_cpus": 56,
+   "stages": [
+    "mixhard1"
+   ],
+   "t": 1794604790.1
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.625,
+     "survival": 13.98,
+     "fa": 0.829,
+     "rt": 0.081
+    }
+   },
+   "t": 1794604865.2,
+   "file": "eval-0.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.698,
+     "survival": 14.01,
+     "fa": 0.893,
+     "rt": 0.088
+    }
+   },
+   "t": 1794605316.1,
+   "file": "eval-1029312.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.74,
+     "survival": 14.0,
+     "fa": 0.91,
+     "rt": 0.109
+    }
+   },
+   "t": 1794605791.3,
+   "file": "eval-2075648.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.729,
+     "survival": 14.02,
+     "fa": 0.907,
+     "rt": 0.088
+    }
+   },
+   "t": 1794606213.2,
+   "file": "eval-3040768.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.698,
+     "survival": 14.04,
+     "fa": 0.907,
+     "rt": 0.113
+    }
+   },
+   "t": 1794606641.7,
+   "file": "eval-4045184.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.792,
+     "survival": 14.03,
+     "fa": 0.92,
+     "rt": 0.102
+    }
+   },
+   "t": 1794606989.1,
+   "file": "eval-5000768.json"
+  }
+ ],
+ "other": [
+  {
+   "event": "end",
+   "steps": 5000768,
+   "hours": 0.602,
+   "stage": "mixhard1",
+   "t": 1794606957.2
+  }
+ ],
+ "every_kth_update": 1
+}

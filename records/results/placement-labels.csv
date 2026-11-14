@@ -1,0 +1,7 @@
+"trunk, config (boss placement)",base,D,P412,D412,Dn,O (outcome only)
+LIN-C 74M solo (legacy boss),0.317,+0.073±0.017,+0.050±0.016,+0.056,+0.052,
+LIN-C 74M coop4h1 (legacy boss),0.492,+0.075±0.020,+0.033±0.019,+0.046,+0.033,
+LIN 62M solo (legacy boss),0.315,+0.031±0.018,+0.017±0.017,+0.021,+0.027,
+LIN 62M coop4h1 (legacy boss),0.394,+0.102±0.020,+0.048±0.019,+0.085,+0.067,
+"LIN-C 74M solo, boss picker on",0.425,+0.077±0.017,,+0.075,+0.058,+0.048
+"LIN-C 74M coop4h1, boss picker on",0.565,+0.092±0.020,,+0.048,+0.054,+0.054

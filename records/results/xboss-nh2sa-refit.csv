@@ -1,0 +1,8 @@
+"arm (solo:ABYSS, n 476)",win,vs none,vs q4b ens
+none,0.553,,
+"q4b + picker (v1)",0.576,+0.023±0.018,
+q5 alone,0.565,+0.013±0.016,-0.011±0.014
+q5 + picker ens 0.5,0.588,+0.036±0.018,+0.013±0.011
+q5 + picker,0.590,+0.038±0.017,+0.015±0.009
+q7b + picker (q5 fine-tuned on 1.3k NH2sA + 3k NMA salted boss labels),0.580,+0.027±0.017,+0.004±0.009
+"perfect K12 legacy picker (sims, per-match seeds; ceiling only)",0.647,+0.095±0.018,+0.071±0.017

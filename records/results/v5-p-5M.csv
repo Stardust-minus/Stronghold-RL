@@ -1,0 +1,3 @@
+ckpt,win 480,T2 480,main/sec/sum,elites,win 192,updates/5M
+"NH 5M (MLP + plan head, PB4)",0.677,0.992,101/70/214,4.06,0.641,
+"V5Ps43 (v5 + plan, V5P BC on PB4 data, NH recipe)",0.708,0.985,104/79/234,3.58,0.698,75

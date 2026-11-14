@@ -1,0 +1,3 @@
+recipe set,D - base,DT - base (+ stacking templates),DT - D,layer-aware valuation (LA - base / DTLA - DT)
+8 (recipes.json),+0.027±0.005,+0.027±0.005,-0.001±0.003,-0.003±0.005 / -0.014±0.006
+8 (recipes-M.json),+0.025±0.005,+0.027±0.005,+0.002±0.003,— / -0.003±0.006

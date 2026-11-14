@@ -9,7 +9,9 @@ import { Match } from '../../server/match/Match.js';
 import { VirtualScheduler } from '../../server/match/scheduler.js';
 import { getData } from '../../server/data.js';
 import { defineBotStrategy, LEGACY_BOT } from '../../server/match/botStrategyContract.js';
-import { createBotPrepSteps, runSteps, layoutCandidatesForPicker, applyPlanForPicker } from '../../server/match/bot.js';
+import { xPlaceProblemForTraining as xPlaceProblemP, createBotPrepSteps, runSteps, layoutCandidatesForPicker, applyPlanForPicker, positionalCandidatesForTraining, layoutFeatures, rehearseCandidatesForTraining, candidatePoolForTraining, teacherSearchForTraining, oracleSigForTraining } from '../../server/match/bot.js';
+import { pieceDir as pieceDirP } from '../../server/match/board.js';
+import { appendFileSync as appendFileSyncP, writeFileSync as writeFileSyncP, existsSync as existsSyncP } from 'node:fs';
 import { PickerHead, pickerRow } from './picker.mjs';
 import { collectViolations } from '../../server/match/invariants.js';
 import { snapshotMatch, restoreMatch } from '../../server/match/snapshot.js';
@@ -19,7 +21,15 @@ import { beginSeatPlan, endSeatPlan, seatPlanOf, seatPlanRerolls } from '../../s
 import { pieceDir } from '../../server/match/board.js';
 import { withBounties } from '../../server/match/waves.js';
 import { SPPolicy2 } from './infer2.mjs';
+import { SPPolicy5 } from './infer5.mjs';
+import { readFileSync as readFileSyncP } from 'node:fs';
 import { recipePlan } from './recipes.mjs';
+import { XPlacer } from './xplace.mjs';
+import { xFeaturize as xFeaturizeP, xAssignOf as xAssignOfP, xCandFeatures as xCandFeaturesP } from './xfeat.mjs'; // (picker boss labels: the xplace Q on legacy K8)
+import { createLabelHook } from './xsearch.mjs';
+import { HumanProxies } from './proxies.mjs'; // (N8) co-op proxies teammate proxy pool (trackE-v2 cfabf0d3)
+// (N5) the route bots' national-route bot (legacy buy loop + NAT_POLICY), the plan-known teacher of natPlan.teacher 'nat'
+import { natSetup, NAT_PROCURE_ONLY, NATIONS as M_NATIONS, PAIRS as M_PAIRS } from './trackm/routebots.mjs';
 
 // Legacy prep with its procurement switched off — rewards too (the policy picks them, under the 让盟约 mask): a personal
 // choice left over, arrange, equip, final arrange (+ rehearsal); prepEnd (legacy) applies the rehearsed plan, resolves
@@ -38,6 +48,11 @@ export const PROCURE_ONLY = createBotPrepSteps({ arrangeSteps: none, equipItems:
 // fa: the team's share of the round-14 Final Assault leader pool (1 − hp / maxHp of that SharedBossPool: 0 when untouched,
 // 1 for a win), paid to every policy seat at the match end (ppo2: a signal between "reached the Final Assault and lost
 // badly" and "nearly cleared it"). Every term can be overridden per environment (option `reward`).
+// (N1) natPlan.slots: plan-block extras (distinct owned P / S members) and per-slot features (in P, in S, new / sole P member)
+const PLAN_X = 2, PLAN_SW = 3;
+// (N1) natPlan.head: one 'planNat' row per nation (PLAN_NF numeric features + a one-hot of the nation) and one extra action per
+// nation after the encoder's actions; a plan decision (kind KIND_PLAN) picks the nation P (S: the rule in _ruleS)
+const PLAN_NF = 8, KIND_PLAN = 5;
 export const REWARD = Object.freeze({ round: 0.1, lp: 1.0, win: 2.0, team: 0.75, fa: 0 });
 
 /**
@@ -167,6 +182,9 @@ export class SPEnv {
     // band choice (ppo3): bandPolicy { share: RL seats whose band the policy picks (the rest legacy's random pick),
     // planProb: chance a human proxy without a band-tied bond announces a random core 主盟约 }; null = legacy picks all
     this.obsVersion = o.obsVersion ?? 3; // 2: the ppo1/ppo2 layout and 60 actions; 3: S5 blocks + band choice; 4: full control
+    // (A1, 11-13, arch) version 3 extension blocks (spec.mjs ext): obsExt { board, hist }; off (null) = version 3 as before.
+    // hist keeps, per seat of a match, its own battles (leaks, LP lost, layers gained, kills) and the shop rolls it saw
+    this.obsExt = o.obsExt && this.obsVersion === 3 && (o.obsExt.board || o.obsExt.hist) ? { board: !!o.obsExt.board, hist: !!o.obsExt.hist } : null;
     // version 4 (the owner's call of 11-12): the policy takes every decision of its seat — economy, lineup, every tile and
     // facing, equipment, personal choices, temp / hand — and END is the seat's Ready; legacy never arranges a policy seat.
     // seatPlan (deploy semantics: one round trip per prep, server/match/seatPlan.js): the seat plans its whole prep from
@@ -219,16 +237,53 @@ export class SPEnv {
     // Assault start, + `sec` if S (free: any class stacking bond) was active there with >= secLayers layers; and the potential
     // phiCount x min(P on board, 6) / 6 + phiLayers x P layers / 100 (free: the best nation) inside the shaping term.
     this.natPlan = o.natPlan ? { phase: 'forced', bonus: 1.5, sec: 0.5, secLayers: 40, phiCount: 0.5, phiLayers: 0.3, ...o.natPlan } : null;
+    // (N5) natPlan.teacher 'nat' (teacher mode): RL seats procure with the route bots' nat bot toward their plan nation (natSetup + NAT_PROCURE_ONLY)
+    this.natTeach = !!(this.natPlan && this.natPlan.teacher === 'nat' && this.mode === 'teacher');
+    // teammate proxy pool (11-13, co-op proxies; off): the human seats are driven by tools/rl/proxies.mjs kinds instead of
+    // legacy (legacy kind: unchanged), with their own normal-round rehearsal and (log) a bond log in the match result
+    this.humanProxy = o.humanProxy ? new HumanProxies(o.humanProxy) : null;
     this.picker = o.pickerHead ? { head: PickerHead.load(o.pickerHead.head), trunk: SPPolicy2.load(o.pickerHead.trunk), K: o.pickerHead.K || 8 } : null;
     // diagnostics (track 2): readyHook(m, ps, slot) runs right before a legacy-placed seat readies (its final layout,
     // after any rehearsal), e.g. a candidate pick; seatPlanBonds { ai_0: bondId }: legacy's focus bond for those seats
     this.readyHook = o.readyHook || null;
     this.equipHook = o.equipHook || null; // diagnostics: replaces equipItems for the policy (LAYOUT_ONLY) seats
     this.seatPlanBonds = o.seatPlanBonds || null;
-    // diagnostics (track 2): recipeSeats { recipes, seats: { pid: k } } — those seats are legacy with recipe k's advisor plan
-    // (the recipe bots: recipes.mjs through Match.externalAI.planFor, server/match/aiPlan.js) and open with its first band
-    this.recipeSeats = o.recipeSeats && o.recipeSeats.recipes?.length ? o.recipeSeats : null;
     this.bountyAware = !!o.bountyAware; // diagnostics: legacy's field model of the policy seats adds their bounty spawns
+    // normal-round layout picker (11-13, picker, off): normalPicker { head: <base>.json of a spatial head (export_p5.py, kind 'p5-picker'),
+    // K, from, to, mode, margin }: at a normal round in [from, to] an RL seat's legacy layout (after LAYOUT_ONLY's final arrange, before
+    // prepEnd) is replaced by the head's pick among K legacy candidates (planLayout only: no battle may be built). The head is the v5
+    // tower over each candidate's version 3 + ext.board observation (Encoder.boardSlice); mode 'reg' (default): switch to the candidate
+    // whose predicted −2 Δleaks + Δlayers / 5 + 0.05 Δkills vs the default exceeds `margin` (default 0.5); mode 'score': the score argmax.
+    if (o.normalPicker && JSON.parse(readFileSyncP(o.normalPicker.head, 'utf8')).kind !== 'p5-picker') throw new Error('normalPicker: not a p5-picker head');
+    this.npicker = o.normalPicker ? { spatial: SPPolicy5.load(o.normalPicker.head.replace(/\.json$/, '')), mode: o.normalPicker.mode || 'reg', margin: o.normalPicker.margin ?? 0.5,
+      K: o.normalPicker.K || 8, from: o.normalPicker.from ?? 1, to: o.normalPicker.to ?? 13, enc: null, w: o.normalPicker.w || [2, 0.2, 0.05],
+      pool: !!o.normalPicker.pool, edits: o.normalPicker.edits ?? 12, max: o.normalPicker.max ?? 32, tmpl: o.normalPicker.tmpl ?? 6 } : null;
+    // normal-round labels (picker, off; training data only): pLabel { dir, K, tmpl, from, to, apply 'label'|'none', seed 'fixed'|'match' }: at every
+    // normal round of an RL seat the K legacy candidates (+ tmpl stacking-aware) are rehearsed once each; one JSON line per decision in
+    // <dir>/lab-<pid>.jsonl (version 3 + ext.board obs, per-candidate ext.board slices, assignments, scores); the D-rule best applied unless 'none'
+    this.plabel = o.pLabel ? { K: 8, tmpl: 0, from: 1, to: 13, apply: 'label', seed: 'fixed', ...o.pLabel, enc: null } : null;
+    // boss-round labels (picker, off; training only): pBossLabel { dir, K, seeds (1|2) }: at the boss / hidden-core round of an RL seat, BEFORE any boss
+    // picker or the xplace ensemble acts, legacy's K candidates are each rehearsed with per-match boss seeds (mean of `seeds`); one line per decision in
+    // <dir>/boss-<pid>.jsonl in posvalue pickrec's format (kind 'boss': v3 obs sparse, c of the boss picker's trunk, pickerRow rows, scores)
+    this.pbl = o.pBossLabel ? { K: 8, seeds: 2, ...o.pBossLabel } : null;
+    // (code-P9, picker, off) pBossLabel also takes qx { name: <X QNet model JSON> } (each net's Q on the same K, recorded as qx) and
+    // rehearse: false (no rehearsal: scores null; records still written). bossSpatial { head: <base>.json (export_p5 of P/b1/bpick5.py,
+    // kind 'p5-picker'), w (default 1), K (default 8), out 'score' (default, output 0) | 'share' (output 1), rounds 'fa' (default: the
+    // Final Assault only) | 'boss' }: in the xplace QNet pick (xPlace) the spatial boss picker's z-scored output over legacy's K candidates (v3 +
+    // ext.board obs with each candidate's board slice, as normalPicker) is added with weight w to z(Q) (+ ens x z(head) if xPlace ens > 0).
+    if (o.bossSpatial && JSON.parse(readFileSyncP(o.bossSpatial.head, 'utf8')).kind !== 'p5-picker') throw new Error('bossSpatial: not a p5-picker head');
+    this.bspatial = o.bossSpatial ? { spatial: SPPolicy5.load(o.bossSpatial.head.replace(/\.json$/, '')), w: o.bossSpatial.w ?? 1, K: o.bossSpatial.K || 8,
+      out: o.bossSpatial.out === 'share' ? 1 : 0, rounds: o.bossSpatial.rounds || 'fa', enc: null } : null;
+    // xplace (11-13, all off): placeHook(m, ps, slot) runs right after the prepBegin of an RL seat (not a human proxy) or a
+    // recipe seat — the label generator (tools/rl/xlabel.mjs); recipeSeats { recipes, seats: { pid: k } } (L10 port): those
+    // seats play legacy with recipe k's advisor plan and open with its first band; xPlace { model, rounds 'all' | 'normal' |
+    // 'boss' }: the learned layout policy (tools/rl/xplace.mjs, no battle may be built) replaces an RL seat's legacy layout
+    this.placeHook = o.placeHook || null;
+    this.recipeSeats = o.recipeSeats && o.recipeSeats.recipes?.length ? o.recipeSeats : null;
+    this.xplace = o.xPlace ? XPlacer.fromOptions(o.xPlace) : null;
+    this.xplaceModel = o.xPlace && o.xPlace.model ? String(o.xPlace.model).split('/').slice(-2).join('/') : null; // (picker boss labels: tag)
+    // xLabel { out, K, ls, seeds, ... } (tools/rl/xsearch.mjs): the search-label hook as placeHook, one <out>-<seed>-<pid> file pair per env
+    if (o.xLabel) { this._xlab = createLabelHook(null, { ...o.xLabel, out: `${o.xLabel.out}-${o.seed}-${process.pid}` }); this.placeHook = this._xlab.hook; }
     this.R = Object.freeze({ ...REWARD, ...(o.reward || {}) });
     // per-difficulty reward overrides on top of this.R (o.rewardBy { ABYSS: { round: 0, win: 1 } }); a seat keeps its match's weights
     this.RB = Object.fromEntries(Object.entries(o.rewardBy || {}).map(([d, r]) => [String(d).toUpperCase(), Object.freeze({ ...this.R, ...r })]));
@@ -254,7 +309,7 @@ export class SPEnv {
     this.errorSamples = [];
     this.slots = new Array(this.envs).fill(null);
     for (let i = 0; i < this.envs; i++) this.slots[i] = this._open(i);
-    this.D = this.encoder.dim + (this.natPlan ? this._planWidth() : 0); this.A = this.encoder.A;
+    this.D = this.encoder.dim + (this.natPlan ? this._planWidth() : 0); this.A = this.encoder.A + (this.natPlan?.head ? this._natBonds(this.encoder.gd).nations.length : 0);
     this._buf(64);
   }
 
@@ -270,10 +325,22 @@ export class SPEnv {
   _encSpec() {
     const sp = this.encoder.spec();
     if (!this.natPlan) return sp;
-    return { ...sp, dim: this.D, blocks: { ...sp.blocks, plan: { offset: this.encoder.dim, count: 1, width: this._planWidth() } } };
+    if (!this.natPlan.slots && !this.natPlan.head) return { ...sp, dim: this.D, blocks: { ...sp.blocks, plan: { offset: this.encoder.dim, count: 1, width: this._planWidth() } } };
+    // (N1) plan slots: the plan block's own row, then one row per shop slot / reward slot / owned row (model.py appends each
+    // to that entity's row input); plan head: one planNat row per nation (a pointer block: its logits are the extra actions)
+    const w0 = 1 + 2 * this.encoder.vocab.bondIds.length + 6 + (this.natPlan.slots ? PLAN_X : 0); let q = this.encoder.dim + w0;
+    const blocks = { ...sp.blocks, plan: { offset: this.encoder.dim, count: 1, width: w0 } };
+    if (this.natPlan.slots) {
+      blocks.planShop = { offset: q, count: SHOP, width: PLAN_SW }; q += PLAN_SW * SHOP;
+      blocks.planRewards = { offset: q, count: REWARDS, width: PLAN_SW }; q += PLAN_SW * REWARDS;
+      blocks.planOwned = { offset: q, count: OWNED, width: PLAN_SW }; q += PLAN_SW * OWNED;
+    }
+    if (this.natPlan.head) { const NN = this._natBonds(this.encoder.gd).nations.length; blocks.planNat = { offset: q, count: NN, width: PLAN_NF + NN }; }
+    return { ...sp, dim: this.D, actions: this.A, blocks, ...(this.natPlan.head ? { planHead: { action0: this.encoder.A, nations: this._natBonds(this.encoder.gd).nations } } : {}) };
   }
 
-  _planWidth() { return 1 + 2 * this.encoder.vocab.bondIds.length + 6; }
+  _planWidth() { const NN = this.natPlan?.head ? this._natBonds(this.encoder.gd).nations.length : 0;
+    return 1 + 2 * this.encoder.vocab.bondIds.length + 6 + (this.natPlan?.slots ? PLAN_X + PLAN_SW * (SHOP + REWARDS + OWNED) : 0) + NN * (PLAN_NF + NN); }
 
   _natBonds(gd) {
     if (this._nat) return this._nat;
@@ -288,18 +355,159 @@ export class SPEnv {
     return this._nat;
   }
 
+  /** (N1) natPlan.live: the bonds switched off in this match (drawn bans + static: their operators never enter the pool). */
+  _offBonds(m) {
+    const ex = this.natPlan?.exclude; // (N6) natPlan.exclude: nations never planned (e.g. ['egirShip']: devour order needs placement we lack)
+    if (!this.natPlan?.live && !(ex && ex.length)) return null;
+    return new Set([...(this.natPlan.live ? [...(m.disabledBonds || []), ...(m.staticInactiveBonds || [])] : []), ...(ex || [])]);
+  }
+
   /** The seat's plan pair (P, S), drawn once per seat from a seat-and-seed stream. */
-  _assignPlan(slot, ps) {
+  _assignPlan(slot, ps, prev = null) {
+    if (this.natPlan.assign === 'lead') return this._leadPlan(slot, ps, prev);
+    if (this.natPlan.assign === 'auto' || this.natPlan.assign === 'mix') return this._autoPlan(slot, ps);
     const m = slot.m, N = this._natBonds(m.gd), bc = bandConflicts(m.gd, m.publicView(), ps.playerId, slot.humans, null);
-    const taken = (slot.natTaken ||= new Set());
-    let ok = N.nations.filter((n) => !bc.humanBand.has(n) && !bc.humanMain.has(n) && !taken.has(n));
-    if (!ok.length) ok = N.nations.filter((n) => !taken.has(n));
-    if (!ok.length) ok = N.nations;
+    const taken = (slot.natTaken ||= new Set()), off = this._offBonds(m), nat = off ? N.nations.filter((n) => !off.has(n)) : N.nations;
+    const hn = this.natPlan.coopReplan ? this._humanNat(slot, ps) : null; let ok = nat.filter((n) => !bc.humanBand.has(n) && !bc.humanMain.has(n) && !taken.has(n) && !(hn && hn.has(n)));
+    if (!ok.length) ok = nat.filter((n) => !taken.has(n));
+    if (!ok.length) ok = nat.length ? nat : N.nations;
     const rng = mulberry32((slot.seed ^ Math.imul((Number(String(ps.playerId).split('_')[1]) || 0) + 1, 0x9E3779B1) ^ 0x7A11) >>> 0);
-    const P = ok[Math.floor(rng() * ok.length)], ss = N.secOf.get(P) || [];
-    const S = ss.length ? ss[Math.floor(rng() * ss.length)] : null;
+    const P = ok[Math.floor(rng() * ok.length)], ss = (N.secOf.get(P) || []).filter((c) => !off || !off.has(c));
+    let S = ss.length ? ss[Math.floor(rng() * ss.length)] : null;
+    if (this.natPlan.pairS) S = this._pairS(m, P) ?? S;
     taken.add(P);
     return { P, S };
+  }
+
+  /** (N8) natPlan.coopReplan: the bonds living humans build or hold by band (their public main core bond, band bonds: the
+   *  让盟约 protected set), never planned and a reason to replan. */
+  _humanNat(slot, ps) { return slot.humans.size ? humanBonds(slot.m.gd, slot.m.publicView(), ps.playerId, slot.humans) : new Set(); }
+
+  /** (N5) the route bots' community secondary for P (first live bond of its PAIRS list), or null. */
+  _pairS(m, P) { const off = new Set([...(m.disabledBonds || []), ...(m.staticInactiveBonds || [])]); return (M_PAIRS[P] || []).find((b) => !off.has(b)) || null; }
+
+  /** (N5) natPlan.assign 'auto': P = the first allowed (live with `live`) nation in the route bots' value order (recipes-M.json rank);
+   *  'mix': a uniformly random allowed nation with probability mixP (default 0.5), else 'auto'. S = the route bots' pair (fallback: the
+   *  first live class bond of P's operators). */
+  _autoPlan(slot, ps) {
+    const m = slot.m, N = this._natBonds(m.gd), bc = bandConflicts(m.gd, m.publicView(), ps.playerId, slot.humans, null);
+    const taken = (slot.natTaken ||= new Set()), off = this._offBonds(m), nat = off ? N.nations.filter((n) => !off.has(n)) : N.nations;
+    const hn = this.natPlan.coopReplan ? this._humanNat(slot, ps) : null; let ok = nat.filter((n) => !bc.humanBand.has(n) && !bc.humanMain.has(n) && !taken.has(n) && !(hn && hn.has(n)));
+    if (!ok.length) ok = nat.filter((n) => !taken.has(n));
+    if (!ok.length) ok = nat.length ? nat : N.nations;
+    const rng = mulberry32((slot.seed ^ Math.imul((Number(String(ps.playerId).split('_')[1]) || 0) + 1, 0x9E3779B1) ^ 0xA070) >>> 0);
+    const rand = this.natPlan.assign === 'mix' && rng() < (this.natPlan.mixP ?? 0.5);
+    const P = rand ? ok[Math.floor(rng() * ok.length)] : (M_NATIONS.find((n) => ok.includes(n)) || ok[0]);
+    const S = this._pairS(m, P) ?? ((N.secOf.get(P) || []).find((c) => !off || !off.has(c)) || null);
+    taken.add(P);
+    return { P, S };
+  }
+
+  /** (N5) natPlan.teacher 'nat': the seat's plan (natPlan.assign) handed to the route bots' natSetup once; s.plan = the bot's own (P, S). */
+  _natTeachSetup(slot, ps, s, atBand = false) {
+    if (ps._nat) return;
+    if (atBand && this.natPlan.head && this.natPlan.planAtBand && this.natPlan.hindsight && this.recorder) { // (N7) the plan sample at the band stage
+      const m = slot.m, obs = new Float32Array(this.encoder.dim), mask = new Uint8Array(this.encoder.A);
+      const aiPicks = new Set([...m.players.keys()].filter((pid) => !slot.humans.has(pid) && m.draft?.picks?.[pid]));
+      const r = this.encoder.encode(m, ps, { kind: 'band', actions: 0, freezes: 0, lp0: s.lp0, humans: slot.humans, rules: this.rules, newUids: new Set(),
+        soldBases: new Set(), cache: {}, aiPicks }, obs, mask);
+      (slot.natBuf ||= []).push({ pid: ps.playerId, kind: KIND_PLAN, traj: s.traj, o: obs.slice(), mk: null, a: -1, plan: true, first: true,
+        rw: this._reward(s, m, m.round, Math.max(0, ps.lp || 0)), view: this._planView(r.own, r.owned), allowed: this._planAllowed(slot, ps, null), round: m.round || 0 });
+      s.steps++; (s.hsPlans ||= new Set()).add(-1);
+    }
+    const plan = this._assignPlan(slot, ps);
+    const N = natSetup(slot.m, ps, plan.P);
+    s.plan = { P: N.P, S: N.S };
+  }
+
+  /** (N5) natPlan.band: the plan nation a seat's (legacy-picked) band should carry, fixing the plan now when needed. */
+  _bandPlanP(slot, ps) {
+    const s = this._seat(slot, ps);
+    if (this.natTeach) this._natTeachSetup(slot, ps, s, true);
+    else if (!s.plan && !this.natPlan.head && this.natPlan.assign !== 'lead') s.plan = this._assignPlan(slot, ps);
+    return s.plan?.P || null;
+  }
+
+  /** (N1) natPlan.assign 'lead': P = the allowed nation with the most distinct owned members (board, hand, temp), the previous
+   *  P on ties, then a seat-and-seed order; S = the class bond of P's operators with the most distinct owned members (the
+   *  previous S on ties). Re-planned at every decision before round lockRound (default 4), then fixed. */
+  _leadPlan(slot, ps, prev) {
+    const m = slot.m, gd = m.gd, N = this._natBonds(gd), bc = bandConflicts(gd, m.publicView(), ps.playerId, slot.humans, null);
+    const taken = (slot.natTaken ||= new Set()); if (prev) taken.delete(prev.P);
+    const off = this._offBonds(m), nat = off ? N.nations.filter((n) => !off.has(n)) : N.nations;
+    const hn = this.natPlan.coopReplan ? this._humanNat(slot, ps) : null; let ok = nat.filter((n) => !bc.humanBand.has(n) && !bc.humanMain.has(n) && !taken.has(n) && !(hn && hn.has(n)));
+    if (!ok.length) ok = nat.filter((n) => !taken.has(n));
+    if (!ok.length) ok = nat.length ? nat : N.nations;
+    const bases = new Map(); for (const p of ps.allChess()) bases.set(gd.baseIdOf(p.id), p.id);
+    const cnt = (b) => { let k = 0; for (const id of bases.values()) if ((gd.chess(id)?.bonds || []).includes(b)) k++; return k; };
+    const rng = mulberry32((slot.seed ^ Math.imul((Number(String(ps.playerId).split('_')[1]) || 0) + 1, 0x9E3779B1) ^ 0x1EAD) >>> 0);
+    const order = new Map(ok.map((n) => [n, rng()]));
+    let P = null, pk = -Infinity;
+    for (const n of ok) { const k = cnt(n) * 10 + (prev && prev.P === n ? 1 : 0) + order.get(n) * 0.5; if (k > pk) { pk = k; P = n; } }
+    const ss = (N.secOf.get(P) || []).filter((c) => !off || !off.has(c));
+    let S = null, sk = -Infinity;
+    for (const c of ss) { const k = cnt(c) * 10 + (prev && prev.S === c ? 1 : 0) + rng() * 0.5; if (k > sk) { sk = k; S = c; } }
+    if (this.natPlan.pairS) S = this._pairS(m, P) ?? S;
+    taken.add(P);
+    return { P, S };
+  }
+
+  /** (N1) The plan a seat played, read off its final board (hindsight label for plan-conditioned BC): P = the nation with
+   *  the highest tier, then most units; S = the active class stacking bond with the most layers (null: none). */
+  _hindsightPlan(gd, ps, fallback = null, known = null) {
+    const N = this._natBonds(gd);
+    let bonds = ps ? ps.privateView().bonds || [] : [];
+    // an eliminated seat's board is gone at the end: then its last decision's bond view (board as placed)
+    if (fallback && !N.nations.some((n) => SPEnv._bv(bonds, n).count > 0)) bonds = fallback;
+    let P = N.nations[0], pv = null, pk = -1;
+    for (const n of N.nations) { const v = SPEnv._bv(bonds, n), k = v.tier * 100 + v.count; if (k > pk) { pk = k; P = n; pv = v; } }
+    let S = null, sv = null;
+    for (const c of N.classes) { const v = SPEnv._bv(bonds, c); if (v.active && (!sv || v.layers > sv.layers)) { sv = v; S = c; } }
+    if (known) { P = known.P; pv = SPEnv._bv(bonds, P); S = known.S || null; sv = S ? SPEnv._bv(bonds, S) : null; } // (N5) natPlan.known: the seat's own plan
+    return { P, S, pTier: pv?.tier || 0, pCount: pv?.count || 0, pLayers: pv?.layers || 0, sLayers: sv?.layers || 0 };
+  }
+
+  /** (N1) What the plan-slot features need of a decision's state, as plain ids (a snapshot: hindsight samples are filled in
+   *  at the match end). */
+  _planView(own, owned) {
+    const ch = (x) => (x && !x.sold && x.kind === 'chess' ? x.id : null);
+    return { bonds: (own?.bonds || []).map((b) => ({ bondId: b.bondId, tier: b.tier, count: b.count, layers: b.layers, active: b.active })),
+      shop: (own?.shop?.slots || []).slice(0, SHOP).map(ch), rewards: (own?.shop?.rewardOffer?.slots || []).slice(0, REWARDS).map(ch),
+      owned: (owned || []).slice(0, OWNED).map((p) => (p && p.kind === 'chess' ? p.id : null)) };
+  }
+
+  /** (N1) Plan-slot features at out[q..]: distinct owned P / S members, then per shop slot / reward slot [in P, in S, a new
+   *  distinct P member], per owned row [in P, in S, the only owned copy of a P member]. */
+  _planSlots(view, plan, out, q) {
+    const gd = this.encoder.gd, inB = (id, b) => !!(b && id && (gd.chess(id)?.bonds || []).includes(b));
+    const own = new Map(); for (const id of view.owned) if (id) { const b = gd.baseIdOf(id); const e = own.get(b); if (e) e.n++; else own.set(b, { id, n: 1 }); }
+    let dP = 0, dS = 0; for (const { id } of own.values()) { if (inB(id, plan.P)) dP++; if (inB(id, plan.S)) dS++; }
+    out[q] = Math.min(dP, 9) / 6; out[q + 1] = Math.min(dS, 9) / 3; q += PLAN_X;
+    const offer = (ids, n) => { for (let i = 0; i < n; i++, q += PLAN_SW) { const id = ids[i]; if (!id) continue;
+      const p = inB(id, plan.P); out[q] = p ? 1 : 0; out[q + 1] = inB(id, plan.S) ? 1 : 0; out[q + 2] = p && !own.has(gd.baseIdOf(id)) ? 1 : 0; } };
+    offer(view.shop, SHOP); offer(view.rewards, REWARDS);
+    for (let i = 0; i < OWNED; i++, q += PLAN_SW) { const id = view.owned[i]; if (!id) continue;
+      const p = inB(id, plan.P); out[q] = p ? 1 : 0; out[q + 1] = inB(id, plan.S) ? 1 : 0; out[q + 2] = p && own.get(gd.baseIdOf(id))?.n === 1 ? 1 : 0; }
+  }
+
+  /** (N1) natPlan.dense: one-time milestone rewards (no cycling): `unit` per new high of the target nation's units on board
+   *  (cap 6), `t2` when it first reaches tier 2, `secOn` when the secondary (forced: S; free: the best active class bond)
+   *  is first active, `secPay` per layer milestone of `secL` it first reaches. */
+  _natDense(s, bonds) {
+    const D = this.natPlan.dense, ms = (s.natMs ||= { cnt: 0, t2: false, sOn: false, sL: 0, sum: 0 });
+    const t = SPEnv._bv(bonds, this._natTarget(bonds, s.plan)), c = Math.min(t.count, 6);
+    let r = 0;
+    if (c > ms.cnt) { r += (D.unit || 0) * (c - ms.cnt); ms.cnt = c; }
+    if (t.tier >= 2 && !ms.t2) { r += D.t2 || 0; ms.t2 = true; }
+    let sv = null;
+    if (this.natPlan.phase === 'free') { for (const c2 of this._natBonds(this.encoder.gd).classes) { const v = SPEnv._bv(bonds, c2); if (v.active && (!sv || v.layers > sv.layers)) sv = v; } }
+    else if (s.plan.S) sv = SPEnv._bv(bonds, s.plan.S);
+    if (sv && sv.active) {
+      if (!ms.sOn) { r += D.secOn || 0; ms.sOn = true; }
+      for (const L of D.secL || []) if (L > ms.sL && sv.layers >= L) { r += D.secPay || 0; ms.sL = L; }
+    }
+    ms.sum += r;
+    return r;
   }
 
   /** Bond view helpers: { tier, count, layers, active } of a bond in a privateView bonds list. */
@@ -319,13 +527,57 @@ export class SPEnv {
     return this.natPlan.phiCount * Math.min(t.count, 6) / 6 + this.natPlan.phiLayers * t.layers / 100;
   }
 
-  _planObs(bonds, plan, out, o) {
+  _planObs(bonds, plan, out, o, view = null) {
     const N = this._natBonds(this.encoder.gd), NB = this.encoder.vocab.bondIds.length;
     out[o] = 1; out[o + 1 + N.index.get(plan.P)] = 1; if (plan.S) out[o + 1 + NB + N.index.get(plan.S)] = 1;
     const p = SPEnv._bv(bonds, plan.P), sv = plan.S ? SPEnv._bv(bonds, plan.S) : { tier: 0, layers: 0, active: false }, q = o + 1 + 2 * NB;
     out[q] = Math.min(p.count, 9) / 6; out[q + 1] = p.tier / 2; out[q + 2] = Math.min(p.layers, 999) / 100; out[q + 3] = sv.active ? 1 : 0;
     out[q + 4] = Math.min(sv.layers, 999) / 100; out[q + 5] = this.natPlan.phase === 'free' ? 0 : 1;
+    if (this.natPlan.slots && view) this._planSlots(view, plan, out, q + 6);
   }
+
+  /** (N1) natPlan.head: allowed nations of a seat's plan decision (not tied to a human's band / 主盟约, not another RL seat's P). */
+  _planAllowed(slot, ps, cur = null) {
+    const m = slot.m, N = this._natBonds(m.gd), bc = bandConflicts(m.gd, m.publicView(), ps.playerId, slot.humans, null);
+    const taken = new Set(slot.natTaken || []); if (cur) taken.delete(cur);
+    const off = this._offBonds(m), nat = off ? N.nations.filter((n) => !off.has(n)) : N.nations;
+    const hn = this.natPlan.coopReplan ? this._humanNat(slot, ps) : null; let ok = nat.filter((n) => !bc.humanBand.has(n) && !bc.humanMain.has(n) && !taken.has(n) && !(hn && hn.has(n)));
+    if (!ok.length) ok = nat.filter((n) => !taken.has(n));
+    return new Set(ok.length ? ok : nat.length ? nat : N.nations);
+  }
+
+  /** (N1) natPlan.head: S for a chosen P = P's class bond with the most distinct owned members (the previous S on ties, then a
+   *  seat-and-seed order). */
+  _ruleS(slot, ps, P, prev = null) {
+    const gd = slot.m.gd, N = this._natBonds(gd), bases = new Map(); for (const p of ps.allChess()) bases.set(gd.baseIdOf(p.id), p.id);
+    const cnt = (b) => { let k = 0; for (const id of bases.values()) if ((gd.chess(id)?.bonds || []).includes(b)) k++; return k; };
+    const rng = mulberry32((slot.seed ^ Math.imul((Number(String(ps.playerId).split('_')[1]) || 0) + 1, 0x9E3779B1) ^ 0x5EC0 ^ (slot.m.round || 0)) >>> 0);
+    let S = null, sk = -Infinity;
+    const off = this._offBonds(slot.m);
+    for (const c of N.secOf.get(P) || []) { if (off && off.has(c)) continue; const k = cnt(c) * 10 + (prev && prev.S === c ? 1 : 0) + rng() * 0.5; if (k > sk) { sk = k; S = c; } }
+    if (this.natPlan.pairS) S = this._pairS(slot.m, P) ?? S;
+    return S;
+  }
+
+  /** (N1) planNat rows at out[q..]: per nation [1, allowed, distinct owned / 6, on board / 6, tier / 2, layers / 100, is the
+   *  plan's P, shop slots offering a new member / 3, one-hot of the nation]. */
+  _planNatObs(view, plan, allowed, out, q) {
+    const gd = this.encoder.gd, N = this._natBonds(gd), NN = N.nations.length, W = PLAN_NF + NN;
+    const own = new Map(); for (const id of view.owned) if (id) own.set(gd.baseIdOf(id), id);
+    N.nations.forEach((n, j) => {
+      const r = q + j * W, inB = (id) => (gd.chess(id)?.bonds || []).includes(n), v = SPEnv._bv(view.bonds, n);
+      let d = 0; for (const id of own.values()) if (inB(id)) d++;
+      let nw = 0; for (const id of view.shop) if (id && inB(id) && !own.has(gd.baseIdOf(id))) nw++;
+      out[r] = 1; out[r + 1] = allowed.has(n) ? 1 : 0; out[r + 2] = Math.min(d, 9) / 6; out[r + 3] = Math.min(v.count, 9) / 6; out[r + 4] = v.tier / 2;
+      out[r + 5] = Math.min(v.layers, 999) / 100; out[r + 6] = plan && plan.P === n ? 1 : 0; out[r + 7] = Math.min(nw, 3) / 3; out[r + PLAN_NF + j] = 1;
+    });
+  }
+
+  /** (N1) natPlan.head: does this seat take a plan decision now (no plan yet, or a replan round it has not replanned in)? */
+  _needPlan(s, round) { return s.plan ? (this.natPlan.replan || []).includes(round) && s.planRound !== round : round >= (this.natPlan.planFrom ?? 1); }
+
+  /** (N1) natPlan.head: the planNat block's offset. */
+  _planNatAt() { const sp = this._encSpec(); return sp.blocks.planNat.offset; }
 
   /** At the Final Assault start: every RL seat's plan state (for the terminal bonus and the metrics). */
   _natAtFA(slot) {
@@ -413,6 +665,7 @@ export class SPEnv {
       slot.recipeSeat.set(pid, k); slot.rl.delete(pid); slot.humans.delete(pid); slot.role.set(pid, 'recipe');
     }
     slot.deferredBand = []; slot.bandSeats = new Set(); slot.announced = new Set(); slot.deferredPrep = [];
+    if (this.humanProxy) slot.proxy = this.humanProxy.assign(slot, [...slot.humans], seed);
     if (this.bandPolicy && !snap) for (const pid of slot.rl) {
       if (slot.humans.has(pid)) continue;
       if (rng() < this.bandPolicy.share) { slot.bandSeats.add(pid); this.bandStats.policySeats++; } else this.bandStats.legacySeats++;
@@ -442,11 +695,18 @@ export class SPEnv {
         return true;
       },
       pickBand(m, ps) {
-        const rk = slot.recipeSeat?.get(ps.playerId);
+        const rk = env.recipeSeats && slot.recipeSeat.get(ps.playerId);
         if (rk) { const ok = (env.recipeSeats.recipes[rk - 1].bands || []).filter((id) => m.gd.bandAllowed(id) && !m.bandTaken(id, ps.playerId)); if (ok.length) return ok[0]; }
+        const hp = slot.proxy?.get(ps.playerId);
+        if (hp && hp.base !== 'legacy') return env.humanProxy.pickBand(m, ps, hp);
         if (env.bandPolicy?.uniform && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId) && !slot.bandSeats?.has(ps.playerId)) {
           const ok = m.gd.bandIds().filter((id) => m.gd.bandAllowed(id) && !m.bandTaken(id, ps.playerId));
           if (ok.length) return ok[Math.floor(slot.collectRng() * ok.length)];
+        }
+        if (env.natPlan?.band && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId)) { // (N5) the plan nation's band when offered (route bots)
+          const P = env._bandPlanP(slot, ps);
+          const ok = P ? m.gd.bandIds().filter((b) => m.gd.bandAllowed(b) && !m.bandTaken(b, ps.playerId) && m.gd.bandBondIds(b).includes(P)) : [];
+          if (ok.length) return ok[0];
         }
         const f = env.forceBand;
         if (f && ps.playerId === 'ai_0' && m.gd.bandAllowed(f) && !m.bandTaken(f, ps.playerId)) return f;
@@ -456,12 +716,15 @@ export class SPEnv {
       },
       *prepBegin(m, ps, o) {
         // the rehearsal count is set for THIS seat before every resumption of its prep steps (per-seat rehearsal, mateRehearsal)
+        const hp = slot.proxy?.get(ps.playerId);
+        if (hp && hp.base !== 'legacy' && !slot.rl.has(ps.playerId)) return yield* env._perSeat(m, ps, slot, env.humanProxy.prepBegin(m, ps, o, hp), true);
         const base = env.readyHook ? env._hookSteps(slot)[slot.rl.has(ps.playerId) ? 'layout' : 'legacy'] : (slot.rl.has(ps.playerId) ? LAYOUT_ONLY : LEGACY_BOT);
         return yield* env._perSeat(m, ps, slot, base.prepBegin(m, ps, o), true);
       },
       prepEnd(m, ps, job) {
-        const g = (env.readyHook ? env._hookSteps(slot)[slot.rl.has(ps.playerId) ? 'layout' : 'legacy'] : LEGACY_BOT).prepEnd(m, ps, job); // the base hook as before, only wrapped
-        return g && typeof g.next === 'function' && (env.bossRehearsal !== null || env.mateRehearsal !== null || env.infoGuard || env.bountyField || env.readyHook) ? env._perSeat(m, ps, slot, g) : g;
+        const hp = slot.proxy?.get(ps.playerId);
+        const g = hp && hp.base !== 'legacy' && !slot.rl.has(ps.playerId) ? env.humanProxy.prepEnd(m, ps, job, hp) : (env.readyHook ? env._hookSteps(slot)[slot.rl.has(ps.playerId) ? 'layout' : 'legacy'] : LEGACY_BOT).prepEnd(m, ps, job); // the base hook as before, only wrapped
+        return g && typeof g.next === 'function' && (env.bossRehearsal !== null || env.mateRehearsal !== null || env.infoGuard || env.bountyField || env.humanProxy || env.readyHook) ? env._perSeat(m, ps, slot, g) : g;
       },
     });
     const collect = this.snapCollect && this.snapCollect.configs.includes(cfg.difficulty) ? this.snapCollect : null;
@@ -481,7 +744,8 @@ export class SPEnv {
       ...(this.experimental && cfg.mode !== 'solo' ? { experimental: { revivalEnabled: false, disableSharedPool: false, ...this.experimental } } : {}),
       botRehearsal: this.rehearsal, botStrategy: strategy, log, send: () => true, broadcast: () => {},
       onEnd: (s) => { slot.summary = s; slot.ended = true; } });
-    if (!this.encoder) this.encoder = new Encoder(slot.m.gd, { version: this.obsVersion });
+    if (this.humanProxy) this.humanProxy.setup(slot);
+    if (!this.encoder) this.encoder = new Encoder(slot.m.gd, { version: this.obsVersion, ...(this.obsExt ? { ext: this.obsExt } : {}) });
     if (this.bountyAware) slot.m._bountyAware = new Set(slot.rl);
     if (slot.recipeSeat.size) { const rs = this.recipeSeats.recipes, mm = slot.m;
       mm.externalAI = { config: { mode: 'recipe' }, observe() {}, close() {}, planFor: (q) => { const k = slot.recipeSeat.get(q.playerId); return k ? recipePlan(mm, q, rs[k - 1]) : null; } }; }
@@ -636,6 +900,8 @@ export class SPEnv {
         const cores = gd.bondIds.filter((b) => gd.bond(b)?.isCore && gd.bondPlannable?.(b) && !gd.modeInactiveBonds?.has?.(b));
         main = cores.length ? cores[Math.floor(slot.collectRng() * cores.length)] : null;
       }
+      const hp = slot.proxy?.get(pid), own = hp && ps ? this.humanProxy.announceOf(m, ps, hp) : undefined;
+      if (own !== undefined) main = own;
       if (main && ps) {
         try { m.planBond(ps, main, []); } catch { /* the plan stays display-only then */ }
         ps._envPlanBonds = [{ id: main, priority: 1 }]; // bot.js bondPlan (src-next copy): legacy's focus = the announced plan
@@ -695,18 +961,27 @@ export class SPEnv {
   }
 
   _rehearsalFor(m, ps, slot) {
+    if (this.placeHook && slot.recipeSeat.has(ps.playerId)) return this.rehearsal; // xplace labels: a recipe seat keeps the RL seats' rehearsal
     if (this.bossRehearsal !== null && (m.round === m.gd.bossRound || m.round === m.gd.hiddenRound)) return this.bossRehearsal;
+    const hp = slot.proxy?.get(ps.playerId);
+    if (hp && hp.rehearsal !== null && !slot.rl.has(ps.playerId)) return hp.rehearsal;
     if (this.mateRehearsal !== null && !slot.rl.has(ps.playerId)) return this.mateRehearsal;
     return this.rehearsal;
   }
 
   *_perSeat(m, ps, slot, gen, begin = false) {
-    const set = () => { if (this.bossRehearsal !== null || this.mateRehearsal !== null) m.botRehearsal = this._rehearsalFor(m, ps, slot); };
+    const set = () => { if (this.bossRehearsal !== null || this.mateRehearsal !== null || this.humanProxy?.rehearsal != null) m.botRehearsal = this._rehearsalFor(m, ps, slot); };
     const bf = this.bountyField && slot.rl.has(ps.playerId) ? ps : null;
     const rl = this.infoGuard && slot.rl.has(ps.playerId) ? ps.playerId : null, step = (v) => { if (this.infoGuard) { this._guardRefresh(slot); m._rlPath = rl; m._rlPhase = 'prep'; } const sw = bf ? this._bfSwap(m, bf, slot) : null; try { return gen.next(v); } finally { if (sw) this._bfRestore(m, sw); if (this.infoGuard) m._rlPath = null; } };
     set(); let r = step();
     while (!r.done) { const v = yield r.value; set(); r = step(v); }
-    if (begin && this.picker && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId)) this._bossPick(m, ps, slot);
+    if (begin && this.pbl && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId)) this._pBossLabel(m, ps, slot); // (picker) before the xplace / picker boss pickers
+    if (begin && (this.placeHook || this.xplace) && !slot.humans.has(ps.playerId) && (slot.rl.has(ps.playerId) || slot.recipeSeat.has(ps.playerId))) this._xHook(m, ps, slot);
+    if (begin && this.picker && !(this.xplace && this.xplace.ens > 0) && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId)) this._bossPick(m, ps, slot);
+    if (begin && this.plabel && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId)) this._pLabel(m, ps, slot); // (picker) before normalPicker: DAgger order
+    if (begin && this.npicker && slot.rl.has(ps.playerId) && !slot.humans.has(ps.playerId)) this._normalPick(m, ps, slot);
+    if (begin && m.wave && (this.plabel?.pool || this.npicker?.pool) && slot.rl.has(ps.playerId)) { // picker pool: the seat's final layout of this round
+      const pl = new Map(); for (const [k, p] of ps.board) if (p && p.kind === 'chess') pl.set(p.uid, [k, pieceDirP(p)]); (slot.prevPlace ||= new Map()).set(ps.playerId, pl); }
     return r.value;
   }
 
@@ -773,6 +1048,168 @@ export class SPEnv {
     }
     this.forceBand = fb; (slot.team ||= []).push({ seat: ps.playerId, ...rec, ...(rec.how === 'forced' ? {} : { band: null }) }); slot.forced = saved;
     return band;
+  }
+
+  /** Track X: the label hook (placeHook) and the learned layout policy (xPlace, RL seats only; no battle may be built). */
+  _xHook(m, ps, slot) {
+    if (this.placeHook) {
+      try { this.placeHook(m, ps, slot, this); } catch (e) { this.stats.errors++; if (this.errorSamples.length < 20) this.errorSamples.push(`placeHook: ${String(e && e.stack).slice(0, 300)}`); }
+    }
+    if (this.xplace && slot.rl.has(ps.playerId)) {
+      const S = (slot.xp ||= { decisions: 0, changed: 0, moved: 0, pieces: 0, sims: 0, ms: 0, msMax: 0, errors: 0 }), t0 = performance.now();
+      const nb = m.newBattle; let sims = 0;
+      m.newBattle = function (...a) { sims++; return nb.apply(this, a); }; // deploy rule: no battle may be built at a placement
+      try { this.xplace.apply(m, ps, slot, this, S); } catch (e) { S.errors++; this.stats.errors++; if (this.errorSamples.length < 20) this.errorSamples.push(`xPlace: ${String(e && e.stack).slice(0, 300)}`); }
+      finally { if (m.newBattle !== nb) m.newBattle = nb; S.sims += sims; const dt = performance.now() - t0; S.ms += dt; S.msMax = Math.max(S.msMax, dt); }
+    }
+  }
+
+  /** Boss-round labels (pBossLabel): see the constructor. */
+  _pBossLabel(m, ps, slot) {
+    const P = this.pbl;
+    if (m.wave || (m.round !== m.gd.bossRound && m.round !== m.gd.hiddenRound) || !this.picker) return;
+    if (P.hidden === false && m.round === m.gd.hiddenRound) return; // (code-P8) round 15 is played only in matches already won
+    const S = (slot.pbl ||= { decisions: 0, labels: 0, ms: 0 }), t0 = performance.now();
+    const C = layoutCandidatesForPicker(m, ps, P.K); if (!C || C.cands.length < 2) return;
+    const R = P.rehearse === false ? [] : ['match', 'match2'].slice(0, P.seeds || 1).map((sd) => rehearseCandidatesForTraining(m, ps, C.chosen, C.cands, { seed: sd }) || []);
+    const sc = C.cands.map((_, j) => { const xs = R.map((r) => r[j]).filter(Boolean); if (!xs.length) return null;
+      const mu = (k) => xs.reduce((a, x) => a + (Number(x[k]) || 0), 0) / xs.length;
+      return { leaks: mu('leaks'), boss: mu('boss'), kills: mu('kills'), lpc: mu('lpc'), cleared: xs.filter((x) => x.end === 'cleared').length / xs.length, per: xs.map((x) => [x.leaks, Math.round(x.boss), x.kills, x.lpc]) }; });
+    S.decisions++;
+    if ((!sc[0] && P.rehearse !== false) || !P.dir) return;
+    const s = this._seat(slot, ps), ob = new Float32Array(this.encoder.dim), mk = new Uint8Array(this.encoder.A);
+    this.encoder.encode(m, ps, { kind: 'prep', actions: 0, freezes: 0, lp0: s.lp0, humans: slot.humans, rules: this.rules, cache: {} }, ob, mk);
+    this.picker.trunk.forward(ob, mk, { value: false }); const c = Array.from(this.picker.trunk.c, (x) => +x.toFixed(4));
+    const oi = [], ov = []; for (let q = 0; q < ob.length; q++) if (ob[q] !== 0) { oi.push(q); ov.push(+ob[q].toFixed(5)); }
+    const rows = C.cands.map((_, j) => Array.from(pickerRow(C.feats[j], C.variants[j], j === 0, C.feats[0]), (x) => +x.toFixed(4)));
+    // the xplace QNet (env xPlace, e.g. xboss-v2 q5) on the same K8, as XPlacer._pick computes it before the ensemble (offline ensemble check)
+    let q = null; const XP = this.xplace;
+    if (XP && XP.q) try {
+      const Pp = xPlaceProblemP(m, ps);
+      if (Pp && Pp.fight && Pp.pieces.length >= XP.minPieces) {
+        const h = (a) => Float32Array.from(Float16Array.from(a)), X0 = xFeaturizeP(m, ps, Pp, { lp0: s?.lp0 }), X = { ...X0, fp: h(X0.fp), ft: h(X0.ft), fe: h(X0.fe), fg: h(X0.fg) };
+        const cfs = C.cands.map((pl) => (XP.net.cfg.cf ? h(xCandFeaturesP(m, ps, Pp.chosen, pl, C.cands[0])) : null));
+        q = Array.from(XP.net.score(X, XP.net.encode(X), C.cands.map((pl) => xAssignOfP(X, pl)), cfs), (x) => +Number(x).toFixed(5));
+      }
+    } catch { q = null; }
+    let qx = null;
+    if (P.qx && XP) try { // (code-P9) extra X QNets' Q on the same K (offline comparison of boss scorers; the game still plays xPlace)
+      P._qx ||= Object.entries(P.qx).map(([k, f]) => [k, XPlacer.fromOptions({ model: f }).net]);
+      const Pp = xPlaceProblemP(m, ps);
+      if (Pp && Pp.fight && Pp.pieces.length >= XP.minPieces) {
+        const h = (a) => Float32Array.from(Float16Array.from(a)), X0 = xFeaturizeP(m, ps, Pp, { lp0: s?.lp0 }), X = { ...X0, fp: h(X0.fp), ft: h(X0.ft), fe: h(X0.fe), fg: h(X0.fg) };
+        qx = {};
+        for (const [k, net] of P._qx) {
+          const cfs = C.cands.map((pl) => (net.cfg.cf ? h(xCandFeaturesP(m, ps, Pp.chosen, pl, C.cands[0])) : null));
+          qx[k] = Array.from(net.score(X, net.encode(X), C.cands.map((pl) => xAssignOfP(X, pl)), cfs), (x) => +Number(x).toFixed(5));
+        }
+      }
+    } catch { qx = null; }
+    let ext = null;
+    if (P.ext) { // (code-P8) p4-style spatial fields: the v3 + ext.board observation and each candidate's board slice (Encoder.boardSlice)
+      if (!P.enc) { P.enc = new Encoder(m.gd, { version: 3, ext: { board: true } }); const sp = `${P.dir}/spec.json`; if (!existsSyncP(sp)) writeFileSyncP(sp, JSON.stringify(P.enc.spec())); }
+      const E = P.enc, ob2 = new Float32Array(E.dim), mk2 = new Uint8Array(E.A);
+      E.encode(m, ps, { kind: 'prep', actions: 0, freezes: 0, lp0: s.lp0, humans: slot.humans, rules: this.rules, cache: {} }, ob2, mk2);
+      const sparse = (a) => { const i = [], v = []; for (let k = 0; k < a.length; k++) if (a[k] !== 0) { i.push(k); v.push(+a[k].toFixed(4)); } return { i, v }; };
+      let boff = 0, blen = 0;
+      const cands = C.cands.map((plan) => { const pl = new Map(), assign = [];
+        for (const p of C.chosen) { const k = plan.get(p.uid); if (!k) continue; const d = plan.dirs?.get(p.uid) ?? 'RIGHT'; pl.set(p.uid, [k, d]); assign.push([p.uid, p.id, k, d]); }
+        const bs = E.boardSlice(m, ps, pl); boff = bs.off; blen = bs.len; return { b: sparse(bs.v), a: assign }; });
+      ext = { fmt: 'p4', D2: E.dim, obs2: sparse(ob2), board: { off: boff, len: blen }, cands, lp: ps.lp, teamLp: Number.isFinite(m.teamLp) ? m.teamLp : null,
+        bonds: Object.entries(ps.bonds || {}).filter(([, b]) => b?.active).map(([id, b]) => [id, b.tier || 0, b.layers || 0]) };
+    }
+    appendFileSyncP(`${P.dir}/boss-${process.pid}.jsonl`, JSON.stringify({ kind: 'boss', trunk: 'SK-30M-js', seedMode: 'match', seeds: P.seeds || 1, cfg: slot.cfg.name, seed: slot.seed, ...(ext || {}),
+      round: m.round, pid: ps.playerId, D: ob.length, obs: { i: oi, v: ov }, c, rows, scores: sc, ...(q ? { q, qModel: this.xplaceModel || null, ens: XP.ens } : {}), ...(qx ? { qx } : {}) }) + '\n');
+    S.labels++; S.ms += performance.now() - t0;
+  }
+
+  /** Normal-round labels (pLabel): see the constructor. Training data only (rehearses every candidate). */
+  _pLabel(m, ps, slot) {
+    const P = this.plabel;
+    if (!m.wave || m.round < P.from || m.round > P.to) return;
+    const S = (slot.plab ||= { decisions: 0, labels: 0, changed: 0, ms: 0 }), t0 = performance.now();
+    let C = P.pool ? candidatePoolForTraining(m, ps, { K: P.K, tmpl: P.tmpl, prev: slot.prevPlace?.get(ps.playerId), edits: P.edits ?? 12, max: P.max ?? 32 })
+      : layoutCandidatesForPicker(m, ps, P.K); if (!C) return;
+    if (!P.pool && P.tmpl > 0) { const ex = positionalCandidatesForTraining(m, ps, C, { N: P.tmpl });
+      C = { chosen: C.chosen, cands: [...C.cands, ...ex], variants: [...C.variants, ...ex.map((q) => [q._tpl === 'egir' ? 101 : q._tpl === 'kjerag' ? 102 : 100])], feats: [...C.feats, ...ex.map((q) => layoutFeatures(m, ps, C.chosen, q, C.cands[0]))], nLegacy: C.cands.length }; }
+    if (C.cands.length < 2) return;
+    let sc = rehearseCandidatesForTraining(m, ps, C.chosen, C.cands, { seed: P.seed || 'fixed' }) || []; S.decisions++;
+    if ((P.seeds || 1) >= 2) { // picker pool labels: the mean over two per-match seeds ('match', 'match2')
+      const s2 = rehearseCandidatesForTraining(m, ps, C.chosen, C.cands, { seed: 'match2' }) || [];
+      sc = sc.map((a, j) => { const b = s2[j]; if (!a || !b) return a || b || null; const lg = {}; for (const k of new Set([...Object.keys(a.lg || {}), ...Object.keys(b.lg || {})])) lg[k] = ((a.lg?.[k] || 0) + (b.lg?.[k] || 0)) / 2;
+        return { leaks: (a.leaks + b.leaks) / 2, boss: (a.boss + b.boss) / 2, kills: (a.kills + b.kills) / 2, lg }; });
+    }
+    if (!sc[0]) return;
+    const sum = (x) => Object.values(x?.lg || {}).reduce((a, b) => a + b, 0);
+    let best = 0;
+    for (let j = 1; j < sc.length; j++) { const x = sc[j], y = sc[best]; if (!x || x.leaks > sc[0].leaks) continue; if (sum(x) > sum(y) || (sum(x) === sum(y) && x.kills > y.kills)) best = j; }
+    let srch = null; // picker teacher search (pLabel.search { methods, budget, every }): from the pool best, each method's top layouts join the labels
+    if (P.search && sc[best] && ((Number(m.seed) + m.round * 31 + (ps.seat || 0) * 7) % (P.search.every || 1)) === 0) {
+      srch = {}; const start = C.cands[best], st = sc[best], sigs = new Set(C.cands.map(oracleSigForTraining));
+      if (!C.src) C.src = C.cands.map((_, j) => (j === 0 ? 'default' : 'legacy'));
+      for (const meth of P.search.methods || ['hill']) {
+        const r = teacherSearchForTraining(m, ps, C, start, st, sc[0].leaks, { method: meth, budget: P.search.budget ?? 32 });
+        srch[meth] = { u0: +r.u0.toFixed(3), u: +r.u.toFixed(3), evals: r.evals };
+        for (const t of r.top) { const sg = oracleSigForTraining(t.plan); if (sigs.has(sg)) continue; sigs.add(sg);
+          C.cands.push(t.plan); C.src.push(`search:${meth}`); C.variants.push([]); C.feats.push(layoutFeatures(m, ps, C.chosen, t.plan, C.cands[0])); sc.push(t.score); }
+      }
+      for (let j = 1; j < sc.length; j++) { const x = sc[j], y = sc[best]; if (!x || x.leaks > sc[0].leaks) continue; if (sum(x) > sum(y) || (sum(x) === sum(y) && x.kills > y.kills)) best = j; }
+    }
+    if (P.dir) {
+      if (!P.enc) { P.enc = new Encoder(m.gd, { version: 3, ext: { board: true } }); const sp = `${P.dir}/spec.json`; if (!existsSyncP(sp)) writeFileSyncP(sp, JSON.stringify(P.enc.spec())); }
+      const E = P.enc, s = this._seat(slot, ps), ob = new Float32Array(E.dim), mk = new Uint8Array(E.A);
+      E.encode(m, ps, { kind: 'prep', actions: 0, freezes: 0, lp0: s.lp0, humans: slot.humans, rules: this.rules, cache: {} }, ob, mk);
+      const sparse = (a, base = 0) => { const i = [], v = []; for (let q = 0; q < a.length; q++) if (a[q] !== 0) { i.push(q + base); v.push(+a[q].toFixed(4)); } return { i, v }; };
+      let boff = 0, blen = 0;
+      const cands = C.cands.map((plan, j) => {
+        const pl = new Map(), assign = [];
+        for (const p of C.chosen) { const k = plan.get(p.uid); if (!k) continue; const d = plan.dirs?.get(p.uid) ?? 'RIGHT'; pl.set(p.uid, [k, d]); assign.push([p.uid, p.id, k, d]); }
+        const bs = E.boardSlice(m, ps, pl); boff = bs.off; blen = bs.len;
+        const f = C.feats[j] || {};
+        return { b: sparse(bs.v), a: assign, var: C.variants[j], f: [f.value, f.cov, f.covMin, f.flyCov, f.onRoad, f.leader, f.diff, f.units].map((x) => +(+x || 0).toFixed(4)) };
+      });
+      const bonds = Object.entries(ps.bonds || {}).filter(([, b]) => b?.active).map(([id, b]) => [id, b.tier || 0, b.layers || 0]);
+      appendFileSyncP(`${P.dir}/lab-${process.pid}.jsonl`, JSON.stringify({ kind: 'normal', fmt: 'p4', cfg: slot.cfg.name, seed: slot.seed, round: m.round, pid: ps.playerId,
+        lp: ps.lp, seedMode: P.seed || 'fixed', seeds: P.seeds || 1, src: C.src || null, ...(srch ? { search: srch } : {}), D: E.dim, obs: sparse(ob), board: { off: boff, len: blen }, nLegacy: C.nLegacy || C.cands.length, cands, bonds, scores: sc, best }) + '\n');
+      S.labels++;
+    }
+    if (best > 0 && P.apply === 'label') { applyPlanForPicker(m, ps, C.chosen, C.cands[best]); S.changed++; }
+    S.ms += performance.now() - t0;
+  }
+
+  /** Normal-round picker (normalPicker, spatial head): see the constructor. No battle may be built (counted in S.sims). */
+  _normalPick(m, ps, slot) {
+    const P = this.npicker;
+    if (!m.wave || m.round < P.from || m.round > P.to) return;
+    const S = (slot.npick ||= { decisions: 0, nonDefault: 0, cands: 0, single: 0, sims: 0, ms: 0 }), t0 = performance.now();
+    const nb = m.newBattle; let sims = 0;
+    m.newBattle = function (...a) { sims++; return nb.apply(this, a); }; // deploy rule: no battle may be built at a pick
+    try {
+      const C = P.pool ? candidatePoolForTraining(m, ps, { K: P.K, tmpl: P.tmpl, prev: slot.prevPlace?.get(ps.playerId), edits: P.edits, max: P.max }) : layoutCandidatesForPicker(m, ps, P.K);
+      if (!C || C.cands.length < 2) { S.single++; return; }
+      const s = this._seat(slot, ps), E = (P.enc ||= new Encoder(m.gd, { version: 3, ext: { board: true } })), ob = new Float32Array(E.dim), mk = new Uint8Array(E.A);
+      E.encode(m, ps, { kind: 'prep', actions: 0, freezes: 0, lp0: s.lp0, humans: slot.humans, rules: this.rules, cache: {} }, ob, mk);
+      const out = C.cands.map((plan) => {
+        const pl = new Map(); for (const p of C.chosen) { const k = plan.get(p.uid); if (k) pl.set(p.uid, [k, plan.dirs?.get(p.uid) ?? 'RIGHT']); }
+        const bs = E.boardSlice(m, ps, pl), o2 = Float32Array.from(ob); o2.set(bs.v, bs.off); const r = P.spatial.forward(o2, null).logits; return [r[0], r[1], r[2], r[3]];
+      });
+      let idx = 0;
+      if (P.mode === 'score') { for (let j = 1; j < out.length; j++) if (out[j][0] > out[idx][0]) idx = j; }
+      else { let bu = P.margin; for (let j = 1; j < out.length; j++) { const u = -P.w[0] * (out[j][1] - out[0][1]) + P.w[1] * (out[j][2] - out[0][2]) + P.w[2] * (out[j][3] - out[0][3]); if (u > bu) { bu = u; idx = j; } } }
+      if (idx > 0) { applyPlanForPicker(m, ps, C.chosen, C.cands[idx]); S.nonDefault++; }
+      S.decisions++; S.cands += C.cands.length;
+      const q = ((S.bySeat ||= {})[ps.playerId] ||= { decisions: 0, nonDefault: 0 }); q.decisions++; if (idx > 0) q.nonDefault++;
+    } finally { if (m.newBattle !== nb) m.newBattle = nb; S.sims += sims; S.ms += performance.now() - t0; }
+  }
+
+  /** (code-P9) bossSpatial: the spatial boss picker's output per candidate of C (see the constructor); called from XPlacer._pick. */
+  _bossSpatialScores(m, ps, slot, C) {
+    const P = this.bspatial, s = this._seat(slot, ps), E = (P.enc ||= new Encoder(m.gd, { version: 3, ext: { board: true } })), ob = new Float32Array(E.dim), mk = new Uint8Array(E.A);
+    E.encode(m, ps, { kind: 'prep', actions: 0, freezes: 0, lp0: s.lp0, humans: slot.humans, rules: this.rules, cache: {} }, ob, mk);
+    return C.cands.map((plan) => {
+      const pl = new Map(); for (const p of C.chosen) { const k = plan.get(p.uid); if (k) pl.set(p.uid, [k, plan.dirs?.get(p.uid) ?? 'RIGHT']); }
+      const bs = E.boardSlice(m, ps, pl), o2 = Float32Array.from(ob); o2.set(bs.v, bs.off); return P.spatial.forward(o2, null).logits[P.out];
+    });
   }
 
   /** Boss-round picker (pickerHead): the head's pick among legacy's candidate layouts of the fielded lineup. */
@@ -972,7 +1409,8 @@ export class SPEnv {
     slot.bl ||= new Map();
     const alive = new Set(m.alivePlayers());
     // legacy mode (no RL seat): the legacy AI seats (not the human proxies) are logged instead (11-13, stacking metrics of legacy fill)
-    for (const pid of (this.mode === 'legacy' ? [...slot.role.keys()].filter((x) => slot.role.get(x) === 'legacy') : slot.rl)) {
+    const logged = this.mode === 'legacy' ? [...slot.role.keys()].filter((x) => slot.role.get(x) === 'legacy' || (this.humanProxy?.log && slot.humans.has(x))) : this.humanProxy?.log ? [...slot.rl, ...[...slot.humans].filter((x) => !slot.rl.has(x))] : slot.rl;
+    for (const pid of logged) {
       const ps = m.players.get(pid);
       if (!ps || !alive.has(ps)) continue;
       const rec = slot.bl.get(pid) || {};
@@ -1023,6 +1461,49 @@ export class SPEnv {
     };
   }
 
+  /** (A1 hist) At each phase change: leaving PREP notes every seat's LP / stacking layers; entering PREP closes the battle. */
+  _histHook(slot) {
+    const m = slot.m, prev = slot.hPhase; slot.hPhase = m.phase;
+    slot.hist ||= new Map();
+    const into = prev === 'PREP' && m.phase !== 'PREP', back = prev !== undefined && prev !== 'PREP' && m.phase === 'PREP';
+    if (!into && !back) return;
+    for (const ps of m.players.values()) {
+      if (ps.spectator) continue;
+      const h = this._histOf(slot, ps);
+      const layers = Math.round(bondTerms(m.gd, ps.privateView().bonds, true).S * 100), lp = Math.max(0, ps.lp || 0);
+      if (into) { h.pre = { round: m.round, layers, lp }; continue; }
+      if (!h.pre) continue;
+      const r = m.lastResults?.get(ps.playerId);
+      const leaks = r ? (r.leaked || []).filter((l) => l && l.counted !== false).length : 0;
+      h.battles.push({ round: h.pre.round, leaks, lpLost: Math.max(0, h.pre.lp - lp), dLayers: layers - h.pre.layers, layers, lp, kills: Math.max(0, Number(r?.killed) || 0) });
+      if (h.battles.length > 20) h.battles.shift();
+      h.pre = null;
+    }
+  }
+
+  _histOf(slot, ps) {
+    slot.hist ||= new Map();
+    let h = slot.hist.get(ps.playerId);
+    if (!h) { h = { battles: [], rolls: 0, seen: new Map(), shopKey: null, pre: null, prepRound: null }; slot.hist.set(ps.playerId, h); }
+    return h;
+  }
+
+  /** (A1 hist) The seat's history at a decision: a shop it has not seen yet (round, rolls, slot ids) counts as one roll. */
+  _histSeen(slot, ps) {
+    const h = this._histOf(slot, ps), m = slot.m, slots = ps.shop?.slots || [];
+    const key = `${m.round}|${ps.stats?.refreshes ?? 0}|${slots.map((x) => (x ? x.id : '')).join(',')}`;
+    if (key !== h.shopKey) {
+      h.shopKey = key; h.rolls++;
+      if (h.prepRound !== m.round) { h.prepRound = m.round; for (const e of h.seen.values()) e.prep = 0; }
+      for (const x of slots) {
+        if (!x || x.kind !== 'chess') continue;
+        const b = m.gd.baseIdOf(x.id), e = h.seen.get(b);
+        if (e) { e.n++; e.prep = (e.prep || 0) + 1; } else h.seen.set(b, { n: 1, first: h.rolls, prep: 1 });
+      }
+    }
+    return h;
+  }
+
   _seat(slot, ps) {
     let s = slot.seat.get(ps.playerId);
     if (!s) {
@@ -1062,6 +1543,7 @@ export class SPEnv {
       if (this.bondLog && (slot.m.phase !== slot.blPhase || slot.m.round !== slot.blRound)) this._bondSample(slot);
       if (this.actLog && (slot.m.phase !== slot.alPhase || slot.m.round !== slot.alRound)) this._actBattle(slot);
       if (this.rewardV === 2 && this.R2.layer > 0 && slot.m.phase !== slot.lhPhase) this._layerHook(slot);
+      if (this.obsExt?.hist && slot.m.phase !== slot.hPhase) this._histHook(slot);
       if (this.bandPolicy && slot.m.draft) this._bandStep(slot);
     }
   }
@@ -1090,15 +1572,41 @@ export class SPEnv {
       ...(slot.fromSnapshot ? { fromSnapshot: slot.fromSnapshot } : {}),
       ...(diag || {}), ...(this.tripLog ? { trips: slot.trips } : {}),
       ...(this.forceAt ? { forced: { ...(slot.forced || { band: this.forceBand, how: 'none' }), got: m.players.get('ai_0')?.bandId ?? null } } : {}),
-      ...(this.picker ? { picker: slot.pick || { decisions: 0 } } : {}),
+      ...(this.picker ? { picker: slot.pick || { decisions: 0 } } : {}), ...(this.npicker ? { npicker: slot.npick || { decisions: 0 } } : {}), ...(this.plabel ? { plab: slot.plab || { decisions: 0 } } : {}), ...(this.pbl ? { pbl: slot.pbl || { decisions: 0 } } : {}),
+      ...(this.xplace ? { xplace: slot.xp || { decisions: 0 } } : {}),
       ...(this.forceTeam ? { team: (slot.team || []).map((t) => ({ ...t, got: m.players.get(t.seat)?.bandId ?? null })) } : {}),
       ...(this.actLog ? { act: this._actSummary(slot) } : {}), ...(this.bountyField ? { bf: { preps: slot.bfPreps || 0, swaps: slot.bfSwaps || 0 } } : {}), ...(slot.names ? { names: slot.names.list, replay: slot.replay } : {}) };
+    // (N1) natPlan.hindsight (teacher recording): every held sample gets the plan its seat played, then goes to the recorder
+    const hind = this.natPlan?.hindsight && slot.natBuf ? new Map() : null;
+    if (hind) {
+      const lastView = new Map(); for (const x of slot.natBuf) lastView.set(x.pid, x.view);
+      for (const [pid, v] of lastView) hind.set(pid, this._hindsightPlan(m.gd, m.players.get(pid), v.bonds, this.natPlan.known ? slot.seat.get(pid)?.plan || null : null));
+      const N = this.natPlan.head ? this._natBonds(m.gd) : null, at = this.natPlan.head ? (this._pnAt ??= this._planNatAt()) : 0;
+      for (const x of slot.natBuf) {
+        const o = new Float32Array(this.D); o.set(x.o); const h = hind.get(x.pid);
+        // a first plan decision sees no plan yet; with natPlan.blind no plan decision does; before planFrom no sample has a plan
+        const noPlan = (x.plan && (x.first || this.natPlan.blind)) || (this.natPlan.head && (x.round ?? 99) < (this.natPlan.planFrom ?? 1));
+        if (!noPlan) this._planObs(x.view.bonds, h, o, this.encoder.dim, this.natPlan.slots ? x.view : null);
+        let mk = x.mk, a = x.a;
+        if (N) {
+          this._planNatObs(x.view, noPlan ? null : h, x.allowed, o, at);
+          if (x.plan) { // the plan sample's action: the hindsight nation (dropped when that nation was not allowed)
+            if (!x.allowed.has(h.P)) continue;
+            mk = new Uint8Array(this.A); N.nations.forEach((n, j) => { if (x.allowed.has(n)) mk[this.encoder.A + j] = 1; });
+            a = this.encoder.A + N.nations.indexOf(h.P);
+          }
+        }
+        this.recorder.sample(x.kind, x.traj, o, mk, a, x.rw);
+      }
+      slot.natBuf = null;
+    }
     for (const p of rows) {
       const round = p.eliminatedRound ?? m.round;
       const rl = slot.rl.has(p.playerId);
       res.seats.push({ playerId: p.playerId, rl, role: slot.role.get(p.playerId), band: m.players.get(p.playerId)?.bandId ?? null, survivalRound: round, roundsPassed: p.roundsPassed,
         lp: p.lp, win: p.victory ? 1 : 0, mainTier: slot.humanTier.get(p.playerId)?.max ?? null,
-        ...(this.bondLog && (rl || (this.mode === 'legacy' && slot.role.get(p.playerId) === 'legacy')) ? (() => { const { last, lastRound, ...rs } = slot.bl?.get(p.playerId) || {}; return { bondLog: { ...rs, end: last || null, endRound: lastRound ?? null } }; })() : {}) });
+        ...(slot.proxy?.has(p.playerId) ? { proxy: this.humanProxy.info(m, m.players.get(p.playerId), slot.proxy.get(p.playerId)) } : {}),
+        ...(this.bondLog && (rl || (this.mode === 'legacy' && slot.role.get(p.playerId) === 'legacy') || (this.humanProxy?.log && slot.humans.has(p.playerId))) ? (() => { const { last, lastRound, ...rs } = slot.bl?.get(p.playerId) || {}; return { bondLog: { ...rs, end: last || null, endRound: lastRound ?? null } }; })() : {}) });
       const s = slot.seat.get(p.playerId);
       if (!s) continue;
       // terminal shaping: γ·Φ(terminal = 0) − Φ(last decision), also for a seat eliminated earlier
@@ -1115,10 +1623,11 @@ export class SPEnv {
         reward = base + win + faT + faO + elim + shapeEnd + nb;
         if (rl) res.seats[res.seats.length - 1].r2 = { ...c, shape: (s.shape || 0), ev: { ...s.ev, ownFa: own, eliminated: p.eliminatedRound ?? null, cleared } };
       } else reward = this._reward(s, m, round, Math.max(0, p.lp || 0)) + (p.victory ? R.win : 0) + R.fa * faShare + shapeEnd;
-      if (rl && this.natPlan && s.plan) res.seats[res.seats.length - 1].nat = { ...s.plan, fa: slot.natFA?.get(p.playerId) || null, bonus: this._natBonus(slot, p.playerId, faShare), phase: this.natPlan.phase };
+      if (rl && this.natPlan && s.plan) res.seats[res.seats.length - 1].nat = { ...s.plan, fa: slot.natFA?.get(p.playerId) || null, bonus: this._natBonus(slot, p.playerId, faShare), phase: this.natPlan.phase, ...(s.natMs ? { dense: +s.natMs.sum.toFixed(3) } : {}), ...(s.natReplans ? { replans: s.natReplans } : {}) };
       const t = { traj: s.traj, reward, win: p.victory ? 1 : 0, round, lp: p.lp || 0, config: slot.ci, steps: s.steps, faShare,
         rRound: s.cRound || 0, rLp: s.cLp || 0, shape: s.shape || 0, seedOffset: slot.seed - this.seed,
         ...(s.R2 ? { r2: [s.R2.win, s.R2.faTeam, s.R2.faOwn, s.R2.leak, s.R2.save, s.R2.lp, s.R2.elim, s.R2.layer, s.shape || 0] } : {}) };
+      if (hind && hind.has(p.playerId)) t.natH = hind.get(p.playerId);
       if (this.recorder) this.recorder.term(t); else this.terms.push(t);
     }
     this.results.push(res);
@@ -1136,7 +1645,15 @@ export class SPEnv {
     for (let k = 0; k < items.length; k++) {
       const dec = items[k], { slot, ps } = dec, m = slot.m;
       const s = this._seat(slot, ps);
-      if (this.natPlan && !s.plan && ps.bandId && !slot.humans.has(ps.playerId)) s.plan = this._assignPlan(slot, ps);
+      if (this.natPlan && !this.natPlan.head && ps.bandId && !slot.humans.has(ps.playerId) && (!s.plan || (this.natPlan.assign === 'lead' && (m.round || 0) < (this.natPlan.lockRound ?? 4)))) s.plan = this._assignPlan(slot, ps, s.plan || null);
+      // (N8) natPlan.coopReplan: a human now builds (or holds by band) our plan nation -> replan (head: a blind plan decision now)
+      const hum = !!(this.natPlan?.coopReplan && dec.kind === 'prep' && s.plan && s.replanRound !== (m.round || 0) && !slot.humans.has(ps.playerId) && this._humanNat(slot, ps).has(s.plan.P));
+      if (hum) s.replanRound = m.round || 0; // at most one co-op replan per round
+      if (hum && !this.natPlan.head) { slot.natTaken?.delete(s.plan.P); s.plan = this._assignPlan(slot, ps, s.plan); s.natReplans = (s.natReplans || 0) + 1; }
+      if (this.natPlan?.focus && s.plan && ps._envPlanBonds?.[0]?.id !== s.plan.P) ps._envPlanBonds = [{ id: s.plan.P, priority: 1 }]; // (N5) legacy's focus = P
+      const pd = !!(this.natPlan?.head && dec.kind === 'prep' && ps.bandId && !slot.humans.has(ps.playerId) && this._needPlan(s, m.round || 0))
+        || !!(this.natPlan?.head && this.natPlan.planAtBand && dec.kind === 'band' && !slot.humans.has(ps.playerId) && !s.plan) // (N7) plan before the band
+        || (hum && !!this.natPlan.head); // (N8)
       this.rew[k] = this._reward(s, m, m.round, Math.max(0, ps.lp || 0));
       s.steps++;
       this.ids[k] = s.traj; this.kinds[k] = KIND[dec.kind] + (this.kindSeat ? 16 * (Number(String(dec.ps.playerId).split('_')[1]) || 0) : 0);
@@ -1146,12 +1663,25 @@ export class SPEnv {
       if (this.full && dec.kind !== 'band' && dec.kind !== 'card' && !dec.opened) this._openPlan(dec);
       if (this.infoGuard) { this._guardRefresh(slot); m._rlPath = ps.playerId; m._rlPhase = 'enc'; }
       const r = this.encoder.encode(m, ps, { kind: dec.kind, actions: dec.actions, freezes: dec.freezes, lp0: s.lp0, humans: slot.humans, visibleOnly: this.visibleOnly, strictPreview: this.strictPreview,
-        rules: this.rules, newUids, soldBases: dec.soldBases, cache: dec.cache || {}, aiPicks,
+        rules: this.rules, newUids, soldBases: dec.soldBases, cache: dec.cache || {}, aiPicks, ...(this.obsExt?.hist ? { hist: this._histSeen(slot, ps) } : {}),
         ...(this.full ? { sel: dec.sel, pubSnap: dec.pubSnap, ...(dec.mateSnap !== undefined ? { mateSnap: dec.mateSnap } : {}),
           planned: dec.planned, rerolls: seatPlanRerolls(ps) } : {}) },
         this.obs.subarray(k * D, (k + 1) * D), this.mask.subarray(k * A, (k + 1) * A));
       dec.own = r.own; dec.owned = r.owned;
-      if (this.natPlan && s.plan) this._planObs(r.own?.bonds, s.plan, this.obs, k * D + this.encoder.dim);
+      const pv = this.natPlan && (this.natPlan.slots || this.natPlan.head) ? this._planView(r.own, r.owned) : null;
+      const blind = pd && (this.natPlan.blind || hum); // (N1) natPlan.blind: a plan decision does not see the current plan (N8: a co-op replan neither)
+      if (this.natPlan && s.plan && !blind) this._planObs(r.own?.bonds, s.plan, this.obs, k * D + this.encoder.dim, this.natPlan.slots ? pv : null);
+      if (this.natPlan?.head && !slot.humans.has(ps.playerId)) {
+        const al = this._planAllowed(slot, ps, s.plan?.P || null);
+        this._planNatObs(pv, blind ? null : s.plan || null, al, this.obs, k * D + (this._pnAt ??= this._planNatAt()));
+        dec.planDec = pd;
+        if (pd) { // a plan decision: only the allowed nations' actions
+          const mk = this.mask.subarray(k * A, (k + 1) * A); mk.fill(0);
+          this._natBonds(m.gd).nations.forEach((n, j) => { if (al.has(n)) mk[this.encoder.A + j] = 1; });
+          this.kinds[k] = KIND_PLAN;
+        }
+      }
+      if (this.natPlan?.dense && s.plan) this.rew[k] += this._natDense(s, r.own?.bonds);
       if (this.infoGuard) {
         m._rlPath = null;
         const pub = r.pub || {}; if (this.visibleOnly && !(pub.hiddenRound && (pub.round || 0) >= pub.hiddenRound) && this.obs[k * D + this.encoder.lay.blocks.extra.offset + 2] !== 0) this.infoGuard.hiddenBoss++;
@@ -1305,6 +1835,25 @@ export class SPEnv {
 
   _apply(dec, a, mask) {
     const { slot, ps, d } = dec, m = slot.m;
+    if (dec.planDec) { // (N1) natPlan.head: the plan decision sets the plan; the prep decision itself stays pending
+      dec.planDec = false;
+      const s = this._seat(slot, ps), N = this._natBonds(m.gd), j = a - this.encoder.A;
+      let P = a >= this.encoder.A && a < this.A && mask[a] ? N.nations[j] : null;
+      if (!P) { this.stats.rejected++; P = N.nations.find((n, i) => mask[this.encoder.A + i]) || N.nations[0]; }
+      const taken = (slot.natTaken ||= new Set()); if (s.plan) taken.delete(s.plan.P); taken.add(P);
+      if (s.plan && s.plan.P !== P && this.natPlan.coopReplan) s.natReplans = (s.natReplans || 0) + 1; // (N8)
+      s.plan = { P, S: this._ruleS(slot, ps, P, s.plan && s.plan.P === P ? s.plan : null) }; s.planRound = m.round || 0;
+      if (this.natPlan.focus) ps._envPlanBonds = [{ id: P, priority: 1 }]; // (N5)
+      if (dec.kind === 'band') { // (N7) natPlan.planAtBand: the band follows the plan (P's band when offered, else legacy's pick)
+        this._drop(dec);
+        if (!d.valid()) return;
+        const ok = m.gd.bandIds().filter((b) => m.gd.bandAllowed(b) && !m.bandTaken(b, ps.playerId) && m.gd.bandBondIds(b).includes(P));
+        const bandId = ok.length ? ok[0] : LEGACY_BOT.pickBand(m, ps);
+        if (bandId) { const r = m._handleSeatIntent(ps, { t: 'g.band', bandId }); if (r?.error) this.stats.rejected++; }
+        if (!d.complete()) d.fallback();
+      }
+      return;
+    }
     if (!(a >= 0 && a < this.A) || !mask[a]) { this.stats.rejected++; a = dec.kind === 'card' ? -1 : dec.kind === 'tile' || dec.kind === 'target' ? ACT.CANCEL : ACT.END; }
     if (dec.kind === 'band') {
       this._drop(dec);
@@ -1371,6 +1920,14 @@ export class SPEnv {
     // samples of this prep: straight to the recorder, or held for the placement labels (written at the prep's end)
     const held = this.placementLabels && rec ? [] : null;
     const put = (kind, o, mk, a, rw, info) => {
+      if (this.natPlan && rec) { // (N1) teacher mode with the plan block: hindsight (held to the match end) or the seat's own plan
+        if (this.A > mk.length) { const m2 = new Uint8Array(this.A); m2.set(mk); mk = m2; }
+        if (this.natPlan.hindsight) { (slot.natBuf ||= []).push({ pid: ps.playerId, kind, traj: s.traj, o: o.slice(), mk: mk === mask ? mk.slice() : mk, a, rw, view: ctx.planView,
+          ...(this.natPlan.head ? { allowed: this._planAllowed(slot, ps, null), round: m.round || 0 } : {}) }); return; }
+        if (!s.plan && ps.bandId) s.plan = this._assignPlan(slot, ps);
+        const o2 = new Float32Array(this.D); o2.set(o); if (s.plan) this._planObs(ctx.planView.bonds, s.plan, o2, this.encoder.dim, ctx.planView);
+        rec.sample(kind, s.traj, o2, mk, a, rw); return;
+      }
       if (!held) { rec.sample(kind, s.traj, o, mk, a, rw); return; }
       held.push({ kind, o: o === obs ? obs.slice() : o, mk: mk === mask ? mask.slice() : mk, a, rw, info });
     };
@@ -1388,7 +1945,9 @@ export class SPEnv {
       if (!avail.length) return false;
       let idx = LEGACY_BOT.pickCard(m, ps, sp.cards, avail);
       if (this.econ) { const a = this._econPick(m, ps, { ...ctx, kind: 'card' }); if (a >= ACT.CARD && a < ACT.CARD + CARDS && sp.cards[a - ACT.CARD]) { idx = sp.cards[a - ACT.CARD].idx; this.econStats.cards++; } }
+      if (this.obsExt?.hist) ctx.hist = this._histSeen(slot, ps);
       lastOwn = this.encoder.encode(m, ps, ctx, obs, mask).own;
+      if (this.natPlan) ctx.planView = this._planView(lastOwn, Encoder.owned(lastOwn));
       if (log) log.before = summarize(m, ps, lastOwn, slot.names, d.kind);
       const pos = sp.cards.findIndex((c) => c.idx === idx);
       const r = m._handleSeatIntent(ps, { t: 'g.choice', idx });
@@ -1398,10 +1957,22 @@ export class SPEnv {
     }
     T.preps++;
     let owned = null, protect = new Set(), pairs = new Set();
+    if (this.natTeach && ps.bandId && !slot.humans.has(ps.playerId)) this._natTeachSetup(slot, ps, s); // (N5) e.g. a band the env did not pick
+    if (this.natPlan?.head && this.natPlan.hindsight && rec && ps.bandId && !slot.humans.has(ps.playerId) && ((s.hsPlans ||= new Set()).size === 0
+      ? (m.round || 0) >= (this.natPlan.planFrom ?? 1) : (this.natPlan.replan || []).includes(m.round || 0) && !s.hsPlans.has(m.round || 0))) {
+      // (N1) a synthetic plan-decision sample at the seat's first prep (and at the replan rounds): its action is the hindsight P
+      s.hsPlans.add(m.round || 0);
+      const r = this.encoder.encode(m, ps, ctx, obs, mask);
+      (slot.natBuf ||= []).push({ pid: ps.playerId, kind: KIND_PLAN, traj: s.traj, o: obs.slice(), mk: null, a: -1, plan: true, first: s.hsPlans.size === 1,
+        rw: this._reward(s, m, m.round, Math.max(0, ps.lp || 0)), view: this._planView(r.own, r.owned), allowed: this._planAllowed(slot, ps, null), round: m.round || 0 });
+      s.steps++;
+    }
     const before = () => {
       ctx.newUids = new Set(ps.allChess().map((p) => p.uid).filter((u) => !startUids.has(u)));
+      if (this.obsExt?.hist) ctx.hist = this._histSeen(slot, ps);
       const r = this.encoder.encode(m, ps, ctx, obs, mask); owned = r.owned; protect = r.protect; pairs = r.pairs;
       lastOwn = r.own;
+      if (this.natPlan) ctx.planView = this._planView(r.own, r.owned);
       if (log && !log.before) log.before = summarize(m, ps, r.own, slot.names, d.kind);
     };
     // which rule a recorded legacy call breaks (it is outside the mask): the 2026-11-11 rule metrics of legacy itself
@@ -1512,7 +2083,7 @@ export class SPEnv {
         // an inline rehearsal job (virtual time: no worker) runs to its end now, so prepEnd applies the rehearsed plan
         if (job && !job.done && !job.remote && typeof job.run === 'function') for (let k = 0; k < 1e5 && !job.run(Infinity); k++); // loop-cap: job slices
         runSteps(LEGACY_BOT.prepEnd(m, ps, job && job.done ? job : null));
-      } else runSteps(PROCURE_ONLY.prepBegin(m, ps, {}));
+      } else runSteps((this.natTeach && ps._nat ? NAT_PROCURE_ONLY : PROCURE_ONLY).prepBegin(m, ps, {}));
     }
     catch (e) { this.stats.errors++; if (this.errorSamples.length < 20) this.errorSamples.push(`teacher: ${e.stack?.slice(0, 300)}`); }
     finally {

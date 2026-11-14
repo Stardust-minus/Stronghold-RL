@@ -1,0 +1,30 @@
+file,md5,role,from
+c9-js.json,35c6b24df39c9ffec3314d75921de09c,normal-round layout picker c9 (JS head; deploy),picker release npool-c9 (tree code-P10 dd4a9831)
+c9-js.bin,230067ab6fd74fcce2770dfb2a8c0555,normal-round layout picker c9 (JS weights; deploy),picker release npool-c9
+c9.pt,e76223fa60a14a84e7438fca753b579d,normal-round layout picker c9 (torch checkpoint),picker release npool-c9
+xplace.json (= xplace-v3.json),aa5fcc3ddf9d4787d0bafc5ce027f63d,boss-round placement xboss-v3 config (deploy; loads dw.json + g3b.json),boss release xboss-v3 (tree code-X11 13d2641b)
+dw.json,e4d1c23d906b02f0bc011d819aaf085a,xboss-v3 Dw scorer weights (deploy),boss release xboss-v3
+g3b.json,6fc155f118640882769ca2f249df3bdd,xboss-v3 boss candidate generator weights (deploy),boss release xboss-v3
+mlp/bc/bc.pt,eaef4a20add9124747442d040ec1ac92,MLP BC init and KL reference (both MLP seeds),final pipeline mlp/
+v5/bc/bc.pt,812700283fd547954c49d69152f3350b,v5 BC init and KL reference (both v5 seeds),final pipeline v5/
+v5/lookahead.json,2912c4aa2ee2f5a04f7756027a83618f,v5 bond-membership table (model input; not weights),final pipeline v5/
+NMA-30000000.pt,73cff28c977ec2c3cd16bb9baf7cd91a,NMA 30M reference checkpoint (setting a/b references; co-op stage arms CA/CB start),NMA recipe run (seed 0)
+FIN-MLP-s1/NM/model-final.pt,66bd582d5948dddba3ba906496f2f5da,NM stage end (5.0M) = NMA stage init,FIN-MLP-s1
+FIN-MLP-s1/NMA/model-final.pt,dcbf93e31c1e3c6f32c76bffeb052457,NMA stage end (60M) = co-op stage init,FIN-MLP-s1
+FIN-V5-s1/V5NM/model-final.pt,bcb968bf00875cbf38ece024ff1896e1,NM stage end (5.0M) = NMA stage init,FIN-V5-s1
+FIN-V5-s1/V5NMA/model-final.pt,8a53027653b9b2221f7a61f0706baec7,NMA stage end (60M) = co-op stage init,FIN-V5-s1
+FIN-MLP-s2/NM/model-final.pt,62dad8a583c739cb0919684ccf5935ca,NM stage end (5.0M) = NMA stage init,FIN-MLP-s2
+FIN-MLP-s2/NMA/model-final.pt,65fe7050307cf7f324bf6b89e7e63e23,NMA stage end (60M) = co-op stage and extension init,FIN-MLP-s2
+FIN-MLP-s2/COOP/model-final.pt,514db10da6f8bca059611c6b198d6962,co-op stage end (70M),FIN-MLP-s2
+FIN-V5-s2/V5NM/model-final.pt,c5ea93fa60072c23260ba7684202e71b,NM stage end (5.0M) = NMA stage init,FIN-V5-s2
+FIN-V5-s2/V5NMA/model-final.pt,2db5079e52b3d4188883ec1936efe000,NMA stage end (60M) = co-op stage and extension init,FIN-V5-s2
+FIN-MLP-s1-50M,4abef10279dacc3b0c33036bb5396e21,milestone checkpoint 50044544,FIN-MLP-s1
+FIN-MLP-s2-50M,b99ca6e8bd29886b7361106ca372da00,milestone checkpoint 50053888,FIN-MLP-s2
+FIN-V5-s1-50M,a81db5500bee66cfbcf1b1184524c7a6,milestone checkpoint 50040640,FIN-V5-s1
+FIN-V5-s2-50M,c861dbea126e3f983aad8b50b090c1c5,milestone checkpoint 50061504,FIN-V5-s2
+FIN-MLPX-s2-70M,c8e2e4c8eb0f48704ccff6a84257cfc9,extension milestone checkpoint 70039296,FIN-MLPX-s2
+coop arm CA model-final.pt,2565e0c9521edfd1d5e97bee10f3c78f,co-op stage arm CA end (NMA 30M + 10M),co-op stage arms
+coop arm CB model-final.pt (= CB10),476ae0a3a45ec2e437a019c6f804c40f,co-op stage arm CB end (NMA 30M + 10M; the adopted stage recipe),co-op stage arms
+coop arm CM2 model-final.pt,836fb83866eb4afe66212a205a3d10c6,co-op stage on FIN-MLP-s1 30M (+10M),co-op stage arms
+coop arm CV5 model-final.pt,8c696c2ecbd631870f49e6e290a16bdf,co-op stage on FIN-V5-s1 30M (+10M; lr 1e-4),co-op stage arms
+coop arm CV5b model-final.pt,99e20e3c7264caa469a0482702f096da,co-op stage on FIN-V5-s1 30M (+10M; lr 3e-4),co-op stage arms

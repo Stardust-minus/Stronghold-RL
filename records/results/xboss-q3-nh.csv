@@ -1,0 +1,9 @@
+arm,solo,coop4h1
+legacy placement (b0),0.406,0.354
+P boss picker,0.510 (+0.104±0.040),0.521 (+0.167±0.041)
+q3 boss (K12 legacy cands),0.531 (+0.125±0.043),0.469 (+0.115±0.036)
+q3 boss - P boss picker,+0.021±0.030,-0.052±0.031
+"q3 normal (margin 0.5) + P boss picker, vs picker",-0.021±0.039,+0.010±0.043
+"P N1 / N2 normal + boss picker, vs picker (480)",-0.031±0.016 / -0.015±0.016,+0.015±0.022 / +0.008±0.021
+q3 boss K16,0.531 (= K12),
+q3 boss K16 + Q hill-climb 32 (model-only),0.427 (-0.104 vs K12),

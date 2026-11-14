@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { LEGACY_BOT } from '../../server/match/botStrategyContract.js';
 import { DEFAULT_VERSION } from '../../shared/versions.js';
 import { pieceDir, parseKey, freeSlot, boardTileOf } from '../../server/match/board.js';
+import { rotateOffset } from '../../server/sim/dir.js';
 import { gateOf } from '../../server/match/waves.js';
 
 export const SHOP = 10, HAND = 10, TEMP = 5, BOARD = 12, OWNED = HAND + TEMP + BOARD;
@@ -183,8 +184,12 @@ export function buildVocab(gd, version = 3) {
 
 // ---- observation layout ----
 const G = 38, FS = 13, FP = 13, FB = 5, FE = 8, FR = 8, FK = 9, FC = 12, FM = 11, FX = 8, FBD = 9, FGX = 16, FPX = 13, FT = 24;
+// (A1, 11-13, arch) version 3 extension blocks, appended after every version 3 block (off unless ext is set): ext.board =
+// posX3 (the owned rows' board tile / facing / placement class / block) + tiles3 (the 28 deployable tiles: terrain, ground
+// paths, occupant, own range coverage); ext.hist = hist (own battle history) + shopH (per shop slot: copies seen so far)
+export const FPX3 = 12, FT3 = 27, FH = 32, FSH = 4, HIST_N = 3;
 const symlog = (x) => Math.sign(x) * Math.log1p(Math.abs(x)); // unbounded counts (S5 features only)
-export function layout(vocab, version = 3) {
+export function layout(vocab, version = 3, ext = null) {
   const NB = vocab.sizes.bonds;
   const blocks = [['global', 1, G], ['shop', SHOP, FS], ['owned', OWNED, FP], ['bonds', NB, FB], ['enemies', ENEMIES, FE],
     ['rewards', REWARDS, FR], ['personal', PERSONAL, FK], ['cards', CARDS, FC], ['mates', MATES, FM]];
@@ -193,6 +198,8 @@ export function layout(vocab, version = 3) {
   if (version >= 3) blocks.push(['extra', 1, FX], ['mateBonds', MATES, 1 + 2 * NB + 3], ['bands', BANDS, FBD + NB]);
   // version 4 (full control): decision sub-kind / field / selection, the owned rows' board state, the deployable tiles
   if (version >= 4) blocks.push(['globalX', 1, FGX], ['ownedX', OWNED, FPX], ['tiles', TILES, FT]);
+  if (version === 3 && ext?.board) blocks.push(['posX3', OWNED, FPX3], ['tiles3', TILES, FT3]);
+  if (version === 3 && ext?.hist) blocks.push(['hist', 1, FH], ['shopH', SHOP, FSH]);
   const out = {}; let off = 0;
   for (const [name, n, f] of blocks) { out[name] = { offset: off, count: n, width: f }; off += n * f; }
   // integer-coded fields the network embeds: [block, field index within a row, vocabulary]
@@ -203,13 +210,16 @@ export function layout(vocab, version = 3) {
   if (version >= 3) ids.push(['extra', 1, 'boss'], ['extra', 2, 'boss'], ['mateBonds', 1 + 2 * NB, 'bond'], ['mateBonds', 2 + 2 * NB, 'bond'],
     ['mateBonds', 3 + 2 * NB, 'bond'], ['bands', 1, 'band']);
   if (version >= 4) ids.push(['ownedX', 11, 'piece'], ['ownedX', 12, 'piece'], ['tiles', 11, 'piece'], ['tiles', 19, 'piece']);
+  if (version === 3 && ext?.board) ids.push(['tiles3', 11, 'piece'], ['tiles3', 19, 'piece']);
   return { dim: off, blocks: out, ids };
 }
 
 /** Per-decision context the encoder needs beyond the views (env bookkeeping, never hidden game state). */
 export class Encoder {
-  constructor(gd, { version = 3 } = {}) {
-    this.gd = gd; this.version = version; this.vocab = buildVocab(gd, version); this.lay = layout(this.vocab, version); this.dim = this.lay.dim;
+  constructor(gd, { version = 3, ext = null } = {}) {
+    // ext (A1): { board, hist } version 3 extension blocks; null / all off = the plain layout (and spec) of version 3
+    this.ext = version === 3 && ext && (ext.board || ext.hist) ? { board: !!ext.board, hist: !!ext.hist } : null;
+    this.gd = gd; this.version = version; this.vocab = buildVocab(gd, version); this.lay = layout(this.vocab, version, this.ext); this.dim = this.lay.dim;
     this.A = version >= 4 ? NUM_ACTIONS_V4 : version >= 3 ? ACT.BAND + BANDS : ACT.BAND; // version 2: the 60 actions of ppo1/ppo2
     this.maxActions = version >= 4 ? MAX_PREP_ACTIONS_V4 : MAX_PREP_ACTIONS;
   }
@@ -217,7 +227,8 @@ export class Encoder {
   spec() {
     return { dataId: this.vocab.dataId, version: this.version, dim: this.dim, actions: this.A, act: ACT, kinds: KIND, blocks: this.lay.blocks, ids: this.lay.ids,
       vocab: this.vocab.sizes, bonds: this.vocab.bondIds, limits: { SHOP, HAND, TEMP, BOARD, OWNED, REWARDS, PERSONAL, CARDS, ENEMIES, MATES,
-      MAX_PREP_ACTIONS: this.maxActions, ...(this.version >= 4 ? { TILES, TILE_R0, TILE_C0, TILE_COLS, DIRS } : {}) } };
+      MAX_PREP_ACTIONS: this.maxActions, ...(this.version >= 4 ? { TILES, TILE_R0, TILE_C0, TILE_COLS, DIRS } : {}) },
+      ...(this.ext ? { ext: this.ext, extLimits: { TILES, TILE_R0, TILE_C0, TILE_COLS, HIST_N } } : {}) };
   }
 
   pieceCode(id) { if (!id) return 0; return this.vocab.piece.get(this.gd.baseIdOf?.(id) ?? id) ?? this.vocab.piece.get(id) ?? 0; }
@@ -392,6 +403,8 @@ export class Encoder {
     });
     }
     if (L.tiles) this._fillV4(m, ps, ctx, obs, own, owned);
+    if (L.tiles3) this._fillBoard3(m, ps, obs, own, owned);
+    if (L.hist) this._fillHist(m, ps, ctx, obs, own);
     // ---- mask ----
     if (ctx.kind === 'tile' || ctx.kind === 'target') {
       mask[ACT.CANCEL] = 1;
@@ -449,6 +462,121 @@ export class Encoder {
       }
     }
     return { pub, own, owned, protect, pairs };
+  }
+
+  /**
+   * (A1) ext.board rows of version 3: posX3 per owned row [present, on board, row, col, facing x4, melee, ranged / all, high,
+   * block count / 3]; tiles3 per deployable tile = the version 4 tile row (selection legality 0) plus [24] own units' attack
+   * ranges covering it / 4, [25] the occupant's block count / 3, [26] covered and on a ground path. Pure reads: the deploy map
+   * is PlayerState's cached map when it is for the current field, else Match.deployMapFor (never ps.deployMap(), which
+   * marks legality stale); ranges are the catalogue grids (chess.json rangeGrid, facing RIGHT) rotated by the facing.
+   */
+  /**
+   * (P4, picker) the ext.board blocks (posX3 + tiles3, contiguous) for seat ps with its board chess placed by `placement`
+   * (Map uid -> [tile key 'r,c', facing]) instead of where they stand: { off, len, v } (v = Float32Array of len). Pure reads.
+   */
+  boardSlice(m, ps, placement) {
+    const L = this.lay.blocks; if (!L.tiles3 || !L.posX3) return null;
+    const own = ps.privateView(), owned = Encoder.owned(own).map((p) => {
+      if (!p || !placement.has(p.uid)) return p; const [key, dir] = placement.get(p.uid); const [r, c] = String(key).split(',').map(Number);
+      return { ...p, row: r, col: c, dir };
+    });
+    const off = L.posX3.offset, end = L.tiles3.offset + L.tiles3.count * L.tiles3.width;
+    const obs = (this._scratch ||= new Float32Array(this.dim)); obs.fill(0, off, end);
+    this._fillBoard3(m, ps, obs, own, owned);
+    return { off, len: end - off, v: obs.slice(off, end) };
+  }
+
+  _fillBoard3(m, ps, obs, own, owned) {
+    const L = this.lay.blocks, gd = this.gd;
+    const field = typeof m.deployFieldOf === 'function' ? m.deployFieldOf(ps) : 'normal';
+    const boss = field === 'bossL' || field === 'bossR';
+    const map = ps._deployMap && ps._deployField === field ? ps._deployMap
+      : typeof m.deployMapFor === 'function' ? m.deployMapFor(ps, field) : new Map();
+    const paths = boss ? null : this._paths(m);
+    const occ = new Map(), cover = new Map();
+    const statsOf = (id) => gd.chess?.(id)?.stats || null;
+    for (let i = 0; i < OWNED; i++) {
+      const p = owned[i]; if (!p) continue;
+      let o = L.posX3.offset + i * FPX3;
+      obs[o] = 1;
+      if (Number.isInteger(p.row) && Number.isInteger(p.col)) {
+        obs[o + 1] = 1; obs[o + 2] = (p.row - TILE_R0) / 3; obs[o + 3] = (p.col - TILE_C0) / 6;
+        const d = DIRS.indexOf(p.dir); if (d >= 0) obs[o + 4 + d] = 1;
+        occ.set(`${p.row},${p.col}`, p);
+        const grid = p.kind === 'chess' ? gd.chess?.(p.id)?.rangeGrid : null;
+        if (Array.isArray(grid)) for (const g of grid) {
+          if (!Array.isArray(g)) continue;
+          const [dr, dc] = rotateOffset(g[0], g[1], p.dir), k = `${p.row + dr},${p.col + dc}`;
+          cover.set(k, (cover.get(k) || 0) + 1);
+        }
+      }
+      if (p.kind !== 'item') {
+        const loc = ps.find?.(p.uid), cls = loc && typeof ps._placementOf === 'function' ? ps._placementOf(loc.piece) : null;
+        obs[o + 8] = cls === 'melee' ? 1 : 0; obs[o + 9] = cls === 'ranged' || cls === 'all' ? 1 : 0; obs[o + 10] = cls === 'high' ? 1 : 0;
+      }
+      obs[o + 11] = p.kind === 'chess' ? Math.min(3, num(statsOf(p.id)?.blockCnt)) / 3 : 0;
+    }
+    const mate = own.bossMate, mateOcc = new Map();
+    if (mate && Array.isArray(mate.units)) for (const u of mate.units) {
+      if (!Number.isInteger(u.y) || !Number.isInteger(u.x)) continue;
+      const [r, c] = boardTileOf(mate.side === 'R' ? 'bossR' : 'bossL', u.y, u.x); mateOcc.set(`${r},${c}`, u);
+    }
+    let leader = null;
+    if (boss) for (const e of own.nextEnemies || []) if (e.boss && Array.isArray(e.start)) leader = boardTileOf(field, e.start[0], e.start[1]);
+    for (let t = 0; t < TILES; t++) {
+      const [r, c] = tileRC(t), key = `${r},${c}`, o = L.tiles3.offset + t * FT3;
+      const cls = map.get(key);
+      obs[o] = 1; obs[o + 1] = cls === 'melee' ? 1 : 0; obs[o + 2] = cls === 'ranged' ? 1 : 0; obs[o + 3] = cls ? 0 : 1;
+      const pt = paths?.get(key);
+      if (pt) { obs[o + 4] = Math.min(1, pt.up / 3); obs[o + 5] = Math.min(1, pt.low / 3); obs[o + 6] = Math.min(1, pt.dist / 6); }
+      if (leader) obs[o + 7] = Math.min(1, (Math.abs(r - leader[0]) + Math.abs(c - leader[1])) / 12);
+      const p = occ.get(key);
+      if (p) {
+        obs[o + 9] = 1; obs[o + 10] = (owned.indexOf(p) + 1) / OWNED; obs[o + 11] = this.pieceCode(p.id);
+        const d = DIRS.indexOf(p.dir); if (d >= 0) obs[o + 12 + d] = 1;
+        obs[o + 16] = p.kind === 'token' ? 1 : 0; obs[o + 17] = p.golden ? 1 : 0;
+        obs[o + 25] = p.kind === 'chess' ? Math.min(3, num(statsOf(p.id)?.blockCnt)) / 3 : 0;
+      }
+      const mu = mateOcc.get(key);
+      if (mu) { obs[o + 19] = this.pieceCode(mu.defId); obs[o + 20] = 1; }
+      obs[o + 21] = (r - TILE_R0) / 3; obs[o + 22] = (c - TILE_C0) / 6; obs[o + 23] = boss ? 1 : 0;
+      const cv = cover.get(key) || 0;
+      obs[o + 24] = Math.min(1, cv / 4); obs[o + 26] = cv > 0 && pt && (pt.up + pt.low) > 0 ? 1 : 0;
+    }
+  }
+
+  /**
+   * (A1) ext.hist rows of version 3, from ctx.hist (env.mjs keeps it per seat from what the seat saw): hist = [present, battles
+   * seen / 15, then per one of the last HIST_N battles (newest first) [present, round / 15, counted leaks / 10, LP lost / 10,
+   * clean (no leak), Σ stacking layers gained in the battle / 20, layers after / 100, LP after / 50, kills / 50], then totals
+   * [Σ layers gained in battles / 100, leaks / 30, clean battles / 15, LP lost / 50, shop rolls seen / 50]; shopH per shop
+   * slot [present, copies of its base id seen in this seat's shops so far / 10, rolls since first seen / 20, seen this prep / 3].
+   */
+  _fillHist(m, ps, ctx, obs, own) {
+    const L = this.lay.blocks, h = ctx.hist; if (!h) return;
+    let o = L.hist.offset;
+    obs[o] = 1; obs[o + 1] = Math.min(1, (h.battles?.length || 0) / 15);
+    const bs = h.battles || [];
+    for (let j = 0; j < HIST_N; j++) {
+      const b = bs[bs.length - 1 - j]; if (!b) continue;
+      const q = o + 2 + j * 9;
+      obs[q] = 1; obs[q + 1] = (b.round || 0) / 15; obs[q + 2] = Math.min(1, b.leaks / 10); obs[q + 3] = Math.min(1, b.lpLost / 10);
+      obs[q + 4] = b.leaks ? 0 : 1; obs[q + 5] = Math.max(-1, Math.min(1, b.dLayers / 20)); obs[q + 6] = Math.min(2, b.layers / 100);
+      obs[q + 7] = Math.min(2, b.lp / 50); obs[q + 8] = Math.min(1, b.kills / 50);
+    }
+    const q = o + 2 + HIST_N * 9;
+    let gl = 0, lk = 0, cl = 0, ll = 0;
+    for (const b of bs) { gl += b.dLayers; lk += b.leaks; cl += b.leaks ? 0 : 1; ll += b.lpLost; }
+    obs[q] = Math.max(-1, Math.min(2, gl / 100)); obs[q + 1] = Math.min(1, lk / 30); obs[q + 2] = cl / 15; obs[q + 3] = Math.min(1, ll / 50);
+    obs[q + 4] = Math.min(1, (h.rolls || 0) / 50);
+    const slots = own.shop?.slots || [];
+    for (let i = 0; i < SHOP; i++) {
+      const s = slots[i]; if (!s || s.kind !== 'chess') continue;
+      const b = this.gd.baseIdOf(s.id), e = h.seen?.get(b), r = L.shopH.offset + i * FSH;
+      obs[r] = 1;
+      if (e) { obs[r + 1] = Math.min(1, e.n / 10); obs[r + 2] = Math.min(1, ((h.rolls || 0) - e.first) / 20); obs[r + 3] = Math.min(1, (e.prep || 0) / 3); }
+    }
   }
 
   /** Version 4 rows: globalX (sub-kind, field, selection, plan, the preview per gate), ownedX, tiles. */

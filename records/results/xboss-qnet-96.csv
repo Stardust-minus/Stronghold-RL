@@ -1,0 +1,6 @@
+arm,solo,coop4h1
+b0 legacy placement,0.406,0.354
+"P boss picker (R/nat/ev reference run, same seeds; reproduced bit-for-bit on 24)",0.510 (+0.104±0.040),0.521 (+0.167±0.041)
+"q2 QNet boss-only, argmax over K12 legacy candidates",0.490 (+0.083±0.038),0.427 (+0.073±0.034)
+q2 boss - P boss picker,-0.021±0.033,-0.094±0.042
+"q2 normal (margin 0.5) + P boss picker, vs picker only",0.521 (+0.010±0.041),-

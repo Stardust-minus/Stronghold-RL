@@ -14,8 +14,10 @@ EMB = {'piece': 32, 'enemy': 16, 'band': 16, 'stage': 8, 'card': 16, 'kind': 8, 
 # blocks a spec does not have are skipped (an older checkpoint builds as before); S5 blocks come last, so their pooled
 # features are the trunk's last input columns (surgery.py zero-initialises them)
 ENTITY_OUT = {'global': 128, 'shop': 128, 'owned': 128, 'enemies': 64, 'rewards': 96, 'personal': 64, 'cards': 64, 'mates': 64,
-              'extra': 32, 'mateBonds': 64, 'bands': 32, 'plan': 32}  # plan (11-13, NAT arm): appended last, only in specs that have it
-POINTER = ['shop', 'owned', 'rewards', 'personal', 'cards', 'bands']  # the action order after the 4 scalars (blocks a spec has)
+              'extra': 32, 'mateBonds': 64, 'bands': 32, 'plan': 32, 'planNat': 32}  # plan (11-13, NAT arm): appended last, only in specs that have it; planNat (N1 plan head) after it
+POINTER = ['shop', 'owned', 'rewards', 'personal', 'cards', 'bands', 'planNat']  # planNat (N1): the plan head's nation actions, after every other action
+# (N1) plan slots: per-row plan features (env natPlan.slots) appended to these entity rows' input (last columns), when the spec has them
+PLAN_SLOTS = {'shop': 'planShop', 'rewards': 'planRewards', 'owned': 'planOwned'}  # the action order after the 4 scalars (blocks a spec has)
 SCALARS = 4
 
 
@@ -35,6 +37,7 @@ class SPNet(nn.Module):
         for block, field, voc in spec['ids']:
             ids[block].append((field, voc))
         self.layout = {}
+        self.pslot = {}
         self.enc = nn.ModuleDict()
         for name in self.names:
             out = ENTITY_OUT[name]; b = blocks[name]
@@ -43,6 +46,9 @@ class SPNet(nn.Module):
             self.register_buffer(f'num_{name}', torch.tensor(numeric, dtype=torch.long), persistent=False)
             self.layout[name] = (b['offset'], b['count'], b['width'], ids[name])
             in_dim = len(numeric) + sum(EMB[v] for _, v in ids[name])
+            if name in PLAN_SLOTS and PLAN_SLOTS[name] in blocks:  # (N1)
+                pb = blocks[PLAN_SLOTS[name]]; assert pb['count'] == b['count'], (name, pb, b)
+                self.pslot[name] = (pb['offset'], pb['count'], pb['width']); in_dim += pb['width']
             self.enc[name] = mlp(in_dim, max(out, 64), out)
         nb = blocks['bonds']
         self.bonds_at = (nb['offset'], nb['count'] * nb['width'])
@@ -63,6 +69,9 @@ class SPNet(nn.Module):
         for field, voc in ids:
             code = x[..., field].round().long().clamp_(0, self.emb[voc].num_embeddings - 1)
             parts.append(self.emb[voc](code))
+        if name in self.pslot:  # (N1)
+            po, pn, pw = self.pslot[name]
+            parts.append(obs[:, po:po + pn * pw].reshape(obs.shape[0], pn, pw))
         h = self.enc[name](torch.cat(parts, dim=-1))
         present = x[..., 0] > 0.5
         return h, present
@@ -109,7 +118,10 @@ def save(path, net, extra=None):
 
 def load(path, device='cpu'):
     ck = torch.load(path, map_location=device, weights_only=False)
-    if ck.get('cfg'):  # an architecture-probe network (model2.SPNet2)
+    if ck.get('cfg') and ck['cfg'].get('arch') == 'v5':  # (A1, 11-13) the tokenized entity transformer (model5.SPNet5)
+        from model5 import SPNet5
+        net = SPNet5(ck['spec'], **ck['cfg']).to(device)
+    elif ck.get('cfg'):  # an architecture-probe network (model2.SPNet2)
         from model2 import SPNet2
         net = SPNet2(ck['spec'], **ck['cfg']).to(device)
     else:

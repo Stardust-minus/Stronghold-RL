@@ -23,14 +23,21 @@ def run(a, policy=None):
             opts = {'envs': min(a.envs, per), 'configs': [cfg], 'seed': a.seed + ci * 1_000_000 + k * per, 'envSeed': a.seed,
                     'maxMatches': per, 'humans': 0 if cfg.split(':')[0].endswith('ai') else 'random', 'legacyMates': a.legacy_mates,  # coop4ai: every seat an AI seat
                     'rehearsal': a.rehearsal,
-                    'metrics': True, 'check': True, 'tripLog': a.trips, **({'lpObs': a.lp_obs if a.lp_obs == 'raw' else float(a.lp_obs)} if getattr(a, 'lp_obs', None) else {}), 'obsVersion': a.obs_version, **({'bondLog': True} if getattr(a, 'bond_log', False) else {}),
+                    'metrics': True, 'check': True, 'tripLog': a.trips, **({'lpObs': a.lp_obs if a.lp_obs == 'raw' else float(a.lp_obs)} if getattr(a, 'lp_obs', None) else {}), 'obsVersion': a.obs_version, **({'obsExt': a.obs_ext} if getattr(a, 'obs_ext', None) else {}), **({'bondLog': True} if getattr(a, 'bond_log', False) else {}),
                     **({'forceBand': a.force_band} if a.force_band else {}),
                     **({'actLog': True} if getattr(a, 'act_log', False) else {}),
                     **({'pickerHead': {'head': a.picker_head, 'trunk': a.picker_trunk, 'K': a.picker_k}} if getattr(a, 'picker_head', None) else {}),
+                    **({'normalPicker': {'head': a.npicker_head, 'K': a.npicker_k, 'from': a.npicker_from, 'to': a.npicker_to, **({'mode': a.npicker_mode} if a.npicker_mode else {}), **({'margin': a.npicker_margin} if a.npicker_margin is not None else {}), **({'w': [float(x) for x in a.npicker_w.split(',')]} if getattr(a, 'npicker_w', None) else {}), **({'pool': True, 'edits': a.npicker_edits, 'max': a.npicker_max} if getattr(a, 'npicker_pool', False) else {})}} if getattr(a, 'npicker_head', None) else {}),
+                    **({'pLabel': json.loads(a.plabel)} if getattr(a, 'plabel', None) else {}),
+                    **({'pBossLabel': json.loads(a.pbosslabel)} if getattr(a, 'pbosslabel', None) else {}),
+                    **({'bossSpatial': json.loads(a.boss_spatial)} if getattr(a, 'boss_spatial', None) else {}),
+                    **({'xPlace': json.loads(a.xplace)} if getattr(a, 'xplace', None) else {}),
+                    **({'xLabel': json.loads(a.xlabel)} if getattr(a, 'xlabel', None) else {}),
                     **({'natPlan': json.loads(a.nat_plan)} if getattr(a, 'nat_plan', None) else {}), **({'bountyField': True} if getattr(a, 'bounty_field', False) else {}),
                     **({'bandPolicy': {'share': a.band_policy, 'uniform': False, **({'planProb': a.plan_prob} if getattr(a, 'plan_prob', None) is not None else {})}} if a.band_policy > 0 and policy is not None else {}),
                     **({'bossRehearsal': a.boss_rehearsal} if a.boss_rehearsal is not None else {}),
                     **({'mateRehearsal': a.mate_rehearsal} if a.mate_rehearsal is not None else {}),
+                    **({'humanProxy': json.loads(a.human_proxy)} if getattr(a, 'human_proxy', None) else {}),
                     **({'visibleOnly': True} if getattr(a, 'visible_only', False) else {}), **({'strictPreview': True} if getattr(a, 'strict_preview', False) else {})}
             opts.update({'mode': 'legacy'} if a.legacy else {'mode': 'teacher', 'enforce': True} if policy is None else {'mode': 'policy'})
             envs.append(NodeEnv(opts, node=a.node)); owner.append(cfg)
@@ -45,7 +52,7 @@ def run(a, policy=None):
                 pool.sel.unregister(envs[i].p.stdout)
                 continue
             decisions += b.n
-            pool.step(i, policy(b))
+            pool.step(i, policy(b, i) if getattr(policy, 'rec', False) else policy(b))
     for e in envs:
         e.close()
     return aggregate(configs, owner, stats, decisions, 'legacy' if a.legacy else 'rl')
@@ -91,7 +98,9 @@ def aggregate(configs, owner, stats, decisions, ai_role='rl'):
                           **({'bondLog': [dict(st['bondLog'], band=st.get('band'), win=st['win']) for st in r['seats'] if (st.get('rl') or st.get('role') == 'legacy') and 'bondLog' in st]}
                              if any('bondLog' in st for st in r['seats']) else {}),
                           **({'trips': r['trips']} if 'trips' in r else {}),
-                          **({'forced': r['forced']} if 'forced' in r else {}), **({'team': r['team']} if 'team' in r else {}), **({'picker': r['picker']} if 'picker' in r else {}), **({'nat': [st['nat'] for st in r['seats'] if 'nat' in st]} if any('nat' in st for st in r['seats']) else {}), **({'act': r['act']} if 'act' in r else {}), **({'bf': r['bf']} if 'bf' in r else {})} for r in res]
+                          **({'forced': r['forced']} if 'forced' in r else {}), **({'team': r['team']} if 'team' in r else {}), **({'picker': r['picker']} if 'picker' in r else {}), **({'plab': r['plab']} if 'plab' in r else {}), **({'npicker': r['npicker']} if 'npicker' in r else {}), **({'xplace': r['xplace']} if 'xplace' in r else {}), **({'nat': [st['nat'] for st in r['seats'] if 'nat' in st]} if any('nat' in st for st in r['seats']) else {}), **({'act': r['act']} if 'act' in r else {}), **({'bf': r['bf']} if 'bf' in r else {}),
+                          **({'human': [{'pid': st['playerId'], 'band': st.get('band'), 'win': st['win'], 'surv': st['survivalRound'], 'mainTier': st.get('mainTier'), 'proxy': st['proxy'], **({'bondLog': st['bondLog']} if 'bondLog' in st else {})}
+                                         for st in r['seats'] if 'proxy' in st]} if any('proxy' in st for st in r['seats']) else {})} for r in res]
         if ai_role != 'rl':
             if ai_role in c['roles']:
                 c['roles']['rl'] = c['roles'].pop(ai_role)
@@ -111,6 +120,12 @@ def aggregate(configs, owner, stats, decisions, ai_role='rl'):
                 c['stack'] = _stack(c['perMatch'], c['teamWin'])
             except Exception as e:
                 c['stack'] = {'error': str(e)[:200]}
+        if any(h.get('bondLog') for pm in c['perMatch'] for h in pm.get('human') or []):  # co-op proxies: the human proxies' own stacking
+            try:
+                from stackrep import summarize as _stack
+                c['humanStack'] = _stack([{'win': pm['win'], 'bondLog': [h['bondLog'] for h in pm.get('human') or [] if h.get('bondLog')]} for pm in c['perMatch']], c['teamWin'])
+            except Exception as e:
+                c['humanStack'] = {'error': str(e)[:200]}
         out['configs'][cfg] = c
     return out
 
@@ -218,7 +233,18 @@ if __name__ == '__main__':
     ap.add_argument('--force-band', default=None, help="Step 0: seat ai_0 opens with this band (band strength table); with --band-policy at ai_0's own band decision, 'random' = a random allowed band")
     ap.add_argument('--plan-prob', type=float, default=None, help='with --band-policy: chance a human proxy whose band has no tied bond announces a random core 主盟约 (env default 0.5)')
     ap.add_argument('--picker-head', default=None, help="boss-round layout picker: the head JSON (with --picker-trunk, the frozen JS trunk export base); boss rehearsal 0")
+    ap.add_argument('--human-proxy', default=None, help='co-op proxies: env humanProxy JSON (tools/rl/proxies.mjs: kinds per human seat, rehearsal, announce, log); off = legacy human proxies')
+    ap.add_argument('--npicker-head', default=None, help='normal-round layout picker (picker spatial head, <base>.json from export_p5.py); rehearsal 0')
+    ap.add_argument('--npicker-k', type=int, default=8); ap.add_argument('--npicker-from', type=int, default=1); ap.add_argument('--npicker-to', type=int, default=13)
+    ap.add_argument('--npicker-mode', default=None, help="'reg' (default) or 'score'"); ap.add_argument('--npicker-margin', type=float, default=None)
+    ap.add_argument('--npicker-w', default=None, help='reg weights wLeak,wLayer,wKill (default 2,0.2,0.05)')
+    ap.add_argument('--npicker-pool', action='store_true', help='picker: the picker scores the candidate pool (bot.js candidatePoolForTraining)'); ap.add_argument('--npicker-edits', type=int, default=12); ap.add_argument('--npicker-max', type=int, default=32)
+    ap.add_argument('--pbosslabel', default=None, help='picker boss-round labels (env pBossLabel JSON: dir, K, seeds)')
+    ap.add_argument('--boss-spatial', default=None, help='picker (code-P9): env bossSpatial JSON {head, w, K, out, rounds}: spatial boss picker in the xPlace QNet ensemble')
+    ap.add_argument('--plabel', default=None, help='picker training labels (env pLabel JSON: dir, K, tmpl, from, to, apply, seed); never for headline evals')
     ap.add_argument('--picker-trunk', default=None); ap.add_argument('--picker-k', type=int, default=8)
+    ap.add_argument('--xlabel', default=None, help='xplace: env xLabel JSON (search labels at the RL seats, tools/rl/xsearch.mjs; training only, builds rehearsals)')
+    ap.add_argument('--xplace', default=None, help='xplace: env xPlace JSON {"model": <xplace model JSON>, "rounds": "all|normal|boss"} (learned layout policy, no sims)')
     ap.add_argument('--nat-plan', default=None, help='NAT arm: env natPlan JSON (plan obs block + terms); a NAT checkpoint needs it (its obs has the plan block)')
     ap.add_argument('--act-log', action='store_true', help='per RL seat: applied actions, buys by kind, 机变 picks, bounty outcomes, items equipped (perMatch act)')
     ap.add_argument('--bounty-field', action='store_true', help="experiment: an RL seat's legacy layout models its own bounty spawns at normal rounds (env bountyField)")
@@ -232,14 +258,26 @@ if __name__ == '__main__':
         from model import load
         dev = torch.device(a.device)
         net, _ = load(a.ckpt, dev); net.eval()
+        if hasattr(net, 'with_value'): net.with_value = False  # (A1) SPNet5: acting never needs the critic
         a.obs_version = 4 if 'tiles' in net.spec['blocks'] else 3 if 'bands' in net.spec['blocks'] else 2
+        a.obs_ext = net.spec.get('ext')  # (A1) version 3 extension blocks of the checkpoint (None: off)
         gen = torch.Generator(device=dev); gen.manual_seed(1)
+        rec = getattr(net, 'rnn', None) is not None  # (A3) a recurrent policy: per (env process, trajectory) state
+        hst = {}; hz = np.zeros(getattr(net, 'state_size', 0), np.float32)
         @torch.no_grad()
-        def policy(b):
-            logits, _ = net(torch.from_numpy(np.array(b.obs)).to(dev), torch.from_numpy(np.array(b.mask)).to(dev))
+        def policy(b, i=None):
+            if rec:
+                for tid in b.term_ids: hst.pop((i, int(tid)), None)
+                H_in = np.stack([hst.get((i, int(b.ids[k])), hz) for k in range(b.n)])
+                logits, _, h_new = net(torch.from_numpy(np.array(b.obs)).to(dev), torch.from_numpy(np.array(b.mask)).to(dev), torch.from_numpy(H_in).to(dev))
+                h_new = h_new.float().cpu().numpy()
+                for k in range(b.n): hst[(i, int(b.ids[k]))] = h_new[k]
+            else:
+                logits, _ = net(torch.from_numpy(np.array(b.obs)).to(dev), torch.from_numpy(np.array(b.mask)).to(dev))
             if a.greedy:
                 return logits.argmax(1).int().cpu().numpy()
             return torch.multinomial(torch.softmax(logits, 1), 1, generator=gen).squeeze(1).int().cpu().numpy()
+        policy.rec = rec
     r = run(a, policy)
     r['seconds'] = round(time.time() - t0, 1)
     r['label'] = ('legacy-live' if a.legacy else 'teacher-enforce' if a.teacher else f'{a.ckpt} {"greedy" if a.greedy else "sampled"}') + f' rehearsal {a.rehearsal}'

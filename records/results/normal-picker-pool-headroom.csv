@@ -1,0 +1,5 @@
+set,best non-legacy (pool w/o search),D-best Δlayers K8 → pool,Δleaks K8 → pool,"hill vs CEM (utility gain over pool best, budget 32)"
+NH2sA solo,35 %,+3.75 → +7.23,-.36 → -.42,+2.81 (36 % improved) vs +2.51 (29 %)
+NH2sA coop4h1,33 %,+2.60 → +4.12,-1.28 → -1.57,+1.91 (44 %) vs +1.38 (31 %)
+NMA23 solo,24 %,+2.57 → +4.44,-.69 → -.80,+2.23 (30 %) vs +1.98 (26 %)
+NMA23 coop4h1,32 %,+2.36 → +3.80,-1.34 → -1.65,+2.00 (41 %) vs +1.47 (33 %)

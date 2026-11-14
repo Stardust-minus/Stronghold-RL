@@ -2,6 +2,14 @@ file,bytes,what
 band/band-refit-LIN40M-fit.json,3526,band-head refit on LIN 40M: TV to target before / after per config
 band/band-table2-LIN40M.json,41141,"band strength table (paired forced bands) on LIN 40M, the band refit target"
 band/combo-coop4h1-screen.json,19222,team band-combination screen on coop4h1 (paired seeds; no set beats the current head)
+coop/stage-10M-ca-cb.csv,1947,co-op stage results tables
+coop/stage-5M-ca-cb.csv,1197,co-op stage results tables
+coop/stage-cm2-cells.csv,1074,co-op stage results tables
+coop/stage-cv5b-lr3e-4.csv,230,co-op stage results tables
+coop/stage-nopicker-cells.csv,1424,co-op stage results tables
+coop/stage-picker-pass.csv,401,co-op stage results tables
+coop/stage-pk-summaries.csv,1688,co-op stage results tables
+coop/stage-vs-start.csv,383,co-op stage results tables
 derived/action-histogram.json,1872,"action histogram per RL seat per match (SK-30M, greedy, b0, RL r0, proxies r3)"
 derived/width-ab-paired.json,3243,"width / structure A/B, paired vs W1 on the same seeds (b0, greedy, band-policy 1, proxies r3)"
 evals/action-log.json,5378,"action histogram runs (SK-30M, act log) and bounty-aware layout A/B"
@@ -22,13 +30,124 @@ evals/nat-arm.json,25934,"NAT arm evals + LIN-C final baseline (picker, b0)"
 evals/picker-parity.json,1159,boss-round picker in the env (SK-30M solo480 b0)
 evals/proxy-plan-prob.json,6606,"human proxy vs legacy seat (legacy-mode identity, plan-prob 0 A/B)"
 evals/width-arms.json,30737,width / structure A/B evals (W1 W2 AT at +5/10/15M)
+final/candidates.csv,1193,final pipeline eval tables (records_final.py output)
+final/coopgate.csv,411,final pipeline eval tables (records_final.py output)
+final/heldout.csv,380,final pipeline eval tables (records_final.py output)
+final/index.csv,481,final pipeline eval tables (records_final.py output)
+final/milestones.csv,11950,final pipeline eval tables (records_final.py output)
+final/ranking.csv,429,final pipeline eval tables (records_final.py output)
+final/repro-gate.csv,264,final pipeline eval tables (records_final.py output)
+final/summary.md,13564,final pipeline eval tables (records_final.py output)
 placement/placement-ceilings-equip-bounty.json,23007,placement track: equipment and bounty-round candidate ceilings
 placement/placement-results.json,116679,"placement track: boss picker, ceilings, stacking oracle, recipes, layer spread, normal-round ablation"
+results/arch-wave1.csv,312,key results tables since the previous commit
+results/arch-wave2-recurrent.csv,382,key results tables since the previous commit
+results/boss-headjoint-refit.csv,377,key results tables since the previous commit
+results/boss-oracle-gap.csv,415,key results tables since the previous commit
+results/boss-picker-q5-hj-bp.csv,304,key results tables since the previous commit
+results/boss-picker-spatial-ingame.csv,308,key results tables since the previous commit
+results/boss-picker-spatial-offline.csv,746,key results tables since the previous commit
+results/coop-nation-cells-nma.csv,524,key results tables since the previous commit
+results/coop-nh2sa-480.csv,725,key results tables since the previous commit
+results/coop-nh2sc-vs-nh2sa.csv,518,key results tables since the previous commit
+results/coop-proxy-first.csv,428,key results tables since the previous commit
+results/coop-proxy-sweep.csv,502,key results tables since the previous commit
+results/coop-replan.csv,500,key results tables since the previous commit
+results/coop-robustness-nma-480.csv,950,key results tables since the previous commit
+results/eval-tree-picker-decisions.csv,145,key results tables since the previous commit
 results/evals-all.csv,39148,"one row per eval x config: win, FA share, rehearsal, seeds, stacking block (national main / tier 2 / layers / elites), picker"
 results/nat-arm.csv,1816,"NAT arm (from LIN-C final 78M to 88M) vs the LIN-C final baseline, picker on, b0, 480 paired seeds"
+results/nat-plan-20M-milestone.csv,555,key results tables since the previous commit
+results/nat-plan-30M-finals.csv,588,key results tables since the previous commit
+results/nat-plan-NH2-finals.csv,565,key results tables since the previous commit
+results/nat-plan-NL-NH-results.csv,793,key results tables since the previous commit
+results/nat-plan-NL-curve.csv,327,key results tables since the previous commit
+results/nat-plan-NM-stage1.csv,586,key results tables since the previous commit
+results/nat-plan-NMA-20M.csv,309,key results tables since the previous commit
+results/nat-plan-bc-diagnosis.csv,385,key results tables since the previous commit
+results/nat-plan-bc-plan-conditioned.csv,391,key results tables since the previous commit
+results/nat-plan-legacy-seat-stacking.csv,600,key results tables since the previous commit
+results/nat-plan-rl-arms-curve.csv,263,key results tables since the previous commit
+results/nat-plan-secondary-bonds.csv,528,key results tables since the previous commit
+results/nat-plan-stage1-5M.csv,509,key results tables since the previous commit
+results/normal-picker-c8-nh2sa.csv,376,key results tables since the previous commit
+results/normal-picker-c8-vs-sall.csv,349,key results tables since the previous commit
+results/normal-picker-c9-gate.csv,259,key results tables since the previous commit
+results/normal-picker-c9-on-xboss-v3.csv,540,key results tables since the previous commit
+results/normal-picker-c9-paired.csv,281,key results tables since the previous commit
+results/normal-picker-pool-headroom.csv,460,key results tables since the previous commit
+results/normal-picker-pool-vs-k8.csv,368,key results tables since the previous commit
+results/normal-picker-r2.csv,339,key results tables since the previous commit
+results/normal-picker-round3.csv,453,key results tables since the previous commit
+results/normal-picker-round4.csv,429,key results tables since the previous commit
+results/normal-picker-round5a.csv,365,key results tables since the previous commit
+results/normal-picker-round5b.csv,374,key results tables since the previous commit
+results/normal-picker-spec1.csv,356,key results tables since the previous commit
+results/placement-labels.csv,537,key results tables since the previous commit
 results/placement.csv,13885,"placement track groups: n, win, FA share, layers; paired deltas vs the base / legacy group on the same seeds"
+results/realplayer-aggregate.csv,197,key results tables since the previous commit
+results/realplayer-mains.csv,323,key results tables since the previous commit
+results/recipe-sets.csv,276,key results tables since the previous commit
+results/scratch-ap-arms.csv,517,key results tables since the previous commit
+results/scratch-arms-2.csv,318,key results tables since the previous commit
+results/scratch-arms-curve.csv,426,key results tables since the previous commit
+results/scratch-coop-finetune.csv,764,key results tables since the previous commit
+results/scratch-nm-reproduced.csv,373,key results tables since the previous commit
+results/scratch-step4-rl.csv,328,key results tables since the previous commit
 results/train-runs.csv,4412,"one row per training (re)start: init, steps, mix and the main hyperparameters (full args in the -runs.json files)"
+results/v5-history-vs-plan.csv,461,key results tables since the previous commit
+results/v5-lite-bc.csv,263,key results tables since the previous commit
+results/v5-lite-init.csv,260,key results tables since the previous commit
+results/v5-nma-bc.csv,184,key results tables since the previous commit
+results/v5-nma-stage1.csv,273,key results tables since the previous commit
+results/v5-p-5M.csv,214,key results tables since the previous commit
+results/v5-p6-retarget.csv,177,key results tables since the previous commit
+results/v5-p6-vs-nh2s.csv,309,key results tables since the previous commit
+results/v5-p6l-seeds.csv,235,key results tables since the previous commit
+results/v5-pbig.csv,294,key results tables since the previous commit
 results/width-ab-paired.csv,840,"width / structure A/B (W1 W2 AT from LIN 40M), paired vs W1, 480 + 480 seeds, b0"
+results/xboss-480-confirm.csv,355,key results tables since the previous commit
+results/xboss-480-solo.csv,219,key results tables since the previous commit
+results/xboss-dw-gates.csv,227,key results tables since the previous commit
+results/xboss-dw-offline.csv,452,key results tables since the previous commit
+results/xboss-first.csv,252,key results tables since the previous commit
+results/xboss-generator-check.csv,300,key results tables since the previous commit
+results/xboss-lineup-ceiling.csv,196,key results tables since the previous commit
+results/xboss-lineup-first.csv,319,key results tables since the previous commit
+results/xboss-newest-nma.csv,260,key results tables since the previous commit
+results/xboss-nh2sa-refit.csv,451,key results tables since the previous commit
+results/xboss-nh2sa-scorer.csv,496,key results tables since the previous commit
+results/xboss-nma17-480.csv,359,key results tables since the previous commit
+results/xboss-q3-nh.csv,515,key results tables since the previous commit
+results/xboss-q3.csv,286,key results tables since the previous commit
+results/xboss-q8d-vs-q5.csv,357,key results tables since the previous commit
+results/xboss-qnet-96.csv,408,key results tables since the previous commit
+results/xboss-scorer-refit-heldout.csv,249,key results tables since the previous commit
+results/xboss-scorer-refit-ingame.csv,335,key results tables since the previous commit
+results/xboss-teacher-bakeoff.csv,683,key results tables since the previous commit
+results/xboss-v3-ingame.csv,468,key results tables since the previous commit
+meta/FIN-MLP-s1-COOP-meta.json,2888,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLP-s1-NM-meta.json,1607,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLP-s1-NMA-meta.json,1860,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLP-s2-COOP-meta.json,2872,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLP-s2-NM-meta.json,2037,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLP-s2-NMA-meta.json,2288,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLPX-s1-src-meta.json,1728,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLPX-s2-EXT-meta.json,3870,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-MLPX-s2-src-meta.json,2158,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5-s1-COOP-meta.json,2952,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5-s1-V5NM-meta.json,1663,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5-s1-V5NMA-meta.json,1952,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5-s2-COOP-meta.json,2936,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5-s2-V5NM-meta.json,2081,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5-s2-V5NMA-meta.json,2368,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5X-s2-EXT-meta.json,3932,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5X-s2-src-meta.json,2237,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/coop-CA-meta.json,2739,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/coop-CB-meta.json,2745,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/coop-CM2-meta.json,3008,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/coop-CV5-meta.json,3077,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/coop-CV5b-meta.json,3127,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
 scratch/evals/B1.json,16704,"scratch batch 1 arm B1: in-run evals (BC init, 5M PPO)"
 scratch/evals/B2.json,16754,"scratch batch 1 arm B2: in-run evals (BC init, 5M PPO)"
 scratch/evals/LR3.json,16600,"scratch batch 1 arm LR3: in-run evals (BC init, 5M PPO)"
@@ -77,6 +196,45 @@ train/SK-stopped-curve.csv,129013,train curve: one row per PPO update (rolling w
 train/SK-stopped-runs.json,3717,"run args (every start event), in-run eval results, end events"
 train/SO1-stopped-curve.csv,73244,train curve: one row per PPO update (rolling win / FA share by difficulty)
 train/SO1-stopped-runs.json,3731,"run args (every start event), in-run eval results, end events"
+train/coop/CA-curve.csv,70848,co-op stage arms: train curve / run events
+train/coop/CA-runs.json,4870,co-op stage arms: train curve / run events
+train/coop/CB-curve.csv,70861,co-op stage arms: train curve / run events
+train/coop/CB-runs.json,4876,co-op stage arms: train curve / run events
+train/coop/CM2-curve.csv,70892,co-op stage arms: train curve / run events
+train/coop/CM2-runs.json,5206,co-op stage arms: train curve / run events
+train/coop/CV5-curve.csv,72756,co-op stage arms: train curve / run events
+train/coop/CV5-runs.json,4856,co-op stage arms: train curve / run events
+train/coop/CV5b-curve.csv,73188,co-op stage arms: train curve / run events
+train/coop/CV5b-runs.json,3460,co-op stage arms: train curve / run events
+train/final/FIN-MLP-s1-COOP-curve.csv,61655,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s1-COOP-runs.json,4475,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s1-NM-curve.csv,25294,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s1-NM-runs.json,4391,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s1-NMA-curve.csv,350757,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s1-NMA-runs.json,12839,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s2-COOP-curve.csv,70861,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s2-COOP-runs.json,4914,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s2-NM-curve.csv,25378,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s2-NM-runs.json,4368,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s2-NMA-curve.csv,351072,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLP-s2-NMA-runs.json,12827,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLPX-s2-EXT-curve.csv,75883,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-MLPX-s2-EXT-runs.json,4764,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s1-COOP-curve.csv,7692,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s1-COOP-runs.json,3064,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s1-V5NM-curve.csv,26201,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s1-V5NM-runs.json,4390,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s1-V5NMA-curve.csv,363712,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s1-V5NMA-runs.json,12853,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s2-COOP-curve.csv,59446,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s2-COOP-runs.json,4097,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s2-V5NM-curve.csv,26132,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s2-V5NM-runs.json,4368,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s2-V5NMA-curve.csv,364509,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5-s2-V5NMA-runs.json,12833,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5X-s2-EXT-curve.csv,42240,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+train/final/FIN-V5X-s2-EXT-runs.json,4066,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
+weights-md5.csv,3385,md5 of weight files kept out of the repo
 width/evals/AT-inrun.json,6319,width arm AT: in-run eval at 55M
 width/evals/W1-inrun.json,6374,width arm W1: in-run eval at 55M
 width/evals/W2-inrun.json,6402,width arm W2: in-run eval at 55M

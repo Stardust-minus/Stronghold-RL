@@ -1,0 +1,6 @@
+"ckpt (solo:HARD 480, greedy)",recipe,runs,win,T2,main/sec/sum,elites,win 192 per run
+V5P6L,"NH2s, lr 1e-4, bp1",3,0.822,0.992,108/76/223,4.67,.807/.844/.797
+V5PH (V5P6L + hist),same + hist ext,2,0.800 (0.815/0.785),0.992,106/84/232,4.60,.786/.734
+NH2s (MLP),"NH2s, lr 3e-4",1,0.787,0.981,119/90/244,4.90,.781
+"NM (MLP, N)","NMA stage 1, lr 3e-4, bp0",1,0.808,0.996,119/71/228,4.37,.797
+xV5NM (v5),"NMA stage 1, lr 1e-4, bp0",1,0.794,0.994,104/66/209,4.52,.786

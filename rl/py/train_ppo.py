@@ -11,6 +11,7 @@ from collections import defaultdict, deque
 import numpy as np
 import torch
 import torch.nn.functional as F
+import contextlib
 from spenv import NodeEnv, AsyncPool
 from model import load, save
 from tb import Board, TYPES
@@ -94,6 +95,7 @@ ap.add_argument('--overlap', action='store_true', help='T1: update on a learner 
 ap.add_argument('--device', default='cuda', help='cuda, or cpu for smoke tests while the GPU is taken')
 ap.add_argument('--kl-ref', default='', help='checkpoint of the KL anchor policy (default: --init)')
 ap.add_argument('--strict-preview', action='store_true', help='strict preview for the RL seats (env strictPreview), off by default')
+ap.add_argument('--xplace', default=None, help='xplace: env xPlace JSON (learned layout scorer, no sims), training envs and in-run evals')
 ap.add_argument('--picker-head', default=None, help='boss-round layout picker in the training envs and in-run evals (env pickerHead; with --picker-trunk, a frozen JS trunk export; boss rehearsal 0)')
 ap.add_argument('--picker-trunk', default=None); ap.add_argument('--picker-k', type=int, default=8)
 ap.add_argument('--nat-plan', default=None, help='(11-13) NAT arm: env natPlan JSON (plan pair obs block, national / secondary terms, potential); in-run evals too')
@@ -104,6 +106,10 @@ ap.add_argument('--r2', default='{}', help='reward version 2 weight overrides, e
 ap.add_argument('--shape-uncapped', action='store_true', help='bond shaping stack term uncapped: Σ stacking-bond layers / 100 (potential-based)')
 ap.add_argument('--eval2-configs', default='', help='a second in-run eval (eval-<steps>-b<N>.json, TB eval_b<N>/…) of these configs with --eval2-boss-rehearsal')
 ap.add_argument('--eval2-boss-rehearsal', type=int, default=0)
+ap.add_argument('--npicker-head', default=None, help='normal-round layout picker (picker spatial head) in the training envs and in-run evals; rehearsal 0')
+ap.add_argument('--npicker-k', type=int, default=8); ap.add_argument('--npicker-from', type=int, default=1); ap.add_argument('--npicker-to', type=int, default=13)
+ap.add_argument('--npicker-mode', default=None); ap.add_argument('--npicker-margin', type=float, default=None)
+ap.add_argument('--human-proxy', default=None, help="co-op proxies: env humanProxy JSON for the human-proxy seats (tools/rl/proxies.mjs), e.g. a teammate population '{\"kinds\":[\"mix:legacy=0.4|nat:rand=0.4|class=0.1|noisy:50=0.1\"],\"log\":false}'; off = legacy proxies")
 ap.add_argument('--mix', default='v1', choices=['v1', 'v2', 'v3', 'v3s', 'v3sc', 'solo1', 'solo1w', 'mp1', 'mp1w', 'mp2', 'hard1', 'auto1'], help='v2 (11-12): fixed mix with coop4ai (4 RL seats) ABYSS .20 / HARD .06')
 ap.add_argument('--reward-by', default='{}', help='per-difficulty reward overrides, e.g. {"ABYSS": {"round": 0, "win": 1.0}} (env rewardBy)')
 ap.add_argument('--freeze-band', action='store_true', help='band choice fixed: no gradient on enc.bands / ptr.bands (no optimizer entries), band-decision rows out of the policy-gradient and entropy terms (their KL anchor stays)')
@@ -143,8 +149,14 @@ ap.add_argument('--adv-norm', choices=['global', 'group'], default='global', hel
 ap.add_argument('--boss-rehearsal', type=int, default=None, help='legacy rehearsal on the Final Assault / Hidden Core rounds only')
 ap.add_argument('--shape-tier', type=float, default=0.0, help='bond shaping: weight of Σ active tier / max tier (potential-based)')
 ap.add_argument('--shape-stack', type=float, default=0.0, help='bond shaping: weight of Σ min(layers / next milestone, 1), active bonds')
+ap.add_argument('--amp', action='store_true', help='(A1) bf16 autocast for every forward (actor, old log-probs, minibatches, KL anchor) and the rollout observations kept fp16 on the GPU')
+ap.add_argument('--fwd-chunk', type=int, default=8192, help='(A1) rows per no-grad forward of the old log-probs pass (memory)')
+ap.add_argument('--seq-len', type=int, default=32, help='(A3) recurrent policy: loss steps per training sequence (truncated BPTT)')
+ap.add_argument('--burn-in', type=int, default=16, help='(A3) recurrent policy: steps before each sequence that rebuild its state from the stored one (no gradient)')
+ap.add_argument('--clip-sep', action='store_true', help='(A1) a separate critic: clip the policy and the value gradients each to 0.5 (else one global norm)')
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
+AMP = (lambda: torch.autocast('cuda', dtype=torch.bfloat16)) if a.amp else contextlib.nullcontext  # (A1) --amp
 if a.curriculum == 'fixed':
     STAGES = FIXED_AUTO1 if a.mix == 'auto1' else FIXED_HARD1 if a.mix == 'hard1' else FIXED if a.mix == 'v1' else FIXED2 if a.mix == 'v2' else FIXED3S if a.mix == 'v3s' else FIXED3SC if a.mix == 'v3sc' else FIXED_SOLO1 if a.mix == 'solo1' else FIXED_SOLO1W if a.mix == 'solo1w' else FIXED_MP1 if a.mix == 'mp1' else FIXED_MP1W if a.mix == 'mp1w' else FIXED_MP2 if a.mix == 'mp2' else FIXED3
 reward_over = json.loads(a.reward)
@@ -158,8 +170,12 @@ if a.mem_frac > 0 and str(dev).startswith('cuda'):
     torch.cuda.set_per_process_memory_fraction(a.mem_frac, 0)
 net, ck = load(a.init, dev)
 bc_net = None
+REC = getattr(net, 'rnn', None) is not None  # (A3) a recurrent policy (model5 cfg rnn): stored states, sequence minibatches
+assert not (REC and (a.sil > 0 or a.band_warmstart)), 'recurrent policy: SIL / band warm start not supported'
 if a.bc_kl > 0:
     bc_net, _ = load(a.kl_ref or a.init, dev); bc_net.eval()
+    if hasattr(bc_net, 'with_value'): bc_net.with_value = False  # (A1) SPNet5: the KL anchor never needs its critic
+    assert getattr(bc_net, 'rnn', None) is None, '(A3) the KL anchor must be a feed-forward policy'
     for p in bc_net.parameters():
         p.requires_grad_(False)
 if a.freeze_band:
@@ -171,6 +187,7 @@ actor = copy.deepcopy(net) if a.overlap else net  # T1: the network that acts; n
 actor.eval()
 value_params = list(net.value.parameters()) + (list(net.vtrunk.parameters()) if hasattr(net, 'vtrunk') else [])  # LIN-C: the critic trunk warms up with its head
 opt_v = torch.optim.Adam(value_params, lr=a.lr, eps=1e-5)  # A1: the value-only warm-up
+pi_params = [p_ for p_ in net.parameters() if p_.requires_grad and all(p_ is not q for q in value_params)]  # (A1) --clip-sep
 spec = net.spec
 threshold = {}
 if a.baseline:
@@ -188,12 +205,16 @@ if a.env_cpus:
 envs = [NodeEnv({'envs': a.envs, 'configs': STAGES[0]['configs'], 'seed': 1_000_000_000 + 10_000_000 * (i + 1) + a.seed_offset, 'envSeed': 1000 + i + a.seed_offset // 1000,
                  'humans': 'random', 'legacyMates': a.legacy_mates, 'rehearsal': a.rehearsal, 'reward': reward_over, **({'rewardBy': reward_by} if reward_by else {}),
                  'obsVersion': 4 if 'tiles' in spec['blocks'] else 3 if 'bands' in spec['blocks'] else 2,
+                 **({'obsExt': spec['ext']} if spec.get('ext') else {}),  # (A1) the checkpoint's version 3 extension blocks
                  'check': a.check, 'shaping': {'gamma': a.gamma, 'wTier': a.shape_tier, 'wStack': a.shape_stack, 'uncapped': a.shape_uncapped},
                  **({'rewardV': 2, 'r2': json.loads(a.r2)} if a.reward_v == 2 else {}),
                  **({'lpObs': a.lp_obs if a.lp_obs == 'raw' else float(a.lp_obs)} if a.lp_obs else {}),
                  **({'visibleOnly': True} if a.visible_only else {}), **({'strictPreview': True} if a.strict_preview else {}),
                  **({'pickerHead': {'head': a.picker_head, 'trunk': a.picker_trunk, 'K': a.picker_k}} if a.picker_head else {}),
+                 **({'normalPicker': {'head': a.npicker_head, 'K': a.npicker_k, 'from': a.npicker_from, 'to': a.npicker_to, **({'mode': a.npicker_mode} if a.npicker_mode else {}), **({'margin': a.npicker_margin} if a.npicker_margin is not None else {})}} if a.npicker_head else {}),
+                 **({'xPlace': json.loads(a.xplace)} if a.xplace else {}),
                  **({'natPlan': json.loads(a.nat_plan)} if a.nat_plan else {}),
+                 **({'humanProxy': json.loads(a.human_proxy)} if getattr(a, 'human_proxy', None) else {}),
                  **({'snapCollect': {'prob': a.snap_collect}, 'snapStart': {'frac': a.snap_start}} if a.snap_start > 0 else {}),
                  **({'bandPolicy': {'share': a.band_policy}} if a.band_policy > 0 else {}),
                  **({'bossRehearsal': a.boss_rehearsal} if a.boss_rehearsal is not None else {})}, node=a.node)
@@ -252,9 +273,11 @@ recent_terms = []  # episodes ended since the last update: (config, win, fa, rou
 BOND = envs[0].spec['blocks']['bonds']  # tier field 2 = tier / 3
 G0 = envs[0].spec['blocks']['global']['offset']  # field 0 = round / 15
 assert envs[0].spec['dataId'] == spec['dataId'], ('observation layout changed since the checkpoint', envs[0].spec['dataId'], spec['dataId'])
+assert envs[0].spec['dim'] == spec['dim'], ('observation width differs from the checkpoint (A1: version 3 extension blocks)', envs[0].spec['dim'], spec['dim'])
 env_stage = [0] * len(envs)
 env_mix = [0] * len(envs)  # (scr0) auto1 mix version applied per process
 pool = AsyncPool(envs); pool.reset()
+hstate = {}; h_zero = np.zeros(net.state_size if REC else 0, np.float32)  # (A3) (process, trajectory) -> state after its last decision
 pending, chains = {}, defaultdict(list)
 ready = 0
 episodes = deque(maxlen=3000)
@@ -308,7 +331,7 @@ def launch_eval(path, block=False, second=False):
     out = os.path.join(a.out, f'eval-{steps}-b{a.eval2_boss_rehearsal}.json' if second else f'eval-{steps}.json')
     cmd = [sys.executable, os.path.join(os.path.dirname(__file__), 'eval.py'), '--ckpt', path, '--out', out, '--greedy',
            '--matches', str(a.eval_matches), '--chunks', str(a.eval_chunks), '--envs', '6', '--node', a.node,
-           '--bond-log', *(['--lp-obs', str(a.lp_obs)] if a.lp_obs else []), *(['--visible-only'] if a.visible_only else []), *(['--strict-preview'] if a.strict_preview else []), *(['--picker-head', a.picker_head, '--picker-trunk', a.picker_trunk, '--picker-k', str(a.picker_k)] if a.picker_head else []), *(['--nat-plan', a.nat_plan] if a.nat_plan else []), '--configs', a.eval2_configs if second else a.eval_configs, '--rehearsal', str(a.rehearsal), '--device', a.device] + (['--boss-rehearsal', str(a.eval2_boss_rehearsal if second else a.boss_rehearsal)] if second or a.boss_rehearsal is not None else []) \
+           '--bond-log', *(['--lp-obs', str(a.lp_obs)] if a.lp_obs else []), *(['--visible-only'] if a.visible_only else []), *(['--strict-preview'] if a.strict_preview else []), *(['--picker-head', a.picker_head, '--picker-trunk', a.picker_trunk, '--picker-k', str(a.picker_k)] if a.picker_head else []), *(['--npicker-head', a.npicker_head, '--npicker-k', str(a.npicker_k), '--npicker-from', str(a.npicker_from), '--npicker-to', str(a.npicker_to), *(['--npicker-mode', a.npicker_mode] if a.npicker_mode else []), *(['--npicker-margin', str(a.npicker_margin)] if a.npicker_margin is not None else [])] if a.npicker_head else []), *(['--xplace', a.xplace] if a.xplace else []), *(['--nat-plan', a.nat_plan] if a.nat_plan else []), '--configs', a.eval2_configs if second else a.eval_configs, '--rehearsal', str(a.rehearsal), '--device', a.device] + (['--boss-rehearsal', str(a.eval2_boss_rehearsal if second else a.boss_rehearsal)] if second or a.boss_rehearsal is not None else []) \
           + (['--band-policy', '1'] if a.band_policy > 0 else [])  # the policy's own band picks are evaluated too
     p = subprocess.Popen(cmd, stdout=open(out + '.log', 'w'), stderr=subprocess.STDOUT,
                          env={**os.environ, 'OMP_NUM_THREADS': '4'}, preexec_fn=lambda: os.sched_setaffinity(0, full_cpus))
@@ -362,6 +385,7 @@ def update(rollout):
     keys = list(rollout.keys())
     obs, mask, act, logp_old, v_old, adv, ret = [], [], [], [], [], [], []
     kinds, preps = [], []  # preps: (buys, sells, refreshes) of every prep that ended (END) in this rollout
+    spans_, hs = [], []  # (A3) per chain: (first flat row, length); per row: the stored state before the decision
     for key in keys:
         ch = rollout.pop(key)
         cnt = [0, 0, 0]
@@ -387,13 +411,15 @@ def update(rollout):
             advs[k] = a_next
         if a.plr > 0:
             ts = traj_score[key]; ts[0] += float(np.abs(advs).sum()); ts[1] += len(advs)
+        if REC:
+            spans_.append((len(obs), len(ch))); hs.extend(t['h'] for t in ch)
         for t, ad in zip(ch, advs):
             obs.append(t['obs']); mask.append(t['mask']); act.append(t['a']); logp_old.append(t['logp']); v_old.append(t['v'])
             adv.append(ad); ret.append(ad + t['v']); kinds.append(t['kind'])
     extra = {'act': np.array(act), 'kind': np.array(kinds), 'v': np.array(v_old, dtype=np.float32), 'adv': np.array(adv, dtype=np.float32),
              'preps': np.array(preps, dtype=np.int32).reshape(-1, 3)}
     obs_np = np.stack(obs)
-    O = torch.from_numpy(obs_np).to(dev).float(); M = torch.from_numpy(np.stack(mask)).to(dev)
+    O = torch.from_numpy(obs_np).to(dev) if a.amp else torch.from_numpy(obs_np).to(dev).float(); M = torch.from_numpy(np.stack(mask)).to(dev)
     # own bond tiers (Σ active tiers) at prep decisions, by round: does the shaping change the builds
     pk = np.array(kinds) == 0
     tiers = (obs_np[pk][:, BOND['offset'] + 2:BOND['offset'] + BOND['count'] * BOND['width']:BOND['width']].astype(np.float32) * 3).sum(1)
@@ -407,12 +433,44 @@ def update(rollout):
     diag = {}
     # P9: the old log-probabilities from the stored (fp16) observations, so the first epoch starts at ratio 1; the same
     # pass gives the rollout policy's entropy per decision kind and per chosen action type (B1)
+    if REC:
+        # (A3) training sequences: each chain (a trajectory's decisions in this rollout, in order) cut into runs of seq_len loss
+        # steps; each run is preceded by up to burn_in earlier steps of the same chain (left-padded) and starts from the state
+        # the actor stored before its first step (burn-in start); padding steps carry the state unchanged
+        Lq, Kb = a.seq_len, a.burn_in; Tq = Kb + Lq; rows_l, h0_l = [], []
+        for f0, n_ in spans_:
+            for s0 in range(0, n_, Lq):
+                nb = min(Kb, s0); nl = min(Lq, n_ - s0)
+                rows_l.append([-1] * (Kb - nb) + list(range(f0 + s0 - nb, f0 + s0 + nl)) + [-1] * (Lq - nl)); h0_l.append(hs[f0 + s0 - nb])
+        SEQ = torch.tensor(rows_l, device=dev, dtype=torch.long); SVAL = SEQ >= 0; SEQc = SEQ.clamp_min(0); NS = SEQ.shape[0]
+        H0 = torch.from_numpy(np.stack(h0_l).astype(np.float32)).to(dev)
+        assert int(SVAL[:, Kb:].sum()) == N, ('every row is a loss step exactly once', int(SVAL[:, Kb:].sum()), N)
+        def seq_fwd(sq):
+            r = SEQc[sq]; vv = SVAL[sq]
+            with AMP():
+                lg_, v_ = net.forward_seq(O[r].float(), M[r], H0[sq], vv, Kb)
+            lv = vv[:, Kb:]
+            return lg_.float()[lv], v_.float()[lv], SEQ[sq][:, Kb:][lv]
+        diag['diag/seqs'] = NS; diag['diag/seq_fill'] = N / max(1, NS * Lq)
     with torch.no_grad():
         lps, ents = [], []
-        for i in range(0, N, 8192):
-            lg, _ = net(O[i:i + 8192], M[i:i + 8192]); la = F.log_softmax(lg, 1)
-            lps.append(la.gather(1, Ac[i:i + 8192, None]).squeeze(1)); ents.append(-(la.exp() * la).sum(1))
-        LP = torch.cat(lps); ENT = torch.cat(ents)
+        FC = a.fwd_chunk
+        wv_ = getattr(net, 'with_value', None)
+        if wv_ is not None: net.with_value = False  # (A1) SPNet5: this pass needs the policy only
+        if REC:
+            LP = torch.zeros(N, device=dev); ENT = torch.zeros(N, device=dev)
+            for i in range(0, NS, max(1, FC // Tq)):
+                lg, _, rid = seq_fwd(torch.arange(i, min(NS, i + max(1, FC // Tq)), device=dev))
+                la = F.log_softmax(lg, 1)
+                LP[rid] = la.gather(1, Ac[rid, None]).squeeze(1); ENT[rid] = -(la.exp() * la).sum(1)
+        else:
+            for i in range(0, N, FC):
+                with AMP():
+                    lg, _ = net(O[i:i + FC].float(), M[i:i + FC])
+                la = F.log_softmax(lg.float(), 1)
+                lps.append(la.gather(1, Ac[i:i + FC, None]).squeeze(1)); ents.append(-(la.exp() * la).sum(1))
+            LP = torch.cat(lps); ENT = torch.cat(ents)
+        if wv_ is not None: net.with_value = wv_
         LP_rec = torch.tensor(logp_old, device=dev)
         diag['diag/logp_fp16_gap'] = float((LP - LP_rec).abs().mean())
         if a.overlap:  # T1: samples were drawn by an actor up to one update older than this net: keep the recorded log-probs
@@ -420,7 +478,7 @@ def update(rollout):
     ent_np = ENT.cpu().numpy(); kinds_np = np.array(kinds)
     NBW = torch.from_numpy((kinds_np != 2).astype(np.float32)).to(dev) if a.freeze_band else None
     types = np.searchsorted(np.array(board.bounds), np.array(act), side='right')
-    for kname, kv in (('prep', 0), ('card', 1), ('band', 2), ('tile', 3), ('target', 4)):
+    for kname, kv in (('prep', 0), ('card', 1), ('band', 2), ('tile', 3), ('target', 4), ('plan', 5)):  # plan: N1 natPlan.head
         sel = kinds_np == kv
         if sel.any():
             diag[f'diag/entropy_kind_{kname}'] = float(ent_np[sel].mean()); diag[f'diag/share_kind_{kname}'] = float(sel.mean())
@@ -477,6 +535,51 @@ def update(rollout):
             diag['diag/band_warm_rows'] = int(selb.sum())
     info = defaultdict(list); stop = False
     for ep in range(a.epochs):
+        if REC and not warm:  # (A3) sequence minibatches; as many per epoch as row minibatches would be
+            permS = torch.randperm(NS, device=dev); nmb = max(1, math.ceil(N / a.minibatch)); mbS = math.ceil(NS / nmb)
+            muS = max(1, (a.micro if a.micro else 10 ** 9) // Tq)
+            for i in range(0, NS, mbS):
+                sqs = permS[i:i + mbS]; B_ = int(SVAL[sqs][:, Kb:].sum())
+                opt.zero_grad(set_to_none=True)
+                acc = defaultdict(float)
+                for j in range(0, len(sqs), muS):
+                    logits, v, idx = seq_fwd(sqs[j:j + muS])
+                    f = len(idx) / B_
+                    vl = 0.5 * ((v - R[idx]) ** 2).mean() if a.vclip <= 0 else 0.5 * torch.max((v - R[idx]) ** 2, (V0[idx] + (v - V0[idx]).clamp(-a.vclip, a.vclip) - R[idx]) ** 2).mean()
+                    logp_all = F.log_softmax(logits, 1)
+                    logp = logp_all.gather(1, Ac[idx, None]).squeeze(1)
+                    logratio = logp - LP[idx]; ratio = torch.exp(logratio)
+                    pgr = torch.min(ratio * AD[idx], ratio.clamp(1 - a.clip, 1 + a.clip) * AD[idx])
+                    p = logp_all.exp()
+                    entr = -(p * logp_all).sum(1)
+                    if NBW is not None:
+                        pgr = pgr * NBW[idx]; entr = entr * NBW[idx]
+                    pg = -pgr.mean(); ent = entr.mean()
+                    loss = pg + a.vf * vl - ent_now * ent
+                    if bc_coef > 0:
+                        with torch.no_grad():
+                            with AMP():
+                                lb, _ = bc_net(O[idx][:, :bc_net.D].float() if bc_net.D < O.shape[1] else O[idx].float(), M[idx])
+                            lpb = F.log_softmax(lb.float(), 1)
+                        kl_bc = (lpb.exp() * (lpb - logp_all)).sum(1).mean()
+                        loss = loss + bc_coef * kl_bc; acc['kl_bc'] += kl_bc.item() * f
+                    (loss * f).backward()
+                    with torch.no_grad():
+                        acc['kl'] += (-logratio).mean().item() * f; acc['kl3'] += ((ratio - 1) - logratio).mean().item() * f
+                        acc['clipfrac'] += ((ratio - 1).abs() > a.clip).float().mean().item() * f
+                    acc['pg'] += pg.item() * f; acc['vloss'] += vl.item() * f; acc['ent'] += ent.item() * f
+                if a.clip_sep:
+                    acc['gn_pi'] = float(torch.nn.utils.clip_grad_norm_(pi_params, 0.5)); acc['gn_v'] = float(torch.nn.utils.clip_grad_norm_(value_params, 0.5))
+                else:
+                    torch.nn.utils.clip_grad_norm_(net.parameters(), 0.5)
+                opt.step()
+                for k_, v_ in acc.items():
+                    info[k_].append(v_)
+                if acc['kl3'] > 1.5 * a.target_kl:
+                    stop = True; break
+            if stop:
+                break
+            continue
         perm = torch.randperm(N, device=dev)
         for i in range(0, N, a.minibatch):
             idx_mb = perm[i:i + a.minibatch]; B_ = len(idx_mb)
@@ -489,7 +592,9 @@ def update(rollout):
                 net.zero_grad(set_to_none=True); vls = 0.0
                 for idx in chunks:
                     f = len(idx) / B_
-                    _, v = net(O[idx], M[idx])
+                    with AMP():
+                        v = net(O[idx].float(), M[idx])[1]  # (A3) a recurrent net also returns its state; the critic is feed-forward
+                    v = v.float()
                     if a.vclip > 0:
                         vc = V0[idx] + (v - V0[idx]).clamp(-a.vclip, a.vclip)
                         vl = 0.5 * torch.max((v - R[idx]) ** 2, (vc - R[idx]) ** 2).mean()
@@ -503,7 +608,9 @@ def update(rollout):
             acc = defaultdict(float)
             for idx in chunks:
                 f = len(idx) / B_
-                logits, v = net(O[idx], M[idx])
+                with AMP():
+                    logits, v = net(O[idx].float(), M[idx])
+                logits, v = logits.float(), v.float()
                 if a.vclip > 0:
                     vc = V0[idx] + (v - V0[idx]).clamp(-a.vclip, a.vclip)
                     vl = 0.5 * torch.max((v - R[idx]) ** 2, (vc - R[idx]) ** 2).mean()
@@ -525,7 +632,9 @@ def update(rollout):
                         lb_ = -(tb[has] * logp_all[has].clamp_min(-1e4)).sum(1).mean(); loss = loss + lb_; acc['band_warm_ce'] += lb_.item() * f
                 if bc_coef > 0:
                     with torch.no_grad():
-                        lb, _ = bc_net(O[idx][:, :bc_net.D] if bc_net.D < O.shape[1] else O[idx], M[idx]); lpb = F.log_softmax(lb, 1)  # a ref without the appended plan block reads the obs it knows
+                        with AMP():
+                            lb, _ = bc_net(O[idx][:, :bc_net.D].float() if bc_net.D < O.shape[1] else O[idx].float(), M[idx])  # a ref without the appended plan block reads the obs it knows
+                        lpb = F.log_softmax(lb.float(), 1)
                     kl_bc = (lpb.exp() * (lpb - logp_all)).sum(1).mean()
                     loss = loss + bc_coef * kl_bc; acc['kl_bc'] += kl_bc.item() * f
                 (loss * f).backward()
@@ -533,7 +642,11 @@ def update(rollout):
                     acc['kl'] += (-logratio).mean().item() * f; acc['kl3'] += ((ratio - 1) - logratio).mean().item() * f  # P6: k3, non-negative
                     acc['clipfrac'] += ((ratio - 1).abs() > a.clip).float().mean().item() * f
                 acc['pg'] += pg.item() * f; acc['vloss'] += vl.item() * f; acc['ent'] += ent.item() * f
-            torch.nn.utils.clip_grad_norm_(net.parameters(), 0.5); opt.step()
+            if a.clip_sep:  # (A1) value and policy parameters clipped apart (a separate critic must not eat the policy's norm budget)
+                acc['gn_pi'] = float(torch.nn.utils.clip_grad_norm_(pi_params, 0.5)); acc['gn_v'] = float(torch.nn.utils.clip_grad_norm_(value_params, 0.5))
+            else:
+                torch.nn.utils.clip_grad_norm_(net.parameters(), 0.5)
+            opt.step()
             for k_, v_ in acc.items():
                 info[k_].append(v_)
             kl3 = acc['kl3']
@@ -595,6 +708,8 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
             key = (i, int(tid))
             if key in pending:
                 finalize(key, float(tr), 0.0, True)
+            if REC:
+                hstate.pop(key, None)  # (A3) the trajectory ended: its state goes
             ci = int(info[3]); names = [c['name'] for c in STAGES[env_stage[i]]['configs']]
             if a.plr > 0:
                 ts = traj_score.pop(key, None)
@@ -623,7 +738,15 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
             pool.step(i, np.zeros(0, dtype=np.int32)); continue
         tf = time.time()
         with torch.no_grad():
-            logits, v = actor(torch.from_numpy(np.array(b.obs)).to(dev), torch.from_numpy(np.array(b.mask)).to(dev))
+            if REC:  # (A3) each trajectory's state before this decision (zeros at its first), stored with the transition
+                H_in = np.stack([hstate.get((i, int(b.ids[k])), h_zero) for k in range(b.n)])
+                with AMP():
+                    logits, v, h_new = actor(torch.from_numpy(np.array(b.obs)).to(dev), torch.from_numpy(np.array(b.mask)).to(dev), torch.from_numpy(H_in).to(dev))
+                h_new = h_new.float().cpu().numpy()
+            else:
+                with AMP():
+                    logits, v = actor(torch.from_numpy(np.array(b.obs)).to(dev), torch.from_numpy(np.array(b.mask)).to(dev))
+            logits, v = logits.float(), v.float()
             probs = torch.softmax(logits, 1)
             acts = torch.multinomial(probs, 1, generator=gen).squeeze(1)
             lp = torch.log(probs.gather(1, acts[:, None]).squeeze(1).clamp_min(1e-12))
@@ -634,6 +757,8 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
                 finalize(key, float(b.rew[k]), float(v_np[k]), False)
             pending[key] = {'obs': b.obs[k].astype(np.float16), 'mask': b.mask[k].copy(), 'a': int(acts_np[k]), 'logp': float(lp_np[k]), 'v': float(v_np[k]),
                             'kind': int(b.kinds[k])}
+            if REC:
+                pending[key]['h'] = H_in[k]; hstate[key] = h_new[k]
         pool.step(i, acts_np)
         steps += b.n; sps_steps += b.n
     if a.overlap and upd_thread is not None:
@@ -666,7 +791,7 @@ while steps < a.max_steps and time.time() - t0 < a.hours * 3600:
                          'diag/plr_score_mean': float(np.mean([e['score'] for L in levels for e in L.values()] or [0]))})
         t_sel = t_fwd = 0.0
         st = STAGES[stage]; roll = rolling(st['key'])
-        diagj = {'diag': {k[5:]: round(v, 4) for k, v in extra['diag'].items() if isinstance(v, float) and k.startswith(('diag/entropy', 'diag/adv_', 'diag/ev_', 'diag/ret_', 'diag/share_kind', 'diag/lr', 'diag/ent_coef'))}} if a.log_diag else {}
+        diagj = {'diag': {k[5:]: round(v, 4) for k, v in extra['diag'].items() if isinstance(v, float) and k.startswith(('diag/entropy', 'diag/adv_', 'diag/ev_', 'diag/ret_', 'diag/share_kind', 'diag/lr', 'diag/ent_coef') + (('diag/logp', 'diag/seq') if REC else ()))}} if a.log_diag else {}
         emit(event='update', update=update_no, steps=steps, sps=round(sps_steps / max(1e-6, time.time() - sps_t)), samples=n, epochs=epochs_done,
              update_s=round(upd_s, 2), bc_coef=round(bc_coef, 4), stage=st['name'], stage_steps=steps - stage_since,
              rolling={k: rolling(k) for k in ('NORMAL', 'HARD', 'ABYSS')}, hours=round((time.time() - t0) / 3600, 3),

@@ -1,0 +1,10 @@
+proxy in the human seat,NAT88 win,Δ,LINC win,Δ
+legacy-r3 (current proxy),0.583,,0.521,
+legacy-r0,0.573,-0.010,0.500,-0.021
+"nat (M bot, rank order)",0.646,+0.062,0.562,+0.042
+nat-rand,0.635,+0.052,0.510,-0.010
+nat-quiet (no flag),0.688,+0.104,0.510,-0.010
+class (Ioleta elite),0.521,-0.062,0.396,-0.125
+recipe-rand (L),0.594,+0.010,0.552,+0.031
+noisy25,0.521,-0.062,0.469,-0.052
+"weak (noisy50, r0)",0.531,-0.052,0.448,-0.073

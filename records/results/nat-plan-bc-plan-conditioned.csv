@@ -1,0 +1,7 @@
+policy,win,natMain,natMainT2,Σlayers,elites,win T2 vs other
+legacy,0.333,0.93,0.85,191,2.6,.362 / .172
+bc-fresh,0.146,0.41,0.03,197,3.7,
+PB1 random P,0.255,0.82,0.65,170,2.7,.347 / .088
+PB1 lead P (lock R4),0.281,0.92,0.81,191,2.7,.323 / .108
+"PB1 random P, bp1",0.286,0.81,0.64,180,2.3,.352 / .171
+B1 / B2 / LR3 at 5M (scratch baseline),.682 / .724 / .745,.39-.48,.02-.03,341-373,5.8-6.0,

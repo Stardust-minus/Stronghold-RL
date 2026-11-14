@@ -1,0 +1,725 @@
+{
+ "starts": [
+  {
+   "event": "start",
+   "init": "<work>/fin/runs/FIN-V5-s2/V5NMA/model-5000960.pt",
+   "params": 2719295,
+   "thresholds": {},
+   "args": {
+    "init": "<work>/fin/runs/FIN-V5-s2/V5NMA/model-5000960.pt",
+    "out": "<work>/fin/runs/FIN-V5-s2/V5NMA",
+    "procs": 50,
+    "envs": 64,
+    "rollout": 65536,
+    "epochs": 3,
+    "minibatch": 8192,
+    "lr": 0.0001,
+    "clip": 0.2,
+    "vf": 0.5,
+    "ent": 0.003,
+    "gamma": 0.997,
+    "lam": 0.95,
+    "target_kl": 0.02,
+    "bc_kl": 0.01,
+    "bc_kl_steps": 0.0,
+    "max_steps": 60000000.0,
+    "hours": 24.0,
+    "ckpt_every": 1000000.0,
+    "eval_every": 2000000.0,
+    "baseline": null,
+    "stage_min": 2000000.0,
+    "stage_max": 10000000.0,
+    "legacy_mates": 0.0,
+    "node": "<work>/node/bin/node",
+    "eval_matches": 96,
+    "eval_chunks": 4,
+    "eval_configs": "solo:HARD,solo:ABYSS",
+    "curriculum": "fixed",
+    "rehearsal": 0,
+    "reward": "{}",
+    "vf_warmup": 5,
+    "learner_cpus": "0,64",
+    "env_cpus": "1-31,65-95",
+    "check": true,
+    "eval_baselines": "",
+    "hist_every": 10,
+    "overlap": true,
+    "device": "cuda",
+    "kl_ref": "<work>/fin/v5/bc/bc.pt",
+    "strict_preview": false,
+    "picker_head": null,
+    "picker_trunk": null,
+    "picker_k": 8,
+    "nat_plan": "{\"slots\":true,\"live\":true,\"assign\":\"auto\",\"band\":true,\"focus\":true,\"pairS\":true}",
+    "visible_only": false,
+    "lp_obs": null,
+    "reward_v": 2,
+    "r2": "{\"leak\":0.15,\"save\":0.075,\"leakCap\":true,\"layer\":0.002}",
+    "shape_uncapped": true,
+    "eval2_configs": "",
+    "eval2_boss_rehearsal": 0,
+    "human_proxy": null,
+    "mix": "auto1",
+    "reward_by": "{}",
+    "freeze_band": false,
+    "lr_warmup": 20,
+    "start_steps": 5000960.0,
+    "seed_offset": 68000000,
+    "bc_kl_from": null,
+    "lr_final": null,
+    "lr_anneal_start": null,
+    "bc_kl_min": 0.0,
+    "viol_rate": 0.6,
+    "micro": 1024,
+    "mem_frac": 0.36,
+    "ent_final": null,
+    "auto_hard_gate": 0.6,
+    "auto_target": 0.35,
+    "auto_smin": 0.1,
+    "auto_smax": 0.85,
+    "auto_step": 0.02,
+    "auto_nfloor": 0.05,
+    "log_diag": true,
+    "eval_at": "",
+    "plr": 0.0,
+    "plr_buffer": 256,
+    "plr_beta": 0.1,
+    "plr_staleness": 0.3,
+    "sil": 0.0,
+    "sil_buffer": 100000,
+    "sil_batches": 4,
+    "sil_vf": 0.01,
+    "snap_start": 0.0,
+    "snap_collect": 0.25,
+    "band_policy": 0.0,
+    "band_warmstart": "",
+    "band_tau": 0.05,
+    "band_warm_steps": 300,
+    "www": "",
+    "vclip": 0.0,
+    "adv_norm": "global",
+    "boss_rehearsal": 0,
+    "shape_tier": 0.06,
+    "shape_stack": 0.3,
+    "amp": true,
+    "fwd_chunk": 2048,
+    "seq_len": 32,
+    "burn_in": 16,
+    "clip_sep": true
+   },
+   "learner_cpus": 2,
+   "env_cpus": 62,
+   "unit_cpus": 64,
+   "stages": [
+    "mixauto1"
+   ],
+   "t": 1794607274.1
+  }
+ ],
+ "evals": [
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.771,
+     "survival": 14.02,
+     "fa": 0.927,
+     "rt": 0.094
+    },
+    "solo:ABYSS": {
+     "win": 0.104,
+     "survival": 12.58,
+     "fa": 0.335,
+     "rt": 0.075
+    }
+   },
+   "t": 1794607700.4,
+   "file": "eval-6026368.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.771,
+     "survival": 14.09,
+     "fa": 0.912,
+     "rt": 0.09
+    },
+    "solo:ABYSS": {
+     "win": 0.146,
+     "survival": 13.2,
+     "fa": 0.443,
+     "rt": 0.096
+    }
+   },
+   "t": 1794608470.7,
+   "file": "eval-8061888.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.76,
+     "survival": 14.06,
+     "fa": 0.907,
+     "rt": 0.064
+    },
+    "solo:ABYSS": {
+     "win": 0.167,
+     "survival": 13.56,
+     "fa": 0.476,
+     "rt": 0.063
+    }
+   },
+   "t": 1794609168.4,
+   "file": "eval-10031232.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.854,
+     "survival": 14.11,
+     "fa": 0.947,
+     "rt": 0.061
+    },
+    "solo:ABYSS": {
+     "win": 0.24,
+     "survival": 13.69,
+     "fa": 0.564,
+     "rt": 0.055
+    }
+   },
+   "t": 1794609924.8,
+   "file": "eval-12062336.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.802,
+     "survival": 14.08,
+     "fa": 0.922,
+     "rt": 0.044
+    },
+    "solo:ABYSS": {
+     "win": 0.229,
+     "survival": 13.59,
+     "fa": 0.49,
+     "rt": 0.036
+    }
+   },
+   "t": 1794610655.0,
+   "file": "eval-14033344.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.823,
+     "survival": 14.1,
+     "fa": 0.914,
+     "rt": 0.061
+    },
+    "solo:ABYSS": {
+     "win": 0.188,
+     "survival": 13.62,
+     "fa": 0.545,
+     "rt": 0.063
+    }
+   },
+   "t": 1794611380.4,
+   "file": "eval-16001792.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.865,
+     "survival": 14.09,
+     "fa": 0.963,
+     "rt": 0.046
+    },
+    "solo:ABYSS": {
+     "win": 0.302,
+     "survival": 13.66,
+     "fa": 0.63,
+     "rt": 0.04
+    }
+   },
+   "t": 1794612131.6,
+   "file": "eval-18037248.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.865,
+     "survival": 14.19,
+     "fa": 0.965,
+     "rt": 0.062
+    },
+    "solo:ABYSS": {
+     "win": 0.281,
+     "survival": 13.85,
+     "fa": 0.637,
+     "rt": 0.068
+    }
+   },
+   "t": 1794612842.9,
+   "file": "eval-20004864.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.865,
+     "survival": 14.17,
+     "fa": 0.97,
+     "rt": 0.051
+    },
+    "solo:ABYSS": {
+     "win": 0.271,
+     "survival": 13.81,
+     "fa": 0.671,
+     "rt": 0.034
+    }
+   },
+   "t": 1794613583.5,
+   "file": "eval-22041024.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.885,
+     "survival": 14.1,
+     "fa": 0.953,
+     "rt": 0.052
+    },
+    "solo:ABYSS": {
+     "win": 0.292,
+     "survival": 14.08,
+     "fa": 0.673,
+     "rt": 0.066
+    }
+   },
+   "t": 1794614301.5,
+   "file": "eval-24010368.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.896,
+     "survival": 14.14,
+     "fa": 0.965,
+     "rt": 0.066
+    },
+    "solo:ABYSS": {
+     "win": 0.323,
+     "survival": 13.97,
+     "fa": 0.69,
+     "rt": 0.052
+    }
+   },
+   "t": 1794615046.7,
+   "file": "eval-26045504.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.844,
+     "survival": 14.14,
+     "fa": 0.953,
+     "rt": 0.045
+    },
+    "solo:ABYSS": {
+     "win": 0.385,
+     "survival": 14.01,
+     "fa": 0.7,
+     "rt": 0.051
+    }
+   },
+   "t": 1794615777.4,
+   "file": "eval-28014592.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.865,
+     "survival": 14.18,
+     "fa": 0.966,
+     "rt": 0.042
+    },
+    "solo:ABYSS": {
+     "win": 0.375,
+     "survival": 13.95,
+     "fa": 0.724,
+     "rt": 0.03
+    }
+   },
+   "t": 1794616536.6,
+   "file": "eval-30048320.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.875,
+     "survival": 14.14,
+     "fa": 0.963,
+     "rt": 0.047
+    },
+    "solo:ABYSS": {
+     "win": 0.448,
+     "survival": 14.01,
+     "fa": 0.736,
+     "rt": 0.046
+    }
+   },
+   "t": 1794617260.9,
+   "file": "eval-32017600.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.906,
+     "survival": 14.12,
+     "fa": 0.965,
+     "rt": 0.027
+    },
+    "solo:ABYSS": {
+     "win": 0.49,
+     "survival": 14.03,
+     "fa": 0.798,
+     "rt": 0.046
+    }
+   },
+   "t": 1794618015.1,
+   "file": "eval-34052608.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.938,
+     "survival": 14.11,
+     "fa": 0.986,
+     "rt": 0.041
+    },
+    "solo:ABYSS": {
+     "win": 0.448,
+     "survival": 14.09,
+     "fa": 0.756,
+     "rt": 0.025
+    }
+   },
+   "t": 1794618748.0,
+   "file": "eval-36020352.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.896,
+     "survival": 14.16,
+     "fa": 0.967,
+     "rt": 0.04
+    },
+    "solo:ABYSS": {
+     "win": 0.5,
+     "survival": 14.1,
+     "fa": 0.774,
+     "rt": 0.021
+    }
+   },
+   "t": 1794619509.1,
+   "file": "eval-38053440.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.927,
+     "survival": 14.11,
+     "fa": 0.976,
+     "rt": 0.04
+    },
+    "solo:ABYSS": {
+     "win": 0.5,
+     "survival": 14.18,
+     "fa": 0.812,
+     "rt": 0.031
+    }
+   },
+   "t": 1794620237.4,
+   "file": "eval-40021760.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.958,
+     "survival": 14.07,
+     "fa": 0.985,
+     "rt": 0.037
+    },
+    "solo:ABYSS": {
+     "win": 0.51,
+     "survival": 14.14,
+     "fa": 0.822,
+     "rt": 0.036
+    }
+   },
+   "t": 1794620995.9,
+   "file": "eval-42056896.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.896,
+     "survival": 14.09,
+     "fa": 0.977,
+     "rt": 0.031
+    },
+    "solo:ABYSS": {
+     "win": 0.521,
+     "survival": 13.93,
+     "fa": 0.784,
+     "rt": 0.025
+    }
+   },
+   "t": 1794621721.4,
+   "file": "eval-44025728.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.948,
+     "survival": 14.17,
+     "fa": 0.986,
+     "rt": 0.034
+    },
+    "solo:ABYSS": {
+     "win": 0.531,
+     "survival": 14.06,
+     "fa": 0.812,
+     "rt": 0.046
+    }
+   },
+   "t": 1794622468.8,
+   "file": "eval-46059008.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.865,
+     "survival": 14.17,
+     "fa": 0.968,
+     "rt": 0.024
+    },
+    "solo:ABYSS": {
+     "win": 0.5,
+     "survival": 14.05,
+     "fa": 0.818,
+     "rt": 0.033
+    }
+   },
+   "t": 1794623202.6,
+   "file": "eval-48026560.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.16,
+     "fa": 0.989,
+     "rt": 0.025
+    },
+    "solo:ABYSS": {
+     "win": 0.448,
+     "survival": 13.91,
+     "fa": 0.765,
+     "rt": 0.02
+    }
+   },
+   "t": 1794623957.6,
+   "file": "eval-50061504.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.917,
+     "survival": 14.18,
+     "fa": 0.988,
+     "rt": 0.021
+    },
+    "solo:ABYSS": {
+     "win": 0.552,
+     "survival": 13.98,
+     "fa": 0.805,
+     "rt": 0.018
+    }
+   },
+   "t": 1794624666.6,
+   "file": "eval-52030080.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.885,
+     "survival": 14.17,
+     "fa": 0.97,
+     "rt": 0.026
+    },
+    "solo:ABYSS": {
+     "win": 0.51,
+     "survival": 13.92,
+     "fa": 0.794,
+     "rt": 0.028
+    }
+   },
+   "t": 1794625408.1,
+   "file": "eval-54065472.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.969,
+     "survival": 14.17,
+     "fa": 0.992,
+     "rt": 0.024
+    },
+    "solo:ABYSS": {
+     "win": 0.49,
+     "survival": 13.88,
+     "fa": 0.749,
+     "rt": 0.019
+    }
+   },
+   "t": 1794626117.8,
+   "file": "eval-56033344.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.938,
+     "survival": 14.19,
+     "fa": 0.989,
+     "rt": 0.026
+    },
+    "solo:ABYSS": {
+     "win": 0.562,
+     "survival": 14.0,
+     "fa": 0.805,
+     "rt": 0.029
+    }
+   },
+   "t": 1794626835.2,
+   "file": "eval-58000704.json"
+  },
+  {
+   "event": "eval",
+   "violations": 0,
+   "errors": 0,
+   "result": {
+    "solo:HARD": {
+     "win": 0.927,
+     "survival": 14.11,
+     "fa": 0.987,
+     "rt": 0.035
+    },
+    "solo:ABYSS": {
+     "win": 0.625,
+     "survival": 14.16,
+     "fa": 0.838,
+     "rt": 0.036
+    }
+   },
+   "t": 1794627556.4,
+   "file": "eval-60000512.json"
+  }
+ ],
+ "other": [
+  {
+   "event": "mix-gate",
+   "steps": 5352192,
+   "reason": "HARD rolling win 0.752 >= 0.60",
+   "t": 1794607395.1
+  },
+  {
+   "event": "end",
+   "steps": 60000512,
+   "hours": 5.626,
+   "stage": "mixauto1",
+   "t": 1794627526.2
+  }
+ ],
+ "every_kth_update": 1
+}

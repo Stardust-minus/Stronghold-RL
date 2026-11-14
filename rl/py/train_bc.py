@@ -18,7 +18,12 @@ ap.add_argument('--vf', type=float, default=0.5)
 ap.add_argument('--gamma', type=float, default=0.997)
 ap.add_argument('--val-every', type=int, default=20, help='every n-th shard is validation')
 ap.add_argument('--max-train', type=int, default=0)
+ap.add_argument('--seed', type=int, default=None, help='(N1) torch / numpy seed (default: unseeded, as before)')
+ap.add_argument('--min-ptier', type=int, default=None, help='(N1) hindsight-plan data: keep only trajectories whose played nation reached this tier (terms natH.pTier)')
+ap.add_argument('--init', default=None, help='(N1) warm start from a checkpoint of the same spec')
 a = ap.parse_args()
+if a.seed is not None:
+    torch.manual_seed(a.seed); np.random.seed(a.seed)
 os.makedirs(a.out, exist_ok=True)
 dev = torch.device('cuda')
 log = open(os.path.join(a.out, 'bc-log.jsonl'), 'a')
@@ -29,7 +34,20 @@ t0 = time.time()
 shards = load_shards(a.data, a.gamma)
 spec = shards[0][1]['spec']
 A = spec['actions']
+def keep_rows(s):  # (N1) --min-ptier: the records of trajectories whose hindsight nation reached the tier
+    if a.min_ptier is None: return slice(None)
+    import glob as _g
+    mp = [m for m in _g.glob(a.data + '/*.meta.json') if json.load(open(m))['tag'] == s[0]][0]
+    ok = set()
+    for line in open(mp[:-len('.meta.json')] + '.terms.jsonl'):
+        if line.strip():
+            t = json.loads(line)
+            if (t.get('natH') or {}).get('pTier', 0) >= a.min_ptier: ok.add(t['traj'])
+    return np.isin(np.asarray(s[2]['traj']), np.array(sorted(ok), dtype=np.int64))
 def stack(sel):
+    if a.min_ptier is not None:
+        ks = [keep_rows(s) for s in sel]
+        sel = [(s[0], s[1], s[2][k], s[3][k]) for s, k in zip(sel, ks)]
     obs = np.concatenate([np.asarray(s[2]['obs']) for s in sel])
     mask = np.concatenate([unpack_mask(np.asarray(s[2]['mask']), A) for s in sel])
     act = np.concatenate([np.asarray(s[2]['action']).astype(np.int64) for s in sel])
@@ -50,7 +68,10 @@ def to_gpu(x):
 TR, VA = to_gpu(tr), to_gpu(va)
 del tr, va
 net = SPNet(spec).to(dev)
-emit(event='model', params=param_count(net))
+if a.init:  # (N1)
+    from model import load as _load
+    _src, _ = _load(a.init, 'cpu'); net.load_state_dict(_src.state_dict()); del _src
+emit(event='model', params=param_count(net), init=a.init)
 opt = torch.optim.AdamW(net.parameters(), lr=a.lr, weight_decay=1e-5)
 N = TR[0].shape[0]
 steps_total = a.epochs * math.ceil(N / a.batch)

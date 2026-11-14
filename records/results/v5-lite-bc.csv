@@ -1,0 +1,8 @@
+BC,CE,acc
+"bc-fresh (MLP, ~6 ep)",0.763,~0.74
+MLP train_bc.py 8 ep,0.664,0.767
+MLP 20 ep,0.566,0.803
+"MLP 40 ep (best ep ~20, then overfits)",0.532,0.824
+"V5 (d128 L2 + board ext), 8 ep",0.425,0.849
+V5H (+ hist ext),0.431,0.849
+V5base (no ext blocks),0.411,0.852

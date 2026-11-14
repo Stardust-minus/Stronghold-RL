@@ -1,0 +1,7 @@
+policy,win,natMain,natMainT2,mainLayers,secLayers,Σlayers,elites,win T2 seats / other
+NL 5M (PB1 + lead plan + NAT terms),0.484,0.92,0.73,117,63,210,4.9,0.617 / 0.118
+NL 5M sampled,0.417,0.90,0.78,112,66,219,4.5,0.477 / 0.209
+NR 5M (random P incl. disabled nations),0.333,0.81,0.60,96,69,198,4.9,0.357 / 0.299
+B1 / B2 / LR3 5M (scratch baseline),.682 / .724 / .745,.39-.48,.02-.03,91-98,119-130,341-373,5.8-6.0,
+B2 5M sampled,0.641,0.38,0.01,80,108,308,4.9,
+"M nat bot (480, tree)",0.608,,0.95 (R14),,,,2.9,

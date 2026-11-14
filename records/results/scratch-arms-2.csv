@@ -1,0 +1,5 @@
+arm,win,paired vs NMr1,natMainT2,mainL,secL,ΣL,elites
+AP (+ plan-buy prior .04),.818,+.031 +- .032,1.00,119,58,208,4.8
+AS (+ M secondary-layer pay x2),.807,+.021 +- .032,.958,110,74,218,5.1
+AE (+ M economy masks),.792,+.005 +- .033,.99,117,59,214,4.7
+AG (+ per-round gamma .975),.766,-.021 +- .036,.98,121,59,215,5.1

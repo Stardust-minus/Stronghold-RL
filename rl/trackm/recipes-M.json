@@ -1,0 +1,986 @@
+[
+ {
+  "id": "M-laterano",
+  "name": "拉特兰（国家主盟约 T2 + 副盟约）",
+  "bond": "lateranoShip",
+  "subs": [
+   "preciShip",
+   "skillfulShip"
+  ],
+  "engines": [
+   "chess_char_2_01_a",
+   "chess_char_3_21_a",
+   "chess_char_4_02_a",
+   "chess_char_3_01_a",
+   "chess_char_4_01_a",
+   "chess_char_1_01_a",
+   "chess_char_6_13_a",
+   "chess_char_6_01_a",
+   "chess_char_5_01_a",
+   "chess_char_6_09_a",
+   "chess_char_6_08_a",
+   "chess_char_4_20_a",
+   "chess_char_5_02_a",
+   "chess_char_4_06_a"
+  ],
+  "bands": [
+   "band_paganini"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 6,
+   "members": [
+    "chess_char_2_01_a",
+    "chess_char_3_21_a",
+    "chess_char_4_02_a",
+    "chess_char_3_01_a",
+    "chess_char_4_01_a",
+    "chess_char_1_01_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_6_13_a",
+    "chess_char_6_01_a",
+    "chess_char_5_01_a",
+    "chess_char_6_09_a"
+   ],
+   "targetRound": "R11-R12",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 2.0,
+     "deployed": 1.7,
+     "level": 3.9
+    },
+    "R9": {
+     "ownedDistinct": 4.8,
+     "deployed": 3.9,
+     "level": 4.1
+    },
+    "R11": {
+     "ownedDistinct": 5.8,
+     "deployed": 5.0,
+     "level": 5.3
+    },
+    "R13": {
+     "ownedDistinct": 6.7,
+     "deployed": 5.7,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "preciShip",
+   "units": [
+    "chess_char_2_01_a",
+    "chess_char_6_01_a",
+    "chess_char_6_08_a",
+    "chess_char_4_20_a",
+    "chess_char_5_02_a",
+    "chess_char_4_06_a"
+   ]
+  },
+  "value": {
+   "rank": 1,
+   "t2WinR14": 0.42,
+   "t2WinR14_rehearsal3": 0.54,
+   "recurringLayersR6_13": 238,
+   "nationFactor": 1.0,
+   "fullMatch": {
+    "win_hard": 0.7,
+    "win_abyss": 0.1,
+    "fa_abyss": 0.257,
+    "reachR14_abyss": 0.487,
+    "t2MeanRound_hard": 10.6,
+    "pT2byR12_hard": 0.793
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation",
+   "bossWinR14_byPlacement_48seeds": {
+    "legacy": 0.458,
+    "rehearsal3": 0.542,
+    "bestOf16": 0.542
+   },
+   "mainLayersPerRoundR9_13_traitImprover_vs_bestOf16": [
+    20.1,
+    33.4
+   ]
+  },
+  "placement": "空弦 (+3 to self and the unit in front at prep start) facing a 拉特兰 carry; 莫斯提马: allies in its 4 neighbours feed 拉特兰 +1 per 6 ammo; 蕾缪安 needs 3 units in its row.",
+  "layers": "in-battle ammo engines (圣约送葬人 ≤49/battle, 莫斯提马, 蕾缪安), 送葬人 +3 first kill; 新约能天使 +2 gold on gain. Swap the T1-T4 fillers (隐现, 信仰搅拌机, 能天使) for 新约能天使 / 蕾缪安 / 圣约送葬人 / 塑心 at L5-L6.",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ },
+ {
+  "id": "M-victoria",
+  "name": "维多利亚（国家主盟约 T2 + 副盟约）",
+  "bond": "victoriaShip",
+  "subs": [
+   "arcaneShip",
+   "preciShip"
+  ],
+  "engines": [
+   "chess_char_3_08_a",
+   "chess_char_1_06_a",
+   "chess_char_2_10_a",
+   "chess_char_4_07_a",
+   "chess_char_4_11_a",
+   "chess_char_2_05_a",
+   "chess_char_6_07_a",
+   "chess_char_6_08_a",
+   "chess_char_5_08_a",
+   "chess_char_5_03_a",
+   "chess_char_6_16_a",
+   "chess_char_4_02_a",
+   "chess_char_4_10_a"
+  ],
+  "bands": [
+   "band_harold"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 6,
+   "members": [
+    "chess_char_3_08_a",
+    "chess_char_1_06_a",
+    "chess_char_2_10_a",
+    "chess_char_4_07_a",
+    "chess_char_4_11_a",
+    "chess_char_2_05_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_6_07_a",
+    "chess_char_6_08_a",
+    "chess_char_5_08_a",
+    "chess_char_5_03_a"
+   ],
+   "targetRound": "R11-R12 (band_harold: earlier)",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 3.1,
+     "deployed": 2.8,
+     "level": 3.9
+    },
+    "R9": {
+     "ownedDistinct": 5.1,
+     "deployed": 4.3,
+     "level": 4.2
+    },
+    "R11": {
+     "ownedDistinct": 5.9,
+     "deployed": 5.4,
+     "level": 5.5
+    },
+    "R13": {
+     "ownedDistinct": 6.4,
+     "deployed": 5.8,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "arcaneShip",
+   "units": [
+    "chess_char_2_10_a",
+    "chess_char_6_16_a",
+    "chess_char_4_02_a",
+    "chess_char_4_10_a"
+   ]
+  },
+  "value": {
+   "rank": 2,
+   "t2WinR14": 0.31,
+   "t2WinR14_rehearsal3": 0.31,
+   "recurringLayersR6_13": 190,
+   "nationFactor": 0.93,
+   "fullMatch": {
+    "win_hard": 0.729,
+    "win_abyss": 0.057,
+    "fa_abyss": 0.218,
+    "reachR14_abyss": 0.392,
+    "t2MeanRound_hard": 10.1,
+    "pT2byR12_hard": 0.841
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation",
+   "bossWinR14_byPlacement_48seeds": {
+    "legacy": 0.25,
+    "rehearsal3": 0.312,
+    "bestOf16": 0.458
+   }
+  },
+  "placement": "distinct-tier engines (薄绿 +2, 维娜 +3, 号角 +2 per distinct tier on the board): field one member per tier; equipment on 维多利亚 carriers (damage ×(1.25+0.008·layers) only when equipped).",
+  "layers": "prep-end distinct-tier engines; 烛煌 +5 炎/维多利亚 on gain; every 25 layers a special 维式重锤.",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ },
+ {
+  "id": "M-kjerag",
+  "name": "谢拉格（国家主盟约 T2 + 副盟约）",
+  "bond": "kjeragShip",
+  "subs": [
+   "arcaneShip",
+   "preciShip"
+  ],
+  "engines": [
+   "chess_char_3_14_a",
+   "chess_char_4_22_a",
+   "chess_char_4_13_a",
+   "chess_char_3_20_a",
+   "chess_char_3_11_a",
+   "chess_char_1_02_a",
+   "chess_char_2_05_a",
+   "chess_char_5_14_a",
+   "chess_char_6_02_a",
+   "chess_char_6_19_a",
+   "chess_char_6_16_a",
+   "chess_char_4_02_a",
+   "chess_char_3_09_a",
+   "chess_item_5_02_e_a",
+   "chess_item_5_02_e_b"
+  ],
+  "bands": [
+   "band_sciurus",
+   "band_kirara"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 6,
+   "members": [
+    "chess_char_3_14_a",
+    "chess_char_4_22_a",
+    "chess_char_4_13_a",
+    "chess_char_3_20_a",
+    "chess_char_3_11_a",
+    "chess_char_1_02_a",
+    "chess_char_2_05_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_5_14_a",
+    "chess_char_6_02_a",
+    "chess_char_6_19_a"
+   ],
+   "targetRound": "R9-R10",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 2.6,
+     "deployed": 2.3,
+     "level": 4.0
+    },
+    "R9": {
+     "ownedDistinct": 4.8,
+     "deployed": 4.1,
+     "level": 4.1
+    },
+    "R11": {
+     "ownedDistinct": 5.8,
+     "deployed": 5.2,
+     "level": 5.4
+    },
+    "R13": {
+     "ownedDistinct": 6.7,
+     "deployed": 5.7,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "arcaneShip",
+   "units": [
+    "chess_char_6_02_a",
+    "chess_char_6_16_a",
+    "chess_char_4_02_a",
+    "chess_char_3_09_a"
+   ]
+  },
+  "value": {
+   "rank": 3,
+   "t2WinR14": 0.42,
+   "t2WinR14_rehearsal3": 0.46,
+   "recurringLayersR6_13": 129,
+   "note": "placement-sensitive: best-of-16 layout search lifts R14 win 0.42 -> 0.63 and R9-R13 main layers +36 %",
+   "nationFactor": 0.83,
+   "fullMatch": {
+    "win_hard": 0.546,
+    "win_abyss": 0.021,
+    "fa_abyss": 0.206,
+    "reachR14_abyss": 0.507,
+    "t2MeanRound_hard": 10.4,
+    "pT2byR12_hard": 0.757
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation",
+   "bossWinR14_byPlacement_48seeds": {
+    "legacy": 0.417,
+    "rehearsal3": 0.458,
+    "bestOf16": 0.625
+   },
+   "mainLayersPerRoundR9_13_traitImprover_vs_bestOf16": [
+    18.7,
+    25.5
+   ]
+  },
+  "placement": "凛御银灰 directly behind (facing) the collecting 谢拉格 unit (初雪 / 银灰); 魔王 behind the collector; the freezers' targets (灵知 S2, 不融冰) must fall inside the collector's range.",
+  "layers": "freeze in collector range (初雪 / 银灰 50 %, 凛御银灰's receiver 60 %), trades 雪猎 / 灵知 (+5) and 角峰 (+2); 锏 +8.",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ },
+ {
+  "id": "M-kazimierz",
+  "name": "卡西米尔（国家主盟约 T2 + 副盟约）",
+  "bond": "kazimierzShip",
+  "subs": [
+   "raidShip",
+   "indomShip"
+  ],
+  "engines": [
+   "chess_char_3_12_a",
+   "chess_char_4_20_a",
+   "chess_char_2_12_a",
+   "chess_char_1_19_a",
+   "chess_char_2_18_a",
+   "chess_char_3_17_a",
+   "chess_char_4_19_a",
+   "chess_char_6_17_a",
+   "chess_char_5_19_a",
+   "chess_char_6_19_a",
+   "chess_char_5_07_a"
+  ],
+  "bands": [
+   "band_mlynar",
+   "band_emperor",
+   "band_lisa"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 6,
+   "members": [
+    "chess_char_3_12_a",
+    "chess_char_4_20_a",
+    "chess_char_2_12_a",
+    "chess_char_1_19_a",
+    "chess_char_2_18_a",
+    "chess_char_3_17_a",
+    "chess_char_4_19_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_6_17_a",
+    "chess_char_5_19_a",
+    "chess_char_6_19_a"
+   ],
+   "targetRound": "R9-R10",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 2.7,
+     "deployed": 2.4,
+     "level": 4.0
+    },
+    "R9": {
+     "ownedDistinct": 5.0,
+     "deployed": 4.2,
+     "level": 4.1
+    },
+    "R11": {
+     "ownedDistinct": 6.1,
+     "deployed": 5.4,
+     "level": 5.5
+    },
+    "R13": {
+     "ownedDistinct": 6.8,
+     "deployed": 5.7,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "raidShip",
+   "units": [
+    "chess_char_5_07_a",
+    "chess_char_3_12_a",
+    "chess_char_6_17_a"
+   ]
+  },
+  "value": {
+   "rank": 4,
+   "t2WinR14": 0.49,
+   "t2WinR14_rehearsal3": 0.58,
+   "recurringLayersR6_13": 363,
+   "nationFactor": 0.82,
+   "fullMatch": {
+    "win_hard": 0.578,
+    "win_abyss": 0.01,
+    "fa_abyss": 0.154,
+    "reachR14_abyss": 0.316,
+    "t2MeanRound_hard": 10.0,
+    "pT2byR12_hard": 0.84
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation",
+   "bossWinR14_byPlacement_48seeds": {
+    "legacy": 0.521,
+    "rehearsal3": 0.583,
+    "bestOf16": 0.646
+   },
+   "mainLayersPerRoundR9_13_traitImprover_vs_bestOf16": [
+    26.3,
+    31.3
+   ]
+  },
+  "placement": "远牙 gives the rightmost unit of its row +4 卡西米尔/精准 per deploy (cap 24): put a blocker that dies and redeploys (砾 / 瑕光) rightmost in 远牙's row on a contact tile. 耀骑士临光: self + front ASPD per 3 layers.",
+  "layers": "in-battle on deploy (瑕光 +4 ≤12, 锏 +8 ≤24, 砾 +1, 远牙 receiver); trades 野鬃 (+2) / 锏 (+8 on gain). 突袭 comes free with 瑕光 + 耀骑士临光; 史尔特尔 adds +8 突袭 per deploy.",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ },
+ {
+  "id": "M-yan",
+  "name": "炎（国家主盟约 T2 + 副盟约）",
+  "bond": "yanShip",
+  "subs": [
+   "arcaneShip",
+   "preciShip"
+  ],
+  "engines": [
+   "chess_char_1_03_a",
+   "chess_char_2_04_a",
+   "chess_char_3_03_a",
+   "chess_char_3_04_a",
+   "chess_char_4_17_a",
+   "chess_char_5_12_a",
+   "chess_char_5_03_a",
+   "chess_char_5_23_a",
+   "chess_char_6_03_a",
+   "chess_char_6_15_a",
+   "chess_char_4_02_a",
+   "chess_char_2_10_a",
+   "chess_char_3_09_a"
+  ],
+  "bands": [
+   "band_duyaoy"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 6,
+   "members": [
+    "chess_char_1_03_a",
+    "chess_char_2_04_a",
+    "chess_char_3_03_a",
+    "chess_char_3_04_a",
+    "chess_char_4_17_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_5_12_a",
+    "chess_char_5_03_a",
+    "chess_char_5_23_a",
+    "chess_char_6_03_a",
+    "chess_char_6_15_a"
+   ],
+   "targetRound": "R12-R13",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 2.2,
+     "deployed": 1.9,
+     "level": 4.0
+    },
+    "R9": {
+     "ownedDistinct": 3.5,
+     "deployed": 2.9,
+     "level": 5.0
+    },
+    "R11": {
+     "ownedDistinct": 5.6,
+     "deployed": 4.9,
+     "level": 5.4
+    },
+    "R13": {
+     "ownedDistinct": 6.8,
+     "deployed": 5.7,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "arcaneShip",
+   "units": [
+    "chess_char_5_12_a",
+    "chess_char_4_02_a",
+    "chess_char_2_10_a",
+    "chess_char_3_09_a"
+   ]
+  },
+  "value": {
+   "rank": 5,
+   "t2WinR14": 0.22,
+   "t2WinR14_rehearsal3": 0.19,
+   "recurringLayersR6_13": 20,
+   "note": "strong at 300 main layers (0.56); its layers come from acquisitions",
+   "nationFactor": 0.66,
+   "fullMatch": {
+    "win_hard": 0.5,
+    "win_abyss": 0.003,
+    "fa_abyss": 0.166,
+    "reachR14_abyss": 0.529,
+    "t2MeanRound_hard": 11.3,
+    "pT2byR12_hard": 0.724
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation"
+  },
+  "placement": "余 needs 3 units in its row (gift of the most-member bond's operator).",
+  "layers": "acquisition engines: 夕 (+2 炎/奥术 per operator gained this prep), 小满 (+1 per gained), 惊蛰 trade (+shop level on gain), 星熊 (+8), 录武官 (+6), 烛煌 (+5). Buy/sell many cheap units per prep once 夕 / 小满 are on board.",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ },
+ {
+  "id": "M-sargon",
+  "name": "萨尔贡（国家主盟约 T2 + 副盟约）",
+  "bond": "sargonShip",
+  "subs": [
+   "preciShip",
+   "swiftShip",
+   "skillfulShip"
+  ],
+  "engines": [
+   "chess_char_2_06_a",
+   "chess_char_3_06_a",
+   "chess_char_4_23_a",
+   "chess_char_1_12_a",
+   "chess_char_2_08_a",
+   "chess_char_3_13_a",
+   "chess_char_4_24_a",
+   "chess_char_5_02_a",
+   "chess_char_6_05_a",
+   "chess_char_6_06_a",
+   "chess_char_4_14_a",
+   "chess_char_4_20_a"
+  ],
+  "bands": [
+   "band_pepe",
+   "band_narant"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 6,
+   "members": [
+    "chess_char_2_06_a",
+    "chess_char_3_06_a",
+    "chess_char_4_23_a",
+    "chess_char_1_12_a",
+    "chess_char_2_08_a",
+    "chess_char_3_13_a",
+    "chess_char_4_24_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_5_02_a",
+    "chess_char_6_05_a",
+    "chess_char_6_06_a"
+   ],
+   "targetRound": "R9-R10",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 2.9,
+     "deployed": 2.5,
+     "level": 3.9
+    },
+    "R9": {
+     "ownedDistinct": 5.3,
+     "deployed": 4.5,
+     "level": 4.3
+    },
+    "R11": {
+     "ownedDistinct": 6.0,
+     "deployed": 5.4,
+     "level": 5.5
+    },
+    "R13": {
+     "ownedDistinct": 6.9,
+     "deployed": 5.8,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "preciShip",
+   "units": [
+    "chess_char_5_02_a",
+    "chess_char_6_05_a",
+    "chess_char_4_14_a",
+    "chess_char_4_20_a"
+   ]
+  },
+  "value": {
+   "rank": 6,
+   "t2WinR14": 0.11,
+   "t2WinR14_rehearsal3": 0.15,
+   "recurringLayersR6_13": 300,
+   "nationFactor": 0.52,
+   "fullMatch": {
+    "win_hard": 0.4,
+    "win_abyss": 0.032,
+    "fa_abyss": 0.15,
+    "reachR14_abyss": 0.413,
+    "t2MeanRound_hard": 9.8,
+    "pT2byR12_hard": 0.813
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation"
+  },
+  "placement": "白面鸮 copies the front unit's prep-start trait; skill-start engines want early-skill units fielded.",
+  "layers": "in-battle skill starts (百炼嘉维尔 +9, 菲莱 +6, 莎草 +5, 缇缇 ≤24); 艾丝黛尔 trade (+2).",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ },
+ {
+  "id": "M-siracusa",
+  "name": "叙拉古（国家主盟约 T2 + 副盟约）",
+  "bond": "siracusaShip",
+  "subs": [
+   "arcaneShip",
+   "swiftShip"
+  ],
+  "engines": [
+   "chess_char_4_10_a",
+   "chess_char_4_16_a",
+   "chess_char_2_16_a",
+   "chess_char_3_18_a",
+   "chess_char_3_19_a",
+   "chess_char_1_07_a",
+   "chess_char_1_08_a",
+   "chess_char_6_18_a",
+   "chess_char_5_20_a",
+   "chess_char_5_10_a",
+   "chess_char_6_16_a",
+   "chess_char_4_02_a",
+   "chess_char_3_09_a"
+  ],
+  "bands": [
+   "band_chiave"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 6,
+   "members": [
+    "chess_char_4_10_a",
+    "chess_char_4_16_a",
+    "chess_char_2_16_a",
+    "chess_char_3_18_a",
+    "chess_char_3_19_a",
+    "chess_char_1_07_a",
+    "chess_char_1_08_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_6_18_a",
+    "chess_char_5_20_a",
+    "chess_char_5_10_a"
+   ],
+   "targetRound": "R9",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 2.7,
+     "deployed": 2.3,
+     "level": 3.9
+    },
+    "R9": {
+     "ownedDistinct": 5.4,
+     "deployed": 4.7,
+     "level": 4.2
+    },
+    "R11": {
+     "ownedDistinct": 6.5,
+     "deployed": 5.8,
+     "level": 5.6
+    },
+    "R13": {
+     "ownedDistinct": 7.0,
+     "deployed": 5.9,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "arcaneShip",
+   "units": [
+    "chess_char_4_10_a",
+    "chess_char_6_16_a",
+    "chess_char_4_02_a",
+    "chess_char_3_09_a"
+   ]
+  },
+  "value": {
+   "rank": 7,
+   "t2WinR14": 0.08,
+   "t2WinR14_rehearsal3": 0.08,
+   "recurringLayersR6_13": 155,
+   "note": "layer-hungry: 0.63 at 300 main layers; refresh engines not counted in the harness",
+   "nationFactor": 0.4,
+   "fullMatch": {
+    "win_hard": 0.393,
+    "win_abyss": 0.003,
+    "fa_abyss": 0.07,
+    "reachR14_abyss": 0.193,
+    "t2MeanRound_hard": 9.5,
+    "pT2byR12_hard": 0.936
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation"
+  },
+  "placement": "铃兰 re-runs the front unit's on-gain trait each prep start.",
+  "layers": "refresh engines: 3 manual refreshes per prep = 阿罗玛 +6, 安洁莉娜 +12, 拉普兰德 +4 (first refresh); free refreshes from 缄默德克萨斯 / 普罗旺斯 / 德克萨斯; 荒芜拉普兰德 +2 per kill (≤100); 忍冬 trade (+6).",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ },
+ {
+  "id": "M-egir",
+  "name": "阿戈尔（国家主盟约 T2 + 副盟约）",
+  "bond": "egirShip",
+  "subs": [
+   "raidShip",
+   "indomShip"
+  ],
+  "engines": [
+   "chess_char_3_05_a",
+   "chess_char_4_12_a",
+   "chess_char_2_07_a",
+   "chess_char_1_04_a",
+   "chess_char_3_09_a",
+   "chess_char_4_09_a",
+   "chess_char_5_13_a",
+   "chess_char_6_04_a",
+   "chess_char_5_05_a",
+   "chess_char_5_07_a",
+   "chess_char_2_09_a"
+  ],
+  "bands": [
+   "band_clementia",
+   "band_ermengard"
+  ],
+  "rhythm": [
+   [
+    3,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    12,
+    6
+   ]
+  ],
+  "t2": {
+   "size": 5,
+   "members": [
+    "chess_char_3_05_a",
+    "chess_char_4_12_a",
+    "chess_char_2_07_a",
+    "chess_char_1_04_a",
+    "chess_char_3_09_a",
+    "chess_char_4_09_a"
+   ],
+   "lateUpgrades": [
+    "chess_char_5_13_a",
+    "chess_char_6_04_a",
+    "chess_char_5_05_a"
+   ],
+   "targetRound": "R9-R10",
+   "natBotTimelineHARD": {
+    "R7": {
+     "ownedDistinct": 1.9,
+     "deployed": 1.5,
+     "level": 3.9
+    },
+    "R9": {
+     "ownedDistinct": 4.0,
+     "deployed": 3.5,
+     "level": 4.1
+    },
+    "R11": {
+     "ownedDistinct": 5.2,
+     "deployed": 4.7,
+     "level": 5.5
+    },
+    "R13": {
+     "ownedDistinct": 5.8,
+     "deployed": 4.9,
+     "level": 6.0
+    }
+   }
+  },
+  "secondary": {
+   "bond": "raidShip",
+   "units": [
+    "chess_char_3_05_a",
+    "chess_char_5_07_a",
+    "chess_char_2_09_a"
+   ]
+  },
+  "value": {
+   "rank": 8,
+   "t2WinR14": 0.02,
+   "t2WinR14_rehearsal3": 0.0,
+   "recurringLayersR6_13": 323,
+   "note": "do not target: even best-of-16 layout search leaves the R14 board at 0.06 (pool 0.56); needs a devour-aware layout (fodder in front of every member)",
+   "nationFactor": 0.21,
+   "fullMatch": {
+    "win_hard": 0.177,
+    "win_abyss": 0.0,
+    "fa_abyss": 0.061,
+    "reachR14_abyss": 0.304,
+    "t2MeanRound_hard": 10.1,
+    "pT2byR12_hard": 0.87
+   },
+   "rankBasis": "0.5 x solo HARD win + 0.3 x solo ABYSS Final Assault share (nat bot, 480 seeds) + 0.2 x controlled R14 T2 win; each scaled to the best nation",
+   "bossWinR14_byPlacement_48seeds": {
+    "legacy": 0.0,
+    "rehearsal3": 0.0,
+    "bestOf16": 0.062
+   },
+   "mainLayersPerRoundR9_13_traitImprover_vs_bestOf16": [
+    26.7,
+    35.2
+   ]
+  },
+  "placement": "each member eats the unit in front (5000 phys, left/top members first): put cheap fodder or summons in front of every member, never a carry; 歌蕾蒂娅 needs 3 units in its row.",
+  "layers": "in-battle deaths (幽灵鲨 +3, 归溟幽灵鲨 +5) and devour (+eaten unit's tier).",
+  "source": "route bots 2026-11-13: shop MC (mc/shopmc.mjs), controlled R14 boards (rb/routebal.mjs b1/b1b/b1r), normal-round engines (n2), full-match route bots (fm/)"
+ }
+]

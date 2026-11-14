@@ -1,0 +1,5 @@
+group,human_seats,national_main_share,nat_main_tier2_share,elites_mean,sum_layers_mean
+R6-9,16,0.50,0.06,1.8,42
+R10-13,22,0.77,0.41,3.9,243
+R14,14,1.00,0.71,6.3,533
+ABYSS R>=6,36,0.78,0.44,4.2,290

@@ -1,0 +1,5 @@
+trunk,config,base,"spatial 40k (reg, margin 0.5)",natT2 base → picker,main layers,Σlayers,picker switch / ms per decision
+NM 5M,solo:ABYSS,0.198,+0.017±0.016,.90 → .93,107 → 123,199 → 220,.46 / 795
+NM 5M,coop4h1,0.104,+0.031±0.017,.43 → .49,60 → 72,116 → 132,.54 / 768
+NMA 12M,solo:ABYSS,0.340,+0.021±0.019,.92 → .94,128 → 137,245 → 256,.45 / 809
+NMA 12M,coop4h1,0.338,-0.037±0.022,.63 → .67,107 → 116,194 → 206,.55 / 703

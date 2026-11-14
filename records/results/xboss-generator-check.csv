@@ -1,0 +1,5 @@
+generator,decisions,= legacy,better,worse,mean utility vs legacy
+g1 (imitation),1236,0.95,0.03,0.01,+0.19±0.07
+"g2 (AWR lr 3e-4, 8 ep, tau 1)",13,0.00,0.38,0.62,-3.9±3.2
+"g3a (AWR lr 1e-4, 2 ep, tau 3)",235,0.72,0.18,0.06,+0.86±0.60
+"g3b (AWR lr 1e-4, 4 ep, tau 5)",275,0.09,0.45,0.32,+1.53±0.67

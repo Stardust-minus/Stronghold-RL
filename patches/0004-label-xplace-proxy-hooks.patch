@@ -1,0 +1,480 @@
+diff --git a/server/match/bot.js b/server/match/bot.js
+index 6603d22..3a19cd5 100644
+--- a/server/match/bot.js
++++ b/server/match/bot.js
+@@ -770,7 +770,9 @@ function buyScore(m, ps, id, ctx) {
+   // Humans and bots count equally; a single soft penalty still allows valuable own merges.
+   if (c.tier >= 5 && !c.isGolden && !c.diyFor && m.pool.has(base) && m.alivePlayers().some((mate) =>
+     mate !== ps && gd.bandBondIds(mate.bandId).some((b) => !gd.modeInactiveBonds.has(b) && c.bonds.includes(b)))) s -= 18;
+-  return s + (ctx.policy?.buyBonus(m, ps, id, ctx) || 0);
++  // co-op proxies (tools/rl/proxies.mjs, eval-only teammate proxy): seeded buy-score noise; never set by the server
++  const total = s + (ctx.policy?.buyBonus(m, ps, id, ctx) || 0);
++  return ps?._buyNoise ? total + ps._buyNoise(id) : total;
+ }
+ 
+ // ---------------------------------------------------------------------------------------------------
+@@ -2019,7 +2021,7 @@ export function* buyLoopSteps(m, ps, { fillOnly = false, maxRefreshes = 0, polic
+   let memo = null;
+   for (let guard = 0; guard < 40; guard++) {
+     if (guard > 0) yield;
+-    if (!policy && !fillOnly && tradeOnce(m, ps, () => context(m, ps))) continue;
++    if ((!policy || policy.trade === true) && !fillOnly && tradeOnce(m, ps, () => context(m, ps))) continue; // route bots: policy.trade (local copy only)
+     if (policy) takeOffers(m, ps, policy); // a merge reward can enable another merge before upgrading
+     if (customPolicy && !fillOnly && policy.canLevel(m, ps)) {
+       const oldLevel = ps.shop.level;
+@@ -2698,7 +2700,7 @@ const LEGACY_PREP_ACTIONS = Object.freeze({
+ export function createBotPrepSteps(actions = {}, policy = null) {
+   const economic = policy ? {
+     // [ASSUMED] Ioleta owns its refresh budget; legacy/adaptive retain the expiring-fund sweep.
+-    spendDown: () => {},
++    spendDown: policy.spendDown === true ? (m, ps) => spendDown(m, ps) : () => {}, // route bots: policy.spendDown (local copy only)
+     takeOffers: (m, ps) => takeOffers(m, ps, policy),
+     sellJunk: (m, ps) => sellJunk(m, ps, policy),
+     buyLoopSteps: (m, ps, opts) => buyLoopSteps(m, ps, { ...opts, policy }),
+@@ -3241,13 +3243,20 @@ export function rehearseCandidatesForTraining(m, ps, chosen, cands, { seed = 'fi
+       let opts = boss ? bossCandidateOpts(m, ps, byUid, plan) : candidateOpts(m, ps, byUid, plan);
+       if (!opts) return null;
+       if (!boss && seed === 'fixed') opts = { ...opts, seed: deriveSeed(0xA11CE, `n:${m.round}:${ps.seat}`) };
++      // picker (11-13): 'match' = a per-match label seed (training only; never the live fight's seed)
++      if (!boss && seed === 'match') opts = { ...opts, seed: deriveSeed(0xA11CE, `nm:${m.seed}:${m.round}:${ps.seat}`) };
++      if (!boss && seed === 'match2') opts = { ...opts, seed: deriveSeed(0xA11CE, `nm2:${m.seed}:${m.round}:${ps.seat}`) };
++      // picker boss labels (11-13): per-match boss rehearsal seeds (training only; never the live boss seed); faRehearsalSeed is round / seat only
++      if (boss && (seed === 'match' || seed === 'match2')) opts = { ...opts, seed: deriveSeed(0xA11CE, `${seed === 'match' ? 'fam' : 'fam2'}:${m.seed}:${m.round}:${ps.seat}`) };
+       try {
+         const battle = m.newBattle(opts, { preview: true });
+         for (let t = 0; t < cap && !battle.finished; t++) battle.step(); // loop-cap: the rehearsal tick cap
+         if (!battle.finished) battle.forceEnd('timeout');
+         const r = battle.result(), pp = r && !r.synthetic && r.perPlayer && r.perPlayer[ps.playerId];
++        // lpc (picker boss labels, 11-13): the LP the field's counted leaks cost (each × its lpr; boss / part entries never count)
+         return pp ? { leaks: (pp.leaked || []).filter((l) => l && l.counted !== false).length, boss: Math.max(0, Number(pp.bossDamage) || 0), kills: pp.killed || 0,
+-          lg: { ...(pp.layerGains || {}) } } : null;
++          lg: { ...(pp.layerGains || {}) }, lpc: (pp.leaked || []).reduce((a, l) => a + (l && l.counted !== false ? (Number.isFinite(l.lpr) ? l.lpr : 1) : 0), 0),
++          ...(r.reason ? { end: r.reason } : {}) } : null;
+       } catch { return null; }
+     });
+   } finally { m._oracle = hadOracle; }
+@@ -3376,3 +3385,411 @@ export function stackOracleForTraining(m, ps, { K = 16, perturb = true, seed = '
+   if (best > 0) runSteps(applyPlanSteps(m, ps, chosen, cands[best]));
+   return { n: cands.length, idx: best, layers0: sc[0].layers, layers: sc[best].layers, boss: !!boss };
+ }
++
++// ---- xplace (tools/rl expert-iteration placement, 11-13): training-only exports, never called by the server or legacy ----
++/**
++ * Training only (xplace): the seat's placement problem as plain data for a learned layout policy and its search labels —
++ * the fielded chess (`chosen`) and per piece its range record (rangeRec), placement class, legal tiles, blocker / healer /
++ * anti-air flags, effective DPS, the current tile and facing; the deploy map and the field model (routes) of the fight.
++ * null without a fielded chess.
++ */
++export function xPlaceProblemForTraining(m, ps) {
++  const boss = !m.wave && bossWaveOf(m, ps);
++  const chosen = [...ps.board.values()].filter((p) => p && p.kind === 'chess');
++  if (!chosen.length) return null;
++  const g = ps.gd || m.gd, map = ps.deployMap(), model = fieldModel(m, ps);
++  const keyOf = new Map(); for (const [k, p] of ps.board) if (p && p.kind === 'chess') keyOf.set(p.uid, k);
++  const pieces = chosen.map((p) => {
++    const rec0 = g.chess(p.id), rec = rangeRec(ps, rec0), cls = placeClass(ps, rec0);
++    return { uid: p.uid, id: p.id, rec, rec0, cls, legal: legalTiles(map, cls).map(([r, c]) => tileKey(r, c)),
++      block: isBlocker(rec0) ? Math.max(1, rec0.stats?.blockCnt ?? 1) : 0, heal: isHealer(rec0), air: hitsFly(rec0),
++      ground: !!rec0 && rec0.attackKind !== 'heal' && !isHealer(rec0), dps: effDps(model, rec0), key: keyOf.get(p.uid) ?? null, dir: pieceDir(p),
++      golden: !!p.golden, items: (p.items || []).map((it) => it && it.id).filter(Boolean) };
++  });
++  return { boss: boss ? { side: boss.side } : null, fight: !!(m.wave || boss), chosen, pieces, map, model, round: m.round };
++}
++
++/** Training only (xplace): the 气流 ATK factor of a facing on a tile (airflowAtkMul of the field model). */
++export function xAirflowForTraining(model, key, dir) { return airflowAtkMul(model, key, dir); }
++
++/**
++ * Training only (xplace labels): rehearse each layout plan of `chosen` once per seed index against the round's real
++ * enemies with honest fixed seeds — normal: deriveSeed(0xA11CE, `n:round:seat`) for s = 0 (the label seed), `n<s>:…` for
++ * s > 0; boss / hidden: faRehearsalSeed for s = 0, `fa<s>:…` for s > 0 (never the live seed). [plan][seed] →
++ * { leaks, boss, kills, layers, lg } | null; null when the round has no fight.
++ */
++export function xRehearseForTraining(m, ps, chosen, plans, seeds = [0], salt = '') {
++  const boss = !m.wave && bossWaveOf(m, ps);
++  if (!m.wave && !boss) return null;
++  const byUid = new Map(chosen.map((p) => [p.uid, p]));
++  const cap = boss ? faRehearsalTicks(m) : rehearsalCap(m.wave?.timeLimit);
++  const hadOracle = m._oracle; m._oracle = undefined;
++  try {
++    return plans.map((plan) => seeds.map((s) => {
++      let opts = boss ? bossCandidateOpts(m, ps, byUid, plan) : candidateOpts(m, ps, byUid, plan);
++      if (!opts) return null;
++      opts = { ...opts, seed: salt ? deriveSeed(0xA11CE, `x${boss ? 'fa' : 'n'}${s}:${m.round}:${ps.seat}:${salt}`) // salted: per-match label seeds (never the live one)
++        : boss ? (s ? deriveSeed(0xA11CE, `fa${s}:${m.round}:${ps.seat}`) : faRehearsalSeed(m, ps))
++        : deriveSeed(0xA11CE, s ? `n${s}:${m.round}:${ps.seat}` : `n:${m.round}:${ps.seat}`) };
++      try {
++        const battle = m.newBattle(opts, { preview: true });
++        for (let t = 0; t < cap && !battle.finished; t++) battle.step(); // loop-cap: the rehearsal tick cap
++        if (!battle.finished) battle.forceEnd('timeout');
++        const r = battle.result(), pp = r && !r.synthetic && r.perPlayer && r.perPlayer[ps.playerId];
++        if (!pp) return null;
++        const lg = { ...(pp.layerGains || {}) };
++        return { leaks: (pp.leaked || []).filter((l) => l && l.counted !== false).length, boss: Math.max(0, Number(pp.bossDamage) || 0),
++          kills: pp.killed || 0, layers: Object.values(lg).reduce((a, b) => a + b, 0), lg };
++      } catch { return null; }
++    }));
++  } finally { m._oracle = hadOracle; }
++}
++
++/** Training only (xplace): one random legal perturbation (1–3 moves / swaps / turns) of `plan` (oracle2Perturb). */
++export function xPerturbForTraining(m, ps, chosen, plan, rng) {
++  return oracle2Perturb(m, ps, new Map(chosen.map((p) => [p.uid, p])), plan, rng, ps.deployMap());
++}
++
++/** Training only (xplace): the seat's current layout of its fielded chess as a LayoutPlan. */
++export function xCurrentPlanForTraining(ps) {
++  const cur = new LayoutPlan();
++  for (const [k, p] of ps.board) if (p && p.kind === 'chess') { cur.set(p.uid, k); cur.dirs.set(p.uid, pieceDir(p)); }
++  return cur;
++}
++
++/**
++ * Training / diagnostics only (tools/rl picker, stacking-aware candidates; generation only, no simulation): extra layouts
++ * for the seat's fielded lineup that satisfy the positional layer engines legacy's geometry-only generator ignores
++ * (catalogue A prep-time layer traits and gifts, catalogue B / C battle conditions, plus: 阿戈尔 members with an ally to devour
++ * in front, 莫斯提马 with 拉特兰 members in its 4, a 卡西米尔 member rightmost of 远牙's row, 蕾缪安's row of 3). From the default
++ * layout and legacy's best other candidates, a greedy hill-climb over turns, swaps and moves to a free legal tile within 2,
++ * keeping the layout model's value >= keep x the default's and every road blocker on the road; every accepted step is a
++ * candidate. Returns up to N plans not already in C (layoutCandidatesForPicker's set), best positional score first.
++ */
++export function positionalCandidatesForTraining(m, ps, C, { N = 4, keep = 0.9, iters = 6, starts = 2 } = {}) {
++  if (!C || !C.cands?.length) return [];
++  const pgd = ps.gd || m.gd, model = fieldModel(m, ps), map = ps.deployMap(), chosen = C.chosen;
++  if (chosen.length < 2) return [];
++  const recOf = (p) => rangeRec(ps, pgd.chess(p.id)), bondsOf = (p) => pgd.chess(p.id)?.bonds || [], nameOf = (p) => pgd.chess(p.id)?.name || '';
++  const bondsView = ps.bonds || {}, act = (b) => !!bondsView[b]?.active;
++  const geo = (plan) => {
++    const units = []; let road = 0;
++    for (const p of chosen) {
++      const key = plan.get(p.uid), rec = recOf(p); if (!key || !rec) continue;
++      const [r, c] = parseKey(key), u = unitOf(rec, key, r, c, plan.dirs.get(p.uid) ?? 'RIGHT', model); units.push(u);
++      if (u.block > 0 && model.ground.has(key)) road++;
++    }
++    const L = new Layout(model, LAYOUT_PARAMS); L.units = units; return { v: L.value(), road };
++  };
++  const extra = (plan) => { // the conditions positionalGainForTraining does not count
++    const at = new Map(); for (const p of chosen) { const k = plan.get(p.uid); if (k) at.set(k, p); }
++    let n = 0;
++    for (const p of chosen) {
++      const k = plan.get(p.uid); if (!k) continue; const [r, c] = parseKey(k), nm = nameOf(p);
++      if (act('egirShip') && bondsOf(p).includes('egirShip')) { const [fr, fc] = frontOfDir(r, c, plan.dirs.get(p.uid) ?? 'RIGHT'); const f = at.get(tileKey(fr, fc)); if (f && !bondsOf(f).includes('egirShip')) n++; }
++      if (nm === '莫斯提马') for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const q = at.get(tileKey(r + a, c + b)); if (q && bondsOf(q).includes('lateranoShip')) n += 0.5; }
++      if (nm === '远牙') { let best = null; for (const [kk, o] of at) { const [rr, cc] = parseKey(kk); if (rr === r && (!best || cc > best[0])) best = [cc, o]; } if (best && best[1] !== p && bondsOf(best[1]).includes('kazimierzShip')) n += 0.5; }
++      if (nm === '蕾缪安') { let row = 0; for (const kk of at.keys()) if (parseKey(kk)[0] === r) row++; if (row === 3) n++; }
++    }
++    return n;
++  };
++  const score = (plan) => { const g = positionalGainForTraining(m, ps, plan); return g.layers + 3 * g.gifts + 3 * g.battle.total + 3 * extra(plan); };
++  const g0 = geo(C.cands[0]), floor = g0.v >= 0 ? g0.v * keep : g0.v / keep;
++  const ok = (plan) => { const g = geo(plan); return g.v >= floor - 1e-9 && g.road >= g0.road; };
++  const legalSet = new Map(chosen.map((p) => [p.uid, new Set(legalTiles(map, placeClass(ps, pgd.chess(p.id))).map(([r, c]) => tileKey(r, c)))]));
++  const clone = (plan) => { const q = new LayoutPlan([...plan.entries()]); for (const [u, d] of plan.dirs) q.dirs.set(u, d); return q; };
++  const seen = new Set(C.cands.map(oracle2Sig)), out = [], fixed = [];
++  // constructive templates (picker, 11-13, from the route bots' controlled boards): 阿戈尔 fodder in front of every member, and the
++  // 谢拉格 collectors' range over the tiles the cold sources hit; offered first, unscored (the rehearsal label decides)
++  for (const mk of [egirFodderPlan, kjeragRangePlan]) for (const si of [0, ...(C.cands.length > 1 ? [1] : [])]) {
++    let q = null; try { q = mk(m, ps, C, C.cands[si], { pgd, model, legalSet: null, chosen, map }); } catch { q = null; }
++    if (!q) continue; q._tpl = mk === egirFodderPlan ? 'egir' : 'kjerag'; const sg = oracle2Sig(q); if (!seen.has(sg)) { seen.add(sg); fixed.push(q); }
++  }
++  const startIdx = [0, ...C.cands.map((_, j) => j).slice(1).sort((a, b) => (C.feats[b]?.value ?? 0) - (C.feats[a]?.value ?? 0)).slice(0, Math.max(0, starts - 1))];
++  for (const si of startIdx) {
++    let best = clone(C.cands[si]), bestS = score(best);
++    for (let it = 0; it < iters; it++) { // loop-cap: iters greedy rounds over a finite move set
++      let cand = null, candS = bestS;
++      const tryPlan = (q) => { const s = score(q); if (s > candS + 1e-9 && ok(q)) { cand = q; candS = s; } };
++      for (let i = 0; i < chosen.length; i++) {
++        const a = chosen[i], ka = best.get(a.uid); if (!ka) continue;
++        for (const d of PLAN_DIRS) if (d !== (best.dirs.get(a.uid) ?? 'RIGHT')) { const q = clone(best); q.dirs.set(a.uid, d); tryPlan(q); }
++        for (let j = i + 1; j < chosen.length; j++) {
++          const b = chosen[j], kb = best.get(b.uid); if (!kb || !legalSet.get(a.uid).has(kb) || !legalSet.get(b.uid).has(ka)) continue;
++          const q = clone(best); q.set(a.uid, kb); q.set(b.uid, ka); const da = q.dirs.get(a.uid); q.dirs.set(a.uid, q.dirs.get(b.uid)); q.dirs.set(b.uid, da); tryPlan(q);
++        }
++        const taken = new Set(best.values()), [ra, ca] = parseKey(ka);
++        for (const key of legalSet.get(a.uid)) {
++          if (taken.has(key)) continue; const [r, c] = parseKey(key); if (Math.max(Math.abs(r - ra), Math.abs(c - ca)) > 2) continue;
++          for (const d of PLAN_DIRS) { const q = clone(best); q.set(a.uid, key); q.dirs.set(a.uid, d); tryPlan(q); }
++        }
++      }
++      if (!cand) break;
++      best = cand; bestS = candS;
++      const sg = oracle2Sig(best); if (!seen.has(sg)) { seen.add(sg); best._tpl = 'climb'; out.push({ plan: best, s: bestS }); }
++    }
++  }
++  return [...fixed, ...out.sort((x, y) => y.s - x.s).map((x) => x.plan)].slice(0, N);
++}
++
++const tplClone = (plan) => { const q = new LayoutPlan([...plan.entries()]); for (const [u, d] of plan.dirs) q.dirs.set(u, d); return q; };
++const tplLegal = (ps, pgd, map) => { const cache = new Map(); return (p) => { if (!cache.has(p.uid)) cache.set(p.uid, new Set(legalTiles(map, placeClass(ps, pgd.chess(p.id))).map(([r, c]) => tileKey(r, c)))); return cache.get(p.uid); }; };
++/**
++ * 阿戈尔 (egirShip active): every member eats the unit in front of it at battle start (5000 physical, left / top members first;
++ * the member gains its ATK / block and 阿戈尔 layers + its tier). A constructive layout from `base`: for each member in devour
++ * order, a cheap non-member (lowest power, never one of the 2 strongest) stands on its front tile — by turning the member, moving
++ * the fodder to a free legal front tile, or swapping it with the unit there. null when nothing changes.
++ */
++function egirFodderPlan(m, ps, C, base, { pgd, map }) {
++  if (!ps.bonds?.egirShip?.active) return null;
++  const chosen = C.chosen, bonds = (p) => pgd.chess(p.id)?.bonds || [], legal = tplLegal(ps, pgd, map);
++  const members = chosen.filter((p) => bonds(p).includes('egirShip')); if (!members.length) return null;
++  const others = chosen.filter((p) => !bonds(p).includes('egirShip')).map((p) => ({ p, v: power(pgd.chess(p.id) || {}) })).sort((a, b) => a.v - b.v);
++  const carries = new Set(others.slice().sort((a, b) => b.v - a.v).slice(0, 2).map((x) => x.p.uid));
++  const fodder = others.filter((x) => !carries.has(x.p.uid)).map((x) => x.p); if (!fodder.length) return null;
++  const q = tplClone(base), used = new Set(), byKey = () => { const at = new Map(); for (const p of chosen) { const k = q.get(p.uid); if (k) at.set(k, p); } return at; };
++  const order = members.slice().sort((a, b) => { const [ra, ca] = parseKey(q.get(a.uid) || '0,0'), [rb, cb] = parseKey(q.get(b.uid) || '0,0'); return ca - cb || rb - ra; });
++  const isFod = (p) => p && fodder.includes(p) && !used.has(p.uid);
++  let changed = false;
++  for (const mem of order) {
++    const k = q.get(mem.uid); if (!k) continue; const [r, c] = parseKey(k), at = byKey(), d0 = q.dirs.get(mem.uid) ?? 'RIGHT';
++    const front = (d) => tileKey(...frontOfDir(r, c, d));
++    if (isFod(at.get(front(d0)))) { used.add(at.get(front(d0)).uid); continue; }
++    let done = false;
++    for (const d of PLAN_DIRS) { const f = at.get(front(d)); if (isFod(f)) { q.dirs.set(mem.uid, d); used.add(f.uid); changed = done = true; break; } }
++    if (done) continue;
++    for (const d of [d0, ...PLAN_DIRS.filter((x) => x !== d0)]) {
++      const fk = front(d), occ = at.get(fk), f = fodder.find((x) => !used.has(x.uid) && legal(x).has(fk) && x !== occ);
++      if (!f) continue;
++      if (!occ) { q.set(f.uid, fk); q.dirs.set(mem.uid, d); used.add(f.uid); changed = done = true; break; }
++      if (occ !== mem && !members.includes(occ) && legal(occ).has(q.get(f.uid))) { const fk0 = q.get(f.uid); q.set(f.uid, fk); q.set(occ.uid, fk0); q.dirs.set(mem.uid, d); used.add(f.uid); changed = done = true; break; }
++    }
++  }
++  return changed ? q : null;
++}
++/**
++ * 谢拉格 (kjeragShip active): a collector (初雪 / 银灰 garrison_28: a freeze inside its range → 50% for +1; the 谢拉格 operator in
++ * front of 凛御银灰 also collects) scores only freezes on tiles it covers, and freezes happen where the cold sources hit (灵知 /
++ * 圣聆初雪, carriers of 谢拉格不融冰; other 谢拉格 attackers at half weight). A constructive layout from `base`: each collector in
++ * turn takes the tile and facing (its own tile, a free legal tile, or a swap with a non-blocker non-source) that maximises the
++ * cold-weighted route tiles in its range. null when nothing changes.
++ */
++function kjeragRangePlan(m, ps, C, base, { pgd, model, map }) {
++  if (!ps.bonds?.kjeragShip?.active) return null;
++  const chosen = C.chosen, nameOf = (p) => pgd.chess(p.id)?.name || '', bonds = (p) => pgd.chess(p.id)?.bonds || [], legal = tplLegal(ps, pgd, map);
++  const route = new Set(model.index.keys());
++  const q = tplClone(base);
++  const isSrcStrong = (p) => ['灵知', '圣聆初雪'].includes(nameOf(p)) || (p.items || []).some((it) => String(it.id).startsWith('chess_item_5_02_e'));
++  const cover = (p, key, dir) => { const rec = rangeRec(ps, pgd.chess(p.id)); if (!rec || !key) return new Set(); const [r, c] = parseKey(key); return unitOf(rec, key, r, c, dir, model).cover; };
++  const at0 = new Map(); for (const p of chosen) { const k = q.get(p.uid); if (k) at0.set(k, p); }
++  const collectors = chosen.filter((p) => ['初雪', '银灰'].includes(nameOf(p)));
++  for (const p of chosen) if (nameOf(p) === '凛御银灰') { const k = q.get(p.uid); if (k) { const [r, c] = parseKey(k); const f = at0.get(tileKey(...frontOfDir(r, c, q.dirs.get(p.uid) ?? 'RIGHT'))); if (f && bonds(f).includes('kjeragShip') && !collectors.includes(f)) collectors.push(f); } }
++  if (!collectors.length) return null;
++  const sources = chosen.filter((p) => !collectors.includes(p) && (isSrcStrong(p) || (bonds(p).includes('kjeragShip') && (pgd.chess(p.id)?.attackKind ?? 'x') !== 'none')));
++  if (!sources.length) return null;
++  const weight = () => { const w = new Map(); for (const s of sources) { const ww = isSrcStrong(s) ? 1 : 0.5; for (const t of cover(s, q.get(s.uid), q.dirs.get(s.uid) ?? 'RIGHT')) if (route.has(t)) w.set(t, (w.get(t) || 0) + ww); } return w; };
++  const val = (p, key, dir, w) => { let v = 0; for (const t of cover(p, key, dir)) if (route.has(t)) v += 0.2 + 3 * (w.get(t) || 0); return v; };
++  const roadBlock = (p) => { const k = q.get(p.uid), rec = pgd.chess(p.id); return k && model.ground.has(k) && rec && isBlocker(rec); };
++  let changed = false;
++  for (const col of collectors) {
++    const w = weight(), k0 = q.get(col.uid); if (!k0) continue;
++    const at = new Map(); for (const p of chosen) { const k = q.get(p.uid); if (k) at.set(k, p); }
++    let best = { v: val(col, k0, q.dirs.get(col.uid) ?? 'RIGHT', w) + 1e-9, key: k0, dir: q.dirs.get(col.uid) ?? 'RIGHT', swap: null };
++    for (const key of legal(col)) {
++      const occ = at.get(key); if (occ && occ !== col && (sources.includes(occ) || collectors.includes(occ) || roadBlock(occ) || !legal(occ).has(k0))) continue;
++      for (const d of PLAN_DIRS) { const v = val(col, key, d, w); if (v > best.v * 1.05) best = { v, key, dir: d, swap: occ && occ !== col ? occ : null }; }
++    }
++    if (best.key === k0 && best.dir === (q.dirs.get(col.uid) ?? 'RIGHT')) continue;
++    if (best.swap) q.set(best.swap.uid, k0);
++    q.set(col.uid, best.key); q.dirs.set(col.uid, best.dir); changed = true;
++  }
++  return changed ? q : null;
++}
++
++// ---- normal-round candidate pool (tools/rl picker, 11-13; generation only, no simulation — usable by a deployed picker) ----
++const poolRng = (m, ps, salt) => { let a = (deriveSeed(m.seed, `pool:${salt}:${ps.playerId}:${m.round}`) >>> 0) || 1;
++  return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
++const poolClone = (plan) => { const q = new LayoutPlan([...plan.entries()]); for (const [u, d] of plan.dirs) q.dirs.set(u, d); return q; };
++/** 卡西米尔 redeploy: a deployment receiver (砾 / 瑕光, else any 卡西米尔 member) rightmost in 远牙's row, by a move to a free legal tile right
++ * of the row or a swap with the row's rightmost unit. */
++function poolKazPlan(m, ps, chosen, base, legal, nameOf, bondsOf) {
++  const fang = chosen.find((p) => nameOf(p) === '远牙'); if (!fang || !ps.bonds?.kazimierzShip?.active) return null;
++  const q = poolClone(base), fk = q.get(fang.uid); if (!fk) return null; const [fr] = parseKey(fk);
++  const recv = chosen.filter((p) => p !== fang && ['砾', '瑕光'].includes(nameOf(p))).concat(chosen.filter((p) => p !== fang && !['砾', '瑕光'].includes(nameOf(p)) && bondsOf(p).includes('kazimierzShip')));
++  for (const r of recv) {
++    const at = new Map(); for (const p of chosen) { const k = q.get(p.uid); if (k) at.set(k, p); }
++    let right = null; for (const [k, p] of at) { const [rr, cc] = parseKey(k); if (rr === fr && (!right || cc > right[0])) right = [cc, p, k]; }
++    if (right && right[1] === r) return null;
++    const free = [...legal(r)].filter((k) => !at.has(k) && parseKey(k)[0] === fr && (!right || parseKey(k)[1] > right[0])).sort((a, b) => parseKey(b)[1] - parseKey(a)[1]);
++    if (free.length) { q.set(r.uid, free[0]); return q; }
++    if (right && legal(r).has(right[2]) && legal(right[1]).has(q.get(r.uid))) { const rk = q.get(r.uid); q.set(r.uid, right[2]); q.set(right[1].uid, rk); return q; }
++  }
++  return null;
++}
++/** 突袭: raid members start on the legal free tiles that cover the fewest route tiles (idle -> they redeploy next to ground enemies). */
++function poolRaidPlan(m, ps, chosen, base, legal, bondsOf, model, pgd) {
++  if (!ps.bonds?.raidShip?.active) return null;
++  const mem = chosen.filter((p) => bondsOf(p).includes('raidShip')); if (!mem.length) return null;
++  const route = new Set(model.index.keys()), q = poolClone(base); let changed = false;
++  for (const p of mem) {
++    const taken = new Set(q.values()), rec = rangeRec(ps, pgd.chess(p.id)); if (!rec) continue;
++    const cov = (k, d) => { const [r, c] = parseKey(k); let n = 0; for (const t of unitOf(rec, k, r, c, d, model).cover) if (route.has(t)) n++; return n; };
++    const k0 = q.get(p.uid); let best = [cov(k0, q.dirs.get(p.uid) ?? 'RIGHT'), k0];
++    for (const k of legal(p)) if (!taken.has(k)) { const v = cov(k, q.dirs.get(p.uid) ?? 'RIGHT'); if (v < best[0]) best = [v, k]; }
++    if (best[1] !== k0) { q.set(p.uid, best[1]); changed = true; }
++  }
++  return changed ? q : null;
++}
++/** 莫斯提马: 拉特兰 members moved / swapped into its free 4-neighbour tiles (each ally's ammo there feeds 拉特兰). */
++function poolMostimaPlan(m, ps, chosen, base, legal, nameOf, bondsOf) {
++  const mo = chosen.find((p) => nameOf(p) === '莫斯提马'); if (!mo || !ps.bonds?.lateranoShip?.active) return null;
++  const q = poolClone(base), mk = q.get(mo.uid); if (!mk) return null; const [r0, c0] = parseKey(mk); let changed = false;
++  const nb = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([a, b]) => tileKey(r0 + a, c0 + b));
++  for (const t of nb) {
++    const at = new Map(); for (const p of chosen) { const k = q.get(p.uid); if (k) at.set(k, p); }
++    const occ = at.get(t); if (occ && bondsOf(occ).includes('lateranoShip')) continue;
++    const cand = chosen.find((p) => p !== mo && bondsOf(p).includes('lateranoShip') && !nb.includes(q.get(p.uid)) && legal(p).has(t));
++    if (!cand) continue;
++    if (!occ) { q.set(cand.uid, t); changed = true; }
++    else if (legal(occ).has(q.get(cand.uid))) { const ck = q.get(cand.uid); q.set(cand.uid, t); q.set(occ.uid, ck); changed = true; }
++  }
++  return changed ? q : null;
++}
++/** Last round's board re-fitted to this lineup: pieces that stood on the board keep their tile / facing (when still legal and free),
++ * the rest are placed by legacy's planner around them. `prev`: Map uid -> [tile key, facing]. */
++function poolPrevPlan(m, ps, chosen, prev, legal) {
++  if (!prev || !prev.size) return null;
++  const q = new LayoutPlan(), taken = new Set(), rest = [];
++  for (const p of chosen) { const v = prev.get(p.uid); if (v && legal(p).has(v[0]) && !taken.has(v[0])) { q.set(p.uid, v[0]); q.dirs.set(p.uid, v[1]); taken.add(v[0]); } else rest.push(p); }
++  if (!q.size) return null;
++  if (rest.length) { const pl = runSteps(planLayoutSteps(m, ps, rest, LAYOUT_PARAMS, { occupied: taken })); for (const p of rest) { const k = pl.get(p.uid); if (!k) return null; q.set(p.uid, k); q.dirs.set(p.uid, pl.dirs.get(p.uid) ?? 'RIGHT'); } }
++  return q;
++}
++/**
++ * Training / model-AI only (tools/rl picker): a candidate pool for one normal-round layout decision — legacy's K variants (the placed
++ * default first), the stacking templates (positionalCandidatesForTraining: 阿戈尔 fodder, 谢拉格 range, positional hill-climb), 卡西米尔 redeploy,
++ * 突袭 idle start, 莫斯提马 neighbours, last round's board re-fitted (`prev`), and `edits` one-step edits (turn / swap / move to a free tile
++ * within 1) of the default; distinct, at most `max`. Returns layoutCandidatesForPicker's shape plus `src` (a tag per candidate) and nLegacy.
++ */
++export function candidatePoolForTraining(m, ps, { K = 8, tmpl = 6, prev = null, edits = 12, max = 32 } = {}) {
++  const C = layoutCandidatesForPicker(m, ps, K); if (!C) return null;
++  const pgd = ps.gd || m.gd, map = ps.deployMap(), model = fieldModel(m, ps), chosen = C.chosen;
++  const nameOf = (p) => pgd.chess(p.id)?.name || '', bondsOf = (p) => pgd.chess(p.id)?.bonds || [];
++  const lg = new Map(); const legal = (p) => { if (!lg.has(p.uid)) lg.set(p.uid, new Set(legalTiles(map, placeClass(ps, pgd.chess(p.id))).map(([r, c]) => tileKey(r, c)))); return lg.get(p.uid); };
++  const cands = [...C.cands], src = C.cands.map((_, j) => (j === 0 ? 'default' : 'legacy')), seen = new Set(cands.map(oracle2Sig));
++  const add = (q, tag) => { if (!q || cands.length >= max) return; const sg = oracle2Sig(q); if (seen.has(sg)) return; seen.add(sg); cands.push(q); src.push(tag); };
++  const safe = (f) => { try { return f(); } catch { return null; } };
++  if (chosen.length >= 2) {
++    if (tmpl > 0) for (const q of safe(() => positionalCandidatesForTraining(m, ps, C, { N: tmpl })) || []) add(q, `tpl:${q._tpl || 'climb'}`);
++    add(safe(() => poolKazPlan(m, ps, chosen, C.cands[0], legal, nameOf, bondsOf)), 'tpl:kaz');
++    add(safe(() => poolRaidPlan(m, ps, chosen, C.cands[0], legal, bondsOf, model, pgd)), 'tpl:raid');
++    add(safe(() => poolMostimaPlan(m, ps, chosen, C.cands[0], legal, nameOf, bondsOf)), 'tpl:most');
++    add(safe(() => poolPrevPlan(m, ps, chosen, prev, legal)), 'prev');
++    const rng = poolRng(m, ps, 'edit'), base = C.cands[0], ops = [];
++    for (const p of chosen) { const k = base.get(p.uid); if (!k) continue; const [r, c] = parseKey(k);
++      for (const d of PLAN_DIRS) if (d !== (base.dirs.get(p.uid) ?? 'RIGHT')) ops.push(['turn', p, d]);
++      for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const t = tileKey(r + a, c + b); if (legal(p).has(t)) ops.push(['move', p, t]); }
++      for (const o of chosen) if (o.uid > p.uid && base.get(o.uid) && legal(p).has(base.get(o.uid)) && legal(o).has(k)) ops.push(['swap', p, o]); }
++    for (let i = ops.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [ops[i], ops[j]] = [ops[j], ops[i]]; }
++    let n = 0;
++    for (const [op, p, x] of ops) {
++      if (n >= edits || cands.length >= max) break;
++      const q = poolClone(base), taken = new Set(q.values());
++      if (op === 'turn') q.dirs.set(p.uid, x);
++      else if (op === 'move') { if (taken.has(x)) continue; q.set(p.uid, x); }
++      else { const kp = q.get(p.uid), ko = q.get(x.uid); q.set(p.uid, ko); q.set(x.uid, kp); const dp = q.dirs.get(p.uid); q.dirs.set(p.uid, q.dirs.get(x.uid)); q.dirs.set(x.uid, dp); }
++      const before = cands.length; add(q, `edit:${op}`); if (cands.length > before) n++;
++    }
++  }
++  const ex = cands.slice(C.cands.length);
++  return { chosen, cands, src, variants: [...C.variants, ...ex.map(() => [])], feats: [...C.feats, ...ex.map((q) => layoutFeatures(m, ps, chosen, q, C.cands[0]))], nLegacy: C.cands.length };
++}
++
++/**
++ * Training only (tools/rl picker, teacher search on top of the candidate pool): from the pool's best layout `start`, spend `budget` rehearsals
++ * (each = the mean of `seeds` per-match seeds) improving the D utility u = layers − 10·max(0, leaks − leaks0) + 0.01·kills (leaks0: the default's).
++ * method 'hill': first-improvement over random one-step edits (turn / move to a free legal tile within 1 / swap) of the current best;
++ * method 'cem': per-unit categorical (tile, facing) distributions peaked at the start, `pop` samples per iteration (legal, collision-free),
++ * the top `elite` refit the distributions (smoothing 0.3). Returns { best, u0, u, evals, top: [{ plan, score }] } (top = the best distinct layouts seen).
++ */
++export function teacherSearchForTraining(m, ps, C, start, startScore, leaks0, { method = 'hill', budget = 32, seeds = ['match', 'match2'], pop = 8, elite = 2 } = {}) {
++  const pgd = ps.gd || m.gd, map = ps.deployMap(), chosen = C.chosen;
++  const lgm = new Map(); const legal = (p) => { if (!lgm.has(p.uid)) lgm.set(p.uid, [...new Set(legalTiles(map, placeClass(ps, pgd.chess(p.id))).map(([r, c]) => tileKey(r, c)))]); return lgm.get(p.uid); };
++  const rng = poolRng(m, ps, `search:${method}`);
++  const sumLg = (s) => Object.values(s?.lg || {}).reduce((a, b) => a + b, 0);
++  const util = (s) => (s ? sumLg(s) - 10 * Math.max(0, s.leaks - leaks0) + 0.01 * s.kills : -1e9);
++  const score = (plans) => { const R = seeds.map((sd) => rehearseCandidatesForTraining(m, ps, chosen, plans, { seed: sd }) || []);
++    return plans.map((_, j) => { const xs = R.map((r) => r[j]).filter(Boolean); if (!xs.length) return null; const lg = {};
++      for (const x of xs) for (const [k, v] of Object.entries(x.lg || {})) lg[k] = (lg[k] || 0) + v / xs.length;
++      return { leaks: xs.reduce((a, x) => a + x.leaks, 0) / xs.length, kills: xs.reduce((a, x) => a + x.kills, 0) / xs.length, boss: 0, lg }; }); };
++  const seen = new Map([[oracle2Sig(start), { plan: start, score: startScore }]]);
++  let best = start, bs = startScore, bu = util(startScore), evals = 0; const u0 = bu;
++  const edit = (base) => {
++    const q = poolClone(base), p = chosen[Math.floor(rng() * chosen.length)], k = q.get(p.uid); if (!k) return null; const op = rng();
++    if (op < 0.3) { q.dirs.set(p.uid, PLAN_DIRS[Math.floor(rng() * 4)]); }
++    else if (op < 0.65) { const [r, c] = parseKey(k), taken = new Set(q.values()), fr = legal(p).filter((t) => !taken.has(t) && Math.max(Math.abs(parseKey(t)[0] - r), Math.abs(parseKey(t)[1] - c)) <= 1); if (!fr.length) return null; q.set(p.uid, fr[Math.floor(rng() * fr.length)]); }
++    else { const o = chosen[Math.floor(rng() * chosen.length)], ko = q.get(o.uid); if (o === p || !ko || !legal(p).includes(ko) || !legal(o).includes(k)) return null; q.set(p.uid, ko); q.set(o.uid, k); const d = q.dirs.get(p.uid); q.dirs.set(p.uid, q.dirs.get(o.uid)); q.dirs.set(o.uid, d); }
++    return q; };
++  if (method === 'hill') {
++    for (let guard = 0; evals < budget && guard < budget * 20; guard++) {
++      const q = edit(best); if (!q) continue; const sg = oracle2Sig(q); if (seen.has(sg)) continue;
++      const [s] = score([q]); evals++; seen.set(sg, { plan: q, score: s });
++      if (util(s) > bu) { best = q; bs = s; bu = util(s); }
++    }
++  } else {
++    const dist = new Map(); // uid -> Map('tile|dir' -> weight)
++    for (const p of chosen) { const w = new Map(); for (const t of legal(p)) for (const d of PLAN_DIRS) w.set(`${t}|${d}`, 0.05); const k = start.get(p.uid); if (k) w.set(`${k}|${start.dirs.get(p.uid) ?? 'RIGHT'}`, 3); dist.set(p.uid, w); }
++    const sample = () => { const q = new LayoutPlan(), taken = new Set();
++      for (const p of [...chosen].sort(() => rng() - 0.5)) { const w = [...dist.get(p.uid)].filter(([kd]) => !taken.has(kd.split('|')[0])); if (!w.length) return null;
++        let z = w.reduce((a, [, v]) => a + v, 0) * rng(); let pick = w[w.length - 1][0]; for (const [kd, v] of w) { z -= v; if (z <= 0) { pick = kd; break; } }
++        const [t, d] = pick.split('|'); q.set(p.uid, t); q.dirs.set(p.uid, d); taken.add(t); }
++      return q; };
++    while (evals < budget) {
++      const batch = []; for (let g = 0; batch.length < Math.min(pop, budget - evals) && g < pop * 10; g++) { const q = sample(); if (!q) continue; const sg = oracle2Sig(q); if (seen.has(sg)) continue; seen.set(sg, null); batch.push(q); }
++      if (!batch.length) break;
++      const S = score(batch); evals += batch.length;
++      const scored = batch.map((q, j) => ({ q, s: S[j], u: util(S[j]) })); for (const x of scored) seen.set(oracle2Sig(x.q), { plan: x.q, score: x.s });
++      for (const x of scored) if (x.u > bu) { best = x.q; bs = x.s; bu = x.u; }
++      const el = scored.sort((a, b) => b.u - a.u).slice(0, elite);
++      for (const p of chosen) { const w = dist.get(p.uid); for (const [kd, v] of w) w.set(kd, v * 0.7); for (const x of el) { const k = x.q.get(p.uid); if (k) { const kd = `${k}|${x.q.dirs.get(p.uid) ?? 'RIGHT'}`; w.set(kd, (w.get(kd) || 0) + 0.3 * 3 / el.length); } } }
++    }
++  }
++  const top = [...seen.values()].filter((x) => x && x.score).sort((a, b) => util(b.score) - util(a.score)).slice(0, 3);
++  return { best, bestScore: bs, u0, u: bu, evals, top };
++}
++/** Training only (picker): a layout plan's signature (uid@tile:facing, sorted), as the pool and the oracle dedupe them. */
++export function oracleSigForTraining(plan) { return oracle2Sig(plan); }
++// ---- xplace lineup ceiling (11-13): training-only exports, never called by the server or legacy ----
++/** Training only: the seat's fielded chess, its bench chess (hand) and the deploy cap / count. */
++export function xLineupProblemForTraining(m, ps) {
++  const board = [...ps.board.values()].filter((p) => p && p.kind === 'chess');
++  const bench = (ps.hand || []).filter((p) => p && p.kind === 'chess');
++  return { board, bench, cap: ps.deployCap, count: ps.deployCount };
++}
++
++/** Training only: legacy's layout variants (the default plan, REHEARSAL_VARIANTS, PICK_EXTRA_VARIANTS) for any lineup `pieces`. */
++export function xPlansForLineupForTraining(m, ps, pieces, K = 8) {
++  const out = [], seen = new Set();
++  for (const v of [{}, ...REHEARSAL_VARIANTS.slice(1), ...PICK_EXTRA_VARIANTS]) {
++    const plan = runSteps(planLayoutSteps(m, ps, pieces, { ...LAYOUT_PARAMS, ...v }, { occupied: new Set() }));
++    const s = oracle2Sig(plan); if (seen.has(s)) continue;
++    seen.add(s); out.push(plan); if (out.length >= K) break;
++  }
++  return out;
++}
++
++/** Training only: field lineup `pieces` with `plan` — each incoming bench piece swaps onto an outgoing piece's tile (or the outgoing
++ * piece goes to a free hand slot), then the plan is applied. Returns true when the board's chess set equals the lineup. */
++export function xApplyLineupForTraining(m, ps, pieces, plan) {
++  const keep = new Set(pieces.map((p) => p.uid));
++  const out = [...ps.board.entries()].filter(([, p]) => p && p.kind === 'chess' && !keep.has(p.uid));
++  const inc = pieces.filter((p) => { const loc = ps.find(p.uid); return loc && loc.area !== 'board'; });
++  for (let i = 0; i < out.length; i++) {
++    const [k, op] = out[i]; let done = false;
++    if (i < inc.length) { const [r, c] = parseKey(k); done = tryDo(() => ps.move(inc[i].uid, { area: 'board', row: r, col: c }, pieceDir(op))); }
++    if (!done) { const idx = freeSlot(ps.hand); if (idx >= 0) tryDo(() => ps.move(op.uid, { area: 'hand', idx })); }
++  }
++  runSteps(applyPlanSteps(m, ps, pieces, plan));
++  const now = new Set([...ps.board.values()].filter((p) => p && p.kind === 'chess').map((p) => p.uid));
++  return now.size === keep.size && [...keep].every((u) => now.has(u));
++}
+diff --git a/server/match/botIoletaPolicy.js b/server/match/botIoletaPolicy.js
+index 796a297..a456fc6 100644
+--- a/server/match/botIoletaPolicy.js
++++ b/server/match/botIoletaPolicy.js
+@@ -40,7 +40,7 @@ const inactive = (m, gd, id) => gd.modeInactiveBonds.has(id)
+ /** Public disabled-bond union, also used by guarded generic bot scoring. */
+ export const ioletaBondDisabled = (m, ps, id) => inactive(m, ps.gd || m.gd, id);
+ 
+-export const ioletaEnabled = (m, ps) => ps.bandId === 'band_ioleta';
++export const ioletaEnabled = (m, ps) => ps.bandId === 'band_ioleta' || ps._ioletaForce === true; // route bots: _ioletaForce (local copy only)
+ 
+ // Static indexes are built once per data view, never once per hypothetical lineup.
+ function dataIndex(gd) {

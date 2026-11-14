@@ -1,0 +1,67 @@
+repo_file,repo_md5,source,source_tree_manifest_md5,source_file_md5,port
+(tree) code-A6,,"training tree of every final run (both architectures, all stages)",2ed55409,,"= code-A7 without the deploy pickers' eval code (env normalPicker / xPlace, eval.py --npicker-* / --xplace, xfeat / xplace / xpool / xsearch / xteach, bot.js); rebuilt by setup.sh, see rl/final/README.md"
+(tree) code-A7,,eval tree of setting b (c9 + xboss-v3),cfe0dda0,,rl/ and patches/ of this commit; random-action matches byte-identical (18 cases)
+(tree) code-P10,,normal-picker label / training tree,dd4a9831,,its tools/rl is contained in code-A7; trainers from the picker work dir as rl/py/picker_train5j.py etc.
+(tree) code-X11,,xboss-v3 label / training tree,13d2641b,,"its training-only files added as rl/py/x*.py, rl/xlabel.mjs, rl/xlineup.mjs, rl/xqtest.mjs; the rest is contained in code-A7"
+patches/0004-label-xplace-proxy-hooks.patch,f502fcde,tree code-A7 server/match/bot.js + botIoletaPolicy.js (vs code-SCR0 base + patches 0001-0003),cfe0dda0,62c2ae7e / 410c5a6c,diff against the pinned game + 0001-0003; comment edits
+rl/env.mjs,1efbd289,tree code-A7 tools/rl/env.mjs,cfe0dda0,30f8b954,3-way merge of the previous commit (code-P + placement diagnostics) with code-A7; comment edits
+rl/final/README.md,d559c571,final pipeline dir README.md,,3ea70ae7,rewritten from the pipeline README
+rl/final/argcmp.py,4c1d78ff,final pipeline dir argcmp.py,,4c1d78ff,identical
+rl/final/coop/coopstage.py,cb426b2b,final pipeline dir coop/coopstage.py,,fc57b219,comment edits only (prints the same arguments); launchers check this md5
+rl/final/coop/launch-xa.sh,7c4892e6,final pipeline dir coop/launch-xa.sh,,3d3a10cd,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/coop/launch.sh,815d85b0,final pipeline dir coop/launch.sh,,db361948,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/evq2.sh,f177ac79,final pipeline dir evq2.sh,,0815143d,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/ext/coop-launch.sh,1edd1ebb,final pipeline dir ext/coop-launch.sh,,878f842b,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/ext/launch.sh,0a14f0c8,final pipeline dir ext/launch.sh,,58037128,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/finalpick.py,c46178bc,final pipeline dir finalpick.py,,f57b22da,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/finsum.py,70a09975,final pipeline dir finsum.py,,10357424,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/gate.sh,c996dd87,final pipeline dir gate.sh,,e5a07338,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/heldout.sh,3e8b81fb,final pipeline dir heldout.sh,,153194f4,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/launch.sh,084c4b87,final pipeline dir the seed-1 host launcher,,e483a63c,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/mlp/launch.sh,c1e6e4f9,final pipeline dir mlp/launch.sh,,7c350b9e,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/records_final.py,2ba54f07,final pipeline dir records_final.py,,,new (regenerates records/final)
+rl/final/smoke.py,d5a2a2e4,final pipeline dir smoke.py,,d5a2a2e4,identical
+rl/final/v5/detrun.py,5d918209,final pipeline dir v5/detrun.py,,5d918209,identical
+rl/final/v5/launch.sh,ab13e540,final pipeline dir v5/launch.sh,,ad714027,"host paths -> variables ($B, manifest md5 overrides); comment edits"
+rl/final/v5/lookahead.json,2912c4aa,final pipeline dir v5/lookahead.json,,2912c4aa,identical
+rl/infer5.mjs,592d01e6,tree code-A7 tools/rl/infer5.mjs,cfe0dda0,29f55c9a,comment edits only
+rl/p5parity.mjs,0aa98a02,picker work dir h5/p5parity.mjs,,0aa98a02,host path -> repo-relative sys.path / SPRL_WORK; comment edits
+rl/parity5.mjs,247be2bc,tree code-A7 tools/rl/parity5.mjs,cfe0dda0,247be2bc,identical
+rl/proxies.mjs,e41dc9a3,tree code-A7 tools/rl/proxies.mjs,cfe0dda0,f56e51e7,comment edits only
+rl/py/addrnn.py,2d4cf49b,tree code-A7 tools/rl/py/addrnn.py,cfe0dda0,2d4cf49b,identical
+rl/py/eval.py,017bbf4d,tree code-A7 tools/rl/py/eval.py,cfe0dda0,bc549758,comment edits only
+rl/py/eval_dump.py,66d81903,tree code-A7 tools/rl/py/eval_dump.py,cfe0dda0,66d81903,identical
+rl/py/export5.py,2bfc31a5,tree code-A7 tools/rl/py/export5.py,cfe0dda0,2bfc31a5,identical
+rl/py/export_p5.py,68e4de84,tree code-P4 tools/rl/py/export_p5.py,,9ca808d2,host path -> repo-relative sys.path / SPRL_WORK; comment edits
+rl/py/init5.py,ff0f1843,tree code-A7 tools/rl/py/init5.py,cfe0dda0,ff0f1843,identical
+rl/py/model.py,2791051e,tree code-A7 tools/rl/py/model.py,cfe0dda0,2791051e,identical
+rl/py/model5.py,2dc56475,tree code-A7 tools/rl/py/model5.py,cfe0dda0,6c404adc,comment edits only
+rl/py/p5parity.py,03b3f0ea,picker work dir h5/p5parity.py,,3e32fa3c,host path -> repo-relative sys.path / SPRL_WORK; comment edits
+rl/py/parity5_dump.py,7f3c390e,tree code-A7 tools/rl/py/parity5_dump.py,cfe0dda0,fc4a76cf,comment edits only
+rl/py/picker_train5j.py,1b830985,picker work dir h5/picker_train5j.py,,79bd0855,host path -> repo-relative sys.path / SPRL_WORK; comment edits
+rl/py/poolgate.py,7b2716d2,picker work dir l8/poolgate.py,,f33bcd76,host path -> repo-relative sys.path / SPRL_WORK; comment edits
+rl/py/rnntest.py,ff073c2d,tree code-A7 tools/rl/py/rnntest.py,cfe0dda0,ff073c2d,identical
+rl/py/train_bc.py,012fab4f,tree code-A7 tools/rl/py/train_bc.py,cfe0dda0,012fab4f,identical
+rl/py/train_bc5.py,87478b2e,tree code-A7 tools/rl/py/train_bc5.py,cfe0dda0,53611295,comment edits only
+rl/py/train_ppo.py,4577e5fc,tree code-A7 tools/rl/py/train_ppo.py,cfe0dda0,82553ab0,comment edits only
+rl/py/winutil.py,9a4bef52,picker work dir b1/winutil.py,,af6de681,host path -> repo-relative sys.path / SPRL_WORK; comment edits
+rl/py/xbake.py,45f7a7ec,tree code-X11 tools/rl/py/xbake.py,13d2641b,1497ff75,comment edits only
+rl/py/xbossgap.py,f44bfc53,tree code-X11 tools/rl/py/xbossgap.py,13d2641b,3c12c2fd,comment edits only
+rl/py/xkfold.py,216bda6a,tree code-X11 tools/rl/py/xkfold.py,13d2641b,d2ca3112,comment edits only
+rl/py/xnoise.py,f9245610,tree code-X11 tools/rl/py/xnoise.py,13d2641b,d2575148,comment edits only
+rl/py/xqtest.py,18f0b90e,tree code-X11 tools/rl/py/xqtest.py,13d2641b,83734c3b,comment edits only
+rl/py/xtrain.py,f0104d31,tree code-X11 tools/rl/py/xtrain.py,13d2641b,d1f33822,comment edits only
+rl/r2check.mjs,3efb0ec6,tree code-A7 tools/rl/r2check.mjs,cfe0dda0,3efb0ec6,identical
+rl/record.mjs,7199c612,tree code-A7 tools/rl/record.mjs,cfe0dda0,7199c612,identical
+rl/spec.mjs,f10ec597,tree code-A7 tools/rl/spec.mjs,cfe0dda0,5444e5bd,comment edits only
+rl/trackm/recipes-M.json,d550de59,tree code-A7 tools/rl/trackm/recipes-M.json,cfe0dda0,aea36128,comment edits only
+rl/trackm/routebots.mjs,560af404,tree code-A7 tools/rl/trackm/routebots.mjs,cfe0dda0,8b55eb07,comment edits only
+rl/trackm/routematch.mjs,c946b617,tree code-A7 tools/rl/trackm/routematch.mjs,cfe0dda0,c946b617,identical
+rl/xfeat.mjs,f4050cf6,tree code-A7 tools/rl/xfeat.mjs,cfe0dda0,d3de1f0a,comment edits only
+rl/xlabel.mjs,7058438f,tree code-X11 tools/rl/xlabel.mjs,13d2641b,f4fe8d2d,comment edits only
+rl/xlineup.mjs,2a851417,tree code-X11 tools/rl/xlineup.mjs,13d2641b,06fc74ec,comment edits only
+rl/xplace.mjs,be9c5db8,tree code-A7 tools/rl/xplace.mjs,cfe0dda0,871520df,comment edits only
+rl/xpool.mjs,6531eea0,tree code-A7 tools/rl/xpool.mjs,cfe0dda0,4834ba22,comment edits only
+rl/xqtest.mjs,9e6ed397,tree code-X11 tools/rl/xqtest.mjs,13d2641b,dae3352e,comment edits only
+rl/xsearch.mjs,f2b96e0b,tree code-A7 tools/rl/xsearch.mjs,cfe0dda0,766c8c2c,comment edits only
+rl/xteach.mjs,c2be12bf,tree code-A7 tools/rl/xteach.mjs,cfe0dda0,5434911b,comment edits only

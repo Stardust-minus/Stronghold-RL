@@ -1,0 +1,5 @@
+BC,epochs,val CE (own split),acc,buy acc,agrees on NEW-member buys,BC buys a new member when buyable R8 / R10 (legacy .66 / .64),sells hitting a sole P member
+bc-fresh,4,0.763,0.730,0.608,0.21,.05 / .02,9.7%
+A MLP40 (no plan features),40,0.532,0.833,0.743,0.72,.54 / .56,9.4%
+PB1 (plan),6,0.578,0.796,0.719,0.88,.79 / .76,2.9%
+PB1c (plan) PB1c,20,0.407,0.863,0.795,0.90,.75 / .71,6.0%

@@ -1,0 +1,6 @@
+ensemble,dU (u: boss w 0.5),dLeaks,dBossShare,switches,paired vs deployed
+q5 alone,+0.00,+.01,+.042,.96,
+q5 + head-joint (deployed),-0.13±.08,+.075,+.042,.96,
+q5 + hjW (plain warm refit),-0.05±.07,+.034,+.041,.95,+0.069±.039
+"q5 + hjE (ensemble-aware warm refit, + X labNH)",+0.15±.05,-.069,+.025,.63,+0.255±.064 (boss w 2: +0.228±.065)
+oracle (K8),+0.84,-.40,+.090,.80,

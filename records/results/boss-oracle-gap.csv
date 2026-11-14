@@ -1,0 +1,5 @@
+arm,solo:ABYSS,Δ,coop4h1,Δ,natT2 solo / coop,main layers solo / coop
+ens (X q4b + P boss picker),0.576 (= N),,0.399 (= N),,.97 / .67,172 / 124
+ens + S80 picker,0.590 (= N),+.015±.020,0.460 (= N),+.061±.025,.98 / .68,176 / 134
+"ens + oracle, K8 legacy only",0.658,+.082±.021,0.529,+.130±.025,.99 / .75,191 / 157
+"ens + oracle, K8 + 4 stacking templates",0.668,+.092±.022,0.561,+.162±.026,.99 / .76,207 / 163

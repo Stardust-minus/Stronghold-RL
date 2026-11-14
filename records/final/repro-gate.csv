@@ -1,0 +1,4 @@
+gate,what,result,n,differing
+g1,"training tree, no pickers, solo:ABYSS vs NMA 30M reference",IDENTICAL,476,0
+g3,"eval tree, c9 pool + xboss-v3, solo:ABYSS vs reference",IDENTICAL,476,0
+g4,"eval tree, c9 pool + xboss-v3, coop4h1:ABYSS vs reference",IDENTICAL,476,0
