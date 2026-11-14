@@ -244,3 +244,4 @@ width/train/W1-curve.csv,51859,train curve: one row per PPO update
 width/train/W1-runs.json,3079,"run args (start events), in-run evals, end events"
 width/train/W2-curve.csv,51914,train curve: one row per PPO update
 width/train/W2-runs.json,3076,"run args (start events), in-run evals, end events"
+final/README.md,7148,"the metrics of the final evals: definitions, computation, how to read them"

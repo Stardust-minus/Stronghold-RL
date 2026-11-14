@@ -112,7 +112,18 @@ Decided per run once its 50M and 60M evals are in:
 - S2 = rolling ABYSS training win (`rolling.ABYSS.win`, n ≥ 100) meaned over the 55–60M updates, minus the 45–50M mean.
 - Extend if S1 ≥ +.02 or S2 ≥ +.02. At most 2 runs are extended: the best qualifying run by 60M setting-b mean, and
   one MLP and one v5 may each take a slot if both qualify.
-- Stop early when a 10M segment gains < +.01 on both S1 and S2.
+- Stop early when a 10M segment gains < +.01 on both S1 and S2. Segment versions (11-14): S1 = the paired Δ of the b
+  mean against the previous milestone; S2 = the rolling ABYSS win over the segment's last 5M minus the previous 5M,
+  measured inside the extension. S1 decides the first segment.
+
+| run | S1 | S2 | 60M b mean | extended |
+|---|---|---|---|---|
+| FIN-MLP-s1 | −.014 ± .019 | +.007 | .663 | no |
+| FIN-MLP-s2 | −.005 ± .018 | +.027 | .672 | yes: FIN-MLPX-s2 (seed offset 64,500,000) |
+| FIN-V5-s1 | +.012 ± .019 | +.027 | .696 | qualified; extended later as FIN-V5X-s1 (66,500,000) when a slot freed up |
+| FIN-V5-s2 | +.045 ± .019 | +.041 | .708 | yes: FIN-V5X-s2 (68,500,000) |
+
+<!-- FINAL: the extension outcomes (where each run stopped and why) -->
 
 `ext/launch.sh` builds the argument list as:
 
@@ -149,6 +160,12 @@ The copy here has comment-only edits (md5 `cb426b2b`, the launchers' `CS_MD5` de
 Gate: each 70M is evaluated against its own 60M (solo:ABYSS 480 + coop4h1 480, settings a and b). Adopt the stage if
 co-op rises and solo drops by no more than .02.
 
+Validation before the final runs reached 60M (arms CM2 / CV5 / CV5b: the stage for 10M from their 30M checkpoints, setting b): the MLP gained
++.118 ± .026 on co-op (solo −.040 ± .027); v5 lost co-op at lr 1e-4 (−.027 ± .026) and at 3e-4 (−.048 ± .027,
+`coop/launch-xa.sh` with `XARGS='--lr 3e-4'`). So the stage is for the MLP; a v5 run keeps its 60M checkpoint unless its
+own 70M gate passes. FIN-MLP-s2's stage passed (b coop +.101 ± .027, b solo −.019 ± .026).
+`ext/coop-launch.sh` runs the stage on an extended checkpoint.
+
 ## Evals
 
 - Milestones: the first checkpoint at or past 30M, 40M, 50M and 60M. Also 70M for the co-op stage and 70/80/90M for
@@ -179,4 +196,8 @@ co-op rises and solo drops by no more than .02.
   - The held-out seeds are solo:ABYSS 202,000,000–202,000,475 and coop4h1:ABYSS 780,000,000–780,000,475.
   - No earlier eval base or record seed reaches them. Training env seeds start at 1.01e9.
   - The reported number is the held-out one.
-- `rl/final/records_final.py` regenerates `records/final/` from the eval outputs.
+- `rl/final/records_final.py` regenerates `records/final/` from the eval outputs; `records/final/README.md` defines the
+  columns.
+- The chosen checkpoint and its pickers are exported with `rl/release/export_release.py` ([RELEASE.md](../../RELEASE.md)).
+
+<!-- FINAL: the pick (candidate, held-out numbers) -->

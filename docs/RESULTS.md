@@ -1,10 +1,94 @@
 # Results
 
-Team win rate (any seat of the team clears ABYSS / HARD) on paired seeds, greedy policy that also picks its own band,
-legacy placement for the RL seat at r0. `b3` / `b0` = legacy's boss-round rehearsal on / off; **b0 is the deploy
-setting** (see [DESIGN.md](DESIGN.md) §9); since 11-13 the deploy number is b0 with `--visible-only` (§1b). ± is one
-standard error: √(p(1−p)/n) for a rate, sd / √n of the per-seed differences for a paired Δ. `fa` is the team's share
-of the Final Assault pool. Steps are environment decisions of the RL seats. Source CSVs: `docs/curves/`.
+Team win rate (any seat of the team clears ABYSS) on paired seeds, greedy policy. ± is one standard error: √(p(1−p)/n)
+for a rate, sd / √n of the per-seed differences for a paired Δ.
+
+- **Part A** (11-14) is the final pipeline: headline protocol, 476 paired seeds per cell, setting a (no pickers) and
+  setting b (the deploy pickers c9 + xboss-v3), stacking metrics next to every win. Protocol and metric definitions:
+  [records/final/README.md](../records/final/README.md). Source tables: `records/final/`.
+- **Part B** (11-12 to 11-13 morning) is the earlier hybrid line under its own protocol (band chosen by the policy, legacy
+  placement, b3 / b0, no plan). Its numbers do not compare with Part A.
+
+## Final result
+
+<!-- FINAL:BEGIN results table. Fill from records/final/heldout.csv and ranking.csv after the pick. -->
+*Placeholder: filled after the final pick.*
+
+| | solo:ABYSS | coop4h1:ABYSS |
+|---|---|---|
+| final model: `<name>` (`<arch>`, `<steps>`), setting b, held-out (476 seeds each) | TBD ± TBD | TBD ± TBD |
+| same, milestone seed set | TBD | TBD |
+| picker lift b − a (milestone seeds, paired) | TBD ± TBD | TBD ± TBD |
+| natMain / natMainT2 | TBD / TBD | TBD / TBD |
+| main / secondary / Σ layers | TBD | TBD |
+| elites | TBD | TBD |
+| reference: NMA 30 M (seed 0), setting b, milestone seeds | 0.679 | 0.540 |
+| reference: NAT 88 M + boss picker (elite route, not the target play) | 0.596 | 0.581 |
+| legacy fill (every model seat legacy; 11-13 protocol, b0, 480 seeds) | 0.010 | 0.071 |
+<!-- FINAL:END -->
+
+## A1. Held-out confirmation (`--seed 200000000`, setting b; status 11-14 05:00 UTC)
+
+| candidate | solo:ABYSS | coop4h1:ABYSS | mean | paired vs FIN-MLP-s2-70M (solo / coop) |
+|---|---|---|---|---|
+| FIN-MLP-s2-70M | 0.784 ± 0.019 | 0.737 ± 0.020 | 0.761 | |
+| FIN-V5-s2-60M | 0.723 ± 0.021 | 0.639 ± 0.022 | 0.681 | −0.061 ± 0.026 / −0.099 ± 0.025 |
+| CB10 | 0.704 ± 0.021 | 0.616 ± 0.022 | 0.660 | −0.080 ± 0.025 / −0.122 ± 0.025 |
+
+The pick itself is made on the milestone seeds (A2); the held-out set removes the selection bias
+([FINDINGS.md](FINDINGS.md) §13). `records/final/heldout.csv` is the current table.
+
+## A2. Milestones of the final runs (476 paired seeds, `--seed 7000000`)
+
+Setting b unless noted. Δ = paired vs NMA 30 M in the same setting.
+
+| checkpoint | b solo | Δ | b coop | Δ | a solo | a coop | natMain / T2 (b solo) | natMain / T2 (b coop) | Σ layers b solo / coop | elites b solo / coop |
+|---|---|---|---|---|---|---|---|---|---|---|
+| NMA 30 M (reference) | 0.679 | | 0.540 | | 0.504 | 0.382 | 0.99 / 0.96 | 0.90 / 0.73 | 304 / 243 | 6.0 / 5.1 |
+| FIN-MLP-s1 60 M | 0.708 | +0.029 ± 0.027 | 0.618 | +0.078 ± 0.027 | 0.544 | 0.489 | 0.99 / 0.96 | 0.90 / 0.75 | 314 / 264 | 5.5 / 5.0 |
+| FIN-MLP-s2 60 M | 0.742 | | 0.601 | | 0.569 | 0.424 | 0.99 / 0.96 | 0.88 / 0.66 | 328 / 253 | 5.7 / 4.9 |
+| FIN-MLP-s2 70 M (co-op stage) | 0.723 | | 0.702 | | 0.595 | 0.508 | | 0.91 / 0.81 | 296 (coop) | 5.6 (coop) |
+| FIN-V5-s1 60 M | 0.704 | | 0.687 | | 0.561 | 0.511 | 0.99 / 0.97 | 0.87 / 0.71 | 334 / 295 | 6.0 / 4.8 |
+| FIN-V5-s2 60 M | 0.754 | | 0.662 | | 0.592 | 0.511 | 0.98 / 0.96 | 0.88 / 0.75 | 331 / 281 | 5.3 / 4.6 |
+
+Every milestone (30–90 M), the Δ columns and the top main / secondary bonds: `records/final/milestones.csv` and
+`summary.md`. The main nations are 拉特兰 (about 0.63 of solo seats) and 维多利亚 (0.28); co-op seats spread over
+谢拉格 / 拉特兰 / others because the human's nation is yielded. The commonest secondaries are 灵巧, 精准 and 坚守.
+
+## A3. Co-op stage gate (the stage output vs its start, paired)
+
+| run | b solo | b coop | a solo | a coop | adopted |
+|---|---|---|---|---|---|
+| FIN-MLP-s2 | −0.019 ± 0.026 | +0.101 ± 0.027 | +0.025 ± 0.028 | +0.084 ± 0.026 | yes |
+| CB10 (NMA 30 M → 40 M) | +0.008 ± 0.026 | +0.080 ± 0.028 | +0.010 ± 0.028 | +0.073 ± 0.025 | yes |
+| CM2 (FIN-MLP-s1 30 M → 40 M) | −0.040 ± 0.027 | +0.118 ± 0.026 | +0.025 ± 0.027 | +0.075 ± 0.025 | (validation) |
+| CV5 (FIN-V5-s1 30 M → 40 M, lr 1e-4) | +0.046 ± 0.027 | −0.027 ± 0.026 | +0.046 | +0.006 ± 0.027 | no |
+| CV5b (same, lr 3e-4) | −0.017 ± 0.029 | −0.048 ± 0.027 | −0.029 | −0.023 | no |
+
+The other runs' stage results: `records/final/coopgate.csv`. Gate: co-op Δ > 0 and solo Δ ≥ −0.02.
+
+## A4. Picker lift (setting b − a, same checkpoint, paired)
+
++0.13 to +0.20 at every milestone of every final run, solo and co-op. Σ layers rise by 30–51 with the pickers; natMain,
+natMainT2 and the main nations do not change. Picker development, against the previous picker on the same boards:
+c9 +0.025 ± 0.009 over the K8 picker Sall (2,856 pairs), xboss-v3 +0.029 ± 0.007 over xboss-v2 ([EXPERIMENTS.md](EXPERIMENTS.md)
+Phase 6).
+
+## A5. Co-op diagnostics (`py/coopstats.py`, setting b, coop4h1:ABYSS)
+
+| checkpoint | collision | win, collided matches | win, other matches | replans |
+|---|---|---|---|---|
+| FIN-MLP-s2 60 M | 0.079 | 0.540 (113 matches) | 0.620 | 0 |
+| FIN-MLP-s2 70 M | 0.088 | 0.632 (125) | 0.726 | 0 |
+
+Robustness to the teammate type (setting a, NMA 30 M and the CB / CA arms): `records/results/coop-*.csv`.
+
+# Part B: the hybrid line (11-12 to 11-13 morning)
+
+Team win rate on paired seeds, greedy policy that also picks its own band, legacy placement for the RL seat at r0. `b3`
+/ `b0` = legacy's boss-round rehearsal on / off; b0 was the deploy setting at the time, with `--visible-only` since
+11-13 (§1b). `fa` is the team's share of the Final Assault pool. Steps are environment decisions of the RL seats.
+Source CSVs: `docs/curves/`.
 
 ## 1. Headline: solo:ABYSS, 480 paired seeds (2026-11-13)
 
@@ -135,8 +219,11 @@ The final ppo2 (13 / 14 / 15 M averaged) against production legacy at its produc
 
 ## CSV files (`docs/curves/`)
 
+Part B's tables come from these files; Part A's from `records/final/` and `records/results/`.
+
 | File | Columns |
 |---|---|
+| `final.csv` | the columns of `<arm>.csv`: the 96-seed in-run evaluations (solo:HARD, solo:ABYSS; coop4h1:ABYSS in the co-op stage) of the final runs, their extensions and co-op stages and the co-op arms CA / CB / CM2 / CV5 / CV5b, from `records/train/*/*-runs.json` |
 | `<arm>.csv` | arm, steps, rehearsal, boss_rehearsal, config, n_seeds, win, win_se, fa: the in-run evaluations (boss_rehearsal blank = not recorded by that run's evaluator; fa 0 for ppo1 = not measured then) |
 | `solo480.csv` | the same columns, solo:ABYSS on 480 seeds |
 | `deploy288.csv` | the same + mates (`mates r3`: legacy mates at production rehearsal) |

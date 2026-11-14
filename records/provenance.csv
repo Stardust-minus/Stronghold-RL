@@ -65,3 +65,11 @@ rl/xpool.mjs,6531eea0,tree code-A7 tools/rl/xpool.mjs,cfe0dda0,4834ba22,comment 
 rl/xqtest.mjs,9e6ed397,tree code-X11 tools/rl/xqtest.mjs,13d2641b,dae3352e,comment edits only
 rl/xsearch.mjs,f2b96e0b,tree code-A7 tools/rl/xsearch.mjs,cfe0dda0,766c8c2c,comment edits only
 rl/xteach.mjs,c2be12bf,tree code-A7 tools/rl/xteach.mjs,cfe0dda0,5434911b,comment edits only
+rl/infer.mjs,de0c9129,"release prep (11-14), from repo 27452bd7",,27452bd7,reads plan-slot rows (layout pslot) of natPlan exports
+rl/infer2.mjs,6a78a978,"release prep (11-14), from repo 91e23d92",,91e23d92,reads plan-slot rows (layout pslot) of natPlan exports; outputs of exports without pslot unchanged (bitwise)
+rl/infer3.mjs,4fc3e4b8,"release prep (11-14), from repo ac28a0ad",,ac28a0ad,refuses plan-slot exports
+rl/py/export.py,00d46ed2,"release prep (11-14), from repo 330f2c38",,330f2c38,writes layout pslot for checkpoints with plan slots; other exports byte-identical
+rl/py/coopstats.py,1bf96234,release prep (11-14),,,new: co-op collision / replans from eval JSONs
+rl/release/export_release.py,d600c0e3,release prep (11-14),,,"new: release export, metadata path scrubbing, JS-vs-torch parity on recorded decisions"
+rl/release/play.mjs,62cb7e72,release prep (11-14),,,new: play a release in JS with both pickers
+rl/release/xplace_arg.py,5ae0a3f2,release prep (11-14),,,new: the --xplace value of a release

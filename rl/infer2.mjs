@@ -24,7 +24,10 @@ export class SPPolicy2 {
         }
         tables.push({ field, n, T }); col += dim;
       }
-      this.blocks[name] = { L, l0, l2, tables, h0: new Float32Array(l0.out), rows: Array.from({ length: L.count }, () => new Float32Array(l2.out)),
+      // (11-14) natPlan.slots: the plan-slot rows (export.py layout pslot) are the last first-layer columns (model.py _block order)
+      const ps = L.pslot ? { offset: L.pslot.offset, width: L.pslot.width, col } : null;
+      if (ps && (L.pslot.count !== L.count || col + ps.width !== l0.inn)) throw new Error(`plan-slot layout of ${name} does not match enc.${name}.0`);
+      this.blocks[name] = { L, l0, l2, tables, ps, h0: new Float32Array(l0.out), rows: Array.from({ length: L.count }, () => new Float32Array(l2.out)),
         present: new Uint8Array(L.count) };
     }
     this.bonds0 = lin('bonds.0'); this.bonds2 = lin('bonds.2');
@@ -55,7 +58,7 @@ export class SPPolicy2 {
   }
 
   encode(obs, name) {
-    const B = this.blocks[name], { L, l0, l2, tables, h0 } = B, num = L.numeric, nn = num.length;
+    const B = this.blocks[name], { L, l0, l2, tables, ps, h0 } = B, num = L.numeric, nn = num.length;
     for (let r = 0; r < L.count; r++) {
       const base = L.offset + r * L.width;
       B.present[r] = obs[base] > 0.5 ? 1 : 0;
@@ -64,6 +67,7 @@ export class SPPolicy2 {
         let s = l0.b[o]; const row = o * l0.inn;
         for (let i = 0; i < nn; i++) s += l0.w[row + i] * obs[base + num[i]];
         for (const t of tables) { let code = Math.round(obs[base + t.field]); if (!(code >= 0)) code = 0; if (code > t.n - 1) code = t.n - 1; s += t.T[code * l0.out + o]; }
+        if (ps) { const pb = ps.offset + r * ps.width, c0 = row + ps.col; for (let j = 0; j < ps.width; j++) s += l0.w[c0 + j] * obs[pb + j]; }
         h0[o] = s < 0 ? 0 : s;
       }
       SPPolicy2.dense(l2, h0, 0, B.rows[r], true);

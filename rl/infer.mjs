@@ -44,6 +44,7 @@ export class SPPolicy {
         let code = Math.round(obs[base + field]); if (!(code >= 0)) code = 0; if (code > n - 1) code = n - 1;
         for (let k = 0; k < dim; k++) parts.push(E.data[code * dim + k]);
       }
+      if (L.pslot) for (let j = 0; j < L.pslot.width; j++) parts.push(obs[L.pslot.offset + r * L.pslot.width + j]); // (11-14) natPlan.slots
       rows.push(this.mlp(`enc.${name}`, Float32Array.from(parts)));
       present.push(obs[base] > 0.5);
     }

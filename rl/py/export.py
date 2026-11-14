@@ -15,7 +15,10 @@ for name, t in net.state_dict().items():
     tensors[name] = {'offset': off, 'shape': list(arr.shape)}
     chunks.append(arr.tobytes()); off += arr.size
 layout = {n: {'offset': o, 'count': c, 'width': w, 'ids': [[f, v] for f, v in ids],
-              'numeric': getattr(net, f'num_{n}').tolist()} for n, (o, c, w, ids) in net.layout.items()}
+              'numeric': getattr(net, f'num_{n}').tolist(),
+              # (11-14) natPlan.slots: the plan-slot block whose rows are appended to this block's rows (model.py pslot); only when present
+              **({'pslot': dict(zip(('offset', 'count', 'width'), getattr(net, 'pslot')[n]))} if n in getattr(net, 'pslot', {}) else {})}
+          for n, (o, c, w, ids) in net.layout.items()}
 manifest = {'format': 'sp-policy/1', 'dataId': net.spec['dataId'], 'D': net.D, 'A': net.A, 'emb': EMB, 'entityOut': ENTITY_OUT,
             'pointer': getattr(net, 'pointer', POINTER), 'scalars': SCALARS, 'layout': layout, 'bondsAt': list(net.bonds_at), 'tensors': tensors,
             'steps': ck.get('steps'), 'stage': ck.get('stage'), **({'cfg': net.cfg} if getattr(net, 'cfg', None) else {})}

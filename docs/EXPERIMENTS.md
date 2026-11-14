@@ -1,7 +1,9 @@
 # Experiment log
 
-This is every training run and side study in order, failures included. Times are UTC+8 in November 2026 (11-11 to
-11-13).
+This is every training run and side study in order, failures included. Phases 1–3 (11-11 to 11-13 morning) give times
+in UTC+8; from Phase 4 on (11-13 to 11-14) times are UTC. The final pipeline's exact arguments are in
+[rl/final/README.md](../rl/final/README.md), its results in `records/final/`, and the result tables of Phases 4–8 in
+`records/results/`.
 
 For each run the entry gives:
 
@@ -11,7 +13,8 @@ For each run the entry gives:
 - **result**: team win, paired seeds, ± one SE;
 - **decision**: what was done next.
 
-Where nothing else is said, evaluation is greedy, r0b3, 96 seeds. Steps count RL-seat decisions. The full flags of
+Where nothing else is said, evaluation in Phases 1–3 is greedy, r0b3, 96 seeds; from Phase 4 on it is greedy, b0,
+480 paired seeds. Steps count RL-seat decisions. The full flags of
 every launch are in [curves/hyperparams.csv](curves/hyperparams.csv), the in-run evaluations in `curves/<arm>.csv`,
 and the protocol in [DESIGN.md](DESIGN.md) §9.
 
@@ -174,7 +177,7 @@ Version 4 gave the policy every decision of the seat, including each piece's til
 - **Result** at 2 M, 48 seeds: solo HARD 0.125 / 0.125, coop4 HARD 0.188 / 0.167. Both below BC.
 - **Decision:** no help. Phase 2 closed.
 
-## Phase 3: hybrid model, observation v3 (11-12 16:00 → now)
+## Phase 3: hybrid model, observation v3 (11-12 16:00 → 11-13 09:30)
 
 The policy does band, economy and 机变; legacy places ([DESIGN.md](DESIGN.md) §1).
 
@@ -285,7 +288,7 @@ Baselines on the new configs (96 seeds, `curves/baselines.csv`):
 | coop4l | 0.135 / 0.094 | ≤ 0.042 |
 | coop2l | 0.073 / 0.052 | ≤ 0.042 |
 
-### m3s (11-12 22:06 →, running)
+### m3s (11-12 22:06 →, stopped 11-13)
 - **Parent:** m3 @ 10.02 M.
 - **Change:** `--mix v3` (ABYSS .65: solo .25, coop4l .12, coop4 .08, coop2l .07, coop2 .05, coop4ai .08) and
   `--seed-offset 11000000`. A second in-run evaluation, `--eval2-configs solo:ABYSS,coop4l:ABYSS,coop2l:ABYSS
@@ -329,7 +332,7 @@ Baselines on the new configs (96 seeds, `curves/baselines.csv`):
   - KL continues (28.5 M by 11-13 09:00, no further evaluation yet).
   - The privileged-critic code is not part of this snapshot.
 
-### S: solo-heavy, sample-matched mix (11-12 22:29 →, running)
+### S: solo-heavy, sample-matched mix (11-12 22:29 →, stopped 11-13)
 - **Parent:** m3 @ 10.02 M.
 - **Change:** `--mix v3s` (ABYSS .75: solo .45, coop4l .15, coop2l .10, coop4ai / coop4 .02, coop2 .01). This is
   about 55 % solo and 28 % one-RL co-op of the ABYSS samples.
@@ -348,7 +351,7 @@ The 96-seed S @ 20 M figures (solo 0.354, coop4l 0.219 with mates r3) were lucky
 0.132. At 30 M the in-run S − m3s read +0.115 ± 0.055 on solo b3, against +0.008 ± 0.022 on 480 seeds. From here on,
 decisions use 288 / 480 paired seeds, and 96-seed evaluations are trend only.
 
-### SC / SK (11-13 04:14 →, running)
+### SC / SK (11-13 04:14 →, stopped 11-13)
 - **Parent:** S @ 20.03 M.
 - **Change:**
   - **SC:** `--mix v3sc` (ABYSS .78: solo .35, coop4l .25, coop2l .15). Why: heavier one-RL co-op, the binding gap.
@@ -376,7 +379,7 @@ original init (10 M), discarding the 38.0 M / 34.0 M progress for 18 minutes unt
 06:19 / 06:20 from the newest checkpoints. The launcher now resumes from the newest complete checkpoint on any start
 (`scripts/train.sh`, [FINDINGS.md](FINDINGS.md) §8).
 
-### Focus on solo; SO1 (11-13 07:49 →, running)
+### Focus on solo; SO1 (11-13 07:49 →, stopped 11-13)
 - **Owner, 07:4x:** focus on solo only, keep training, no from-scratch run. Two large solo arms (≈ 100 processes each)
   were planned and then put on hold until the controls settle the recipe.
 - **SO1:**
@@ -409,7 +412,7 @@ original init (10 M), discarding the 38.0 M / 34.0 M progress for 18 minutes unt
 - **Decision:** deploy numbers are b0 + visible-only from here on (`scripts/eval.sh` default). Training for
   deployment uses `--boss-rehearsal 0 --visible-only`.
 
-## Side studies (not training runs)
+## Side studies of Phases 1–3 (not training runs)
 
 | Date | Study | Result | Decision |
 |---|---|---|---|
@@ -424,3 +427,353 @@ original init (10 M), discarding the 38.0 M / 34.0 M progress for 18 minutes unt
 | 11-13 ~03:xx | v6 per-piece placement BC from the K16 layouts (about 3 M samples) | economy Δ −0.011; placement −0.080 (288 seeds, p 0.0001); 36 % tile + facing match | Track paused; retry only as a whole-layout pick or DAgger |
 | 11-13 early | Product scenarios, m3s @ 20 M | coop4h1 (1 proxy + 3 RL) 0.323; coop2h1 (1 proxy + 1 RL) 0.083 | Proxies die early, so these understate play with humans |
 | 11-13 early | 1-RL co-op diagnostic | Final Assault pool × alive players; mates net −0.45 each; co-op ABYSS HP 2.1–2.5× | Structural; levers are game-side ([FINDINGS.md](FINDINGS.md) §6) |
+
+## Phase 4: the elite route and placement (11-13, about 01:00 → 10:00 UTC)
+
+From here on, times are UTC. Evals are b0 (`--boss-rehearsal 0`), greedy, 480 paired seeds unless noted, and they now
+report the stacking metrics ([records/final/README.md](../records/final/README.md)). Earlier phases did not log them.
+SK @ 30 M (the best checkpoint of Phase 3) became the parent of the next line. The Phase 3 arms (m3s, S, SK, SC, SO1, KL)
+were stopped without further matched evals, so the open KL 0.003 and solo1 questions were not settled; the final recipe
+keeps KL 0.01.
+
+### LIN and LIN-C
+- **LIN.** Parent SK @ 30 M. Change: `--mix solo1` for 30–36 M, then `--mix mp1` (humans + model seats), 90 processes,
+  `--boss-rehearsal 0`. Why: train on the product configs at deploy settings.
+  - Result: solo:ABYSS 0.333 at 45 M, 0.315 at 62 M (b0, no picker).
+- **LIN-C.** Parent LIN @ 54 M. Change: a separate critic trunk (`model2.py`, `py/critic.py`; 2.52 M parameters, the
+  critic training-only). Result: +0.025 ± 0.010 pooled over LIN, mostly coop4h1. Adopted. LIN-C final (78 M) with the
+  boss picker: solo 0.477, coop4h1 0.510.
+- Baseline SK @ 30 M against legacy fill (every model seat replaced by legacy):
+
+| config | SK @ 30 M | legacy fill |
+|---|---|---|
+| solo:ABYSS | 0.319 | 0.010 |
+| coop4h1 | 0.358 | 0.071 |
+| coop4h2 | 0.206 | 0.033 |
+| coop4h3 | 0.085 | 0.033 |
+| coop2h1 | 0.056 | 0.017 |
+
+### Boss-round picker in the loop
+- **Change:** at the boss rounds, a learned head scores legacy's K8 layouts (`planLayout`, no battle built) and plays
+  the best. Labels: fixed-seed rehearsal of each candidate; joint head, leak weight 2 (`--picker-head` /
+  `--picker-trunk`, `picker.mjs`, `py/picker_train.py`).
+- **Result:** on SK @ 30 M, solo +0.123 (0.442), coop4h1 +0.109 (0.474). A stale (not refitted) head on LIN 58 M keeps
+  85–90 % of the gain. K10 / K12 add ≤ 1 point, so K8 stays. 35–45 ms per boss prep in JS.
+- **Decision:** the boss picker joins every eval and, in NAT, the training loop.
+
+### Width and structure A/B
+- **Change:** three arms from the same checkpoint, +15 M steps each: W2 = 2× width (5.8 M parameters, `py/widen.py`), AT
+  = entity attention (`infer2at.mjs`), W1 = control.
+- **Result** at +15 M (55.03 M, 480 + 480 paired seeds, b0, no picker): W1 0.325 / 0.429, W2 0.333 / 0.458, AT 0.323 /
+  0.421 (solo / coop4h1). W2 − W1 +0.019 ± 0.015, the gap growing (+0.002 / +0.004 / +0.019 at +5 / +10 / +15 M).
+  AT − W1 −0.005 ± 0.015.
+- **Decision:** AT closed. The W2 extension was not run (handover); width was not carried into the final recipe.
+
+### Stacking diagnosis
+The owner set a hard requirement here (later relaxed to a trend, see Phase 5): the AI must play a national main bond at
+tier ≥ 2 plus a stacked secondary class bond, not the elite-merge route.
+
+| seat | national main at end | national tier ≥ 2 | Σ layers | elites | win |
+|---|---|---|---|---|---|
+| model (SK / LIN line) | 4 % | 0 % | ~380 | ~6 | 0.32 |
+| legacy fill | 90 % | 78 % (reached at R9–R12) | 186 | 2.4 | 0.01 |
+
+The models' main bonds were 坚守 / 精准. Causes found: national tier 2 needs 6 distinct units of one nation and pays
+only late; the class route is 1.7–2× cheaper per layer; the R2 stacking shaping is route-agnostic; exploration at
+entropy 0.003 never finds the national route; legacy placement is blind to in-battle layer engines.
+
+### NAT: the national push on the elite line
+- **Parent:** LIN-C final (78 M). **Change:** `--nat-plan '{"phase":"forced"}'` for 78 → 81 M, then `"free"` to 88 M;
+  `--mix mp2`, the boss picker in the loop, `--bc-kl-from 78M --bc-kl-steps 5e6` (KL decaying to 0), late-lr flags.
+- **Result** (b0, boss picker, 480 seeds):
+
+| step | solo | coop4h1 | natMainT2 |
+|---|---|---|---|
+| LIN-C final | 0.477 | 0.510 | 0 |
+| 81.0 M | 0.473 | 0.527 | 0 |
+| 84.1 M | 0.500 | 0.560 | 0 |
+| **88.0 M** | **0.596** | **0.581** | **0** |
+
+  National main 6–9 %, national tier 2 at 0 %, Σ layers 320–390, about 6 elites.
+- **Decision:** the best win so far, on the elite route. Not acceptable under the requirement; kept as the win reference.
+  The win likely came from mp2, the KL decay and the picker in the loop, not from the national push (no ablation).
+
+### Placement ceilings (teacher-only, live seed)
+- Oracle placement on LIN-C 74 M, 96 seeds, solo: none 0.292, every round 0.625, boss rounds only 0.490, normal rounds
+  only 0.385 (+47 layers). coop4h1 0.490 → 0.677. Placement is a much bigger lever than the 11-12 study suggested.
+- Normal-round ablation (LIN-C 74 M, normal rounds only, 96 seeds): K8 legacy candidates, layer scoring, fixed seed
+  ("D") +0.073 ± 0.031 solo / +0.062 ± 0.049 coop4h1; wider candidates, outcome scoring or the live seed add only
+  0.01–0.03. **Decision:** build a learned normal-round picker from D (Phase 6).
+
+### Other
+- **Old scratch run SCR** (fresh BC → PPO): killed at 20 M (HARD 0.625, ABYSS 0.000). Causes: weak BC start, a KL decay
+  coinciding with a mix switch, almost no ABYSS win signal, entropy collapse.
+- Closed: an equipment-pick ceiling (+0.015 solo), bounty-round placement (≈ 0), a per-seat band-table refit (−0.125 on
+  coop4h1: seats pile onto the same bands), proxy handicaps (none that matters).
+
+## Phase 5: the national route (11-13 10:00 → 21:15 UTC)
+
+### Diagnosis: the BC start loses tier 2
+- solo:HARD, 192 seeds: legacy keeps national tier 2 (natMainT2 0.85, win 0.333); the BC start "bc-fresh" drops it to
+  about 0 (natMainT2 0.00–0.03, win 0.14), under greedy and sampled play and either band policy.
+- First reading: legacy follows a hidden focus bond the observation does not show. A **plan block** in the observation
+  (hindsight plan labels, data-plan1) lifted the BC's agreement on "buy a new member of the eventual nation" from 0.21
+  to 0.88.
+- **Correction:** bc-fresh was under-trained (about 4–6 epochs). A plain MLP BC trained to convergence (40 epochs, CE
+  0.532) reaches natMainT2 0.81; a v5 BC 0.84. Plan features still add about +0.18 agreement on commitment buys and a
+  controllable handle. From then on every BC trains 20–40 epochs to the best validation CE. A reproduction found
+  bc-fresh itself to be a lucky draw (three 4-epoch reruns: CE 0.79–0.81, HARD 0.146 each vs 0.177).
+
+### Route economics (no RL)
+- Shop Monte Carlo (2000 matches per cell, solo ABYSS, full commitment): P(tier 2 by R12) 0.94–0.97 for 叙拉古 / 阿戈尔 /
+  萨尔贡 / 谢拉格 / 卡西米尔, 0.82 维多利亚, 0.72 拉特兰, 0.49 炎. Half commitment is far too slow (≤ 0.15).
+- Controlled Final Assault boards (48 paired seeds): tier 2 is where the value is (about +0.2 pool share, against +0.03
+  per unit before it). Best pairs: 卡西米尔 + 突袭 0.49, 谢拉格 + 奥术 0.42, 拉特兰 + 精准 0.42.
+- Full-match route bots (480 seeds, r0): the national bot wins HARD 0.608 (legacy 0.388, class bot 0.223) and reaches tier
+  2 by R14 in 95 % of matches. Ranked by 0.5 HARD win + 0.3 ABYSS FA share + 0.2 controlled tier-2 win, the nations
+  order 拉特兰 1.0, 维多利亚 0.93, 谢拉格 0.83, 卡西米尔 0.82, 炎 0.66, 萨尔贡 0.52, 叙拉古 0.40, 阿戈尔 0.21. This is the
+  `assign: "auto"` order and `trackm/recipes-M.json`. The national bot became the BC teacher.
+
+### Plan-block arms (solo:HARD, 5 M from a plan BC, 192 seeds)
+- **NR / NL** (random / lead plan, KL to the plan BC): NL 0.484 (natMainT2 0.73), NR 0.333. Scratch-recipe baselines
+  without a plan: 0.68–0.75 but natMainT2 0.02. Tier 2 passes, win fails. Two bugs found and fixed on the way: plans
+  included disabled nations (→ `live`), and a plan head leaked the hindsight plan (→ `planFrom`, `blind`).
+- **NH** (a learned plan head): 0.641, natMainT2 0.99. NL10 (10 M) 0.635.
+- **NM** (BC "PB5" on the national-teacher data + `{slots, live, assign auto, band, focus, pairS}` + the plan reward
+  terms, lr 3e-4): **0.797** (+0.052 ± 0.036 vs the best scratch baseline), natMain 1.00, natMainT2 1.00, layers
+  121 / 68 / 223, elites 4.3. A no-plan control (MLP40 BC) reached 0.766 with natMainT2 drifting 0.81 → 0.50.
+- **NMA** = NM 5 M → 30 M with `--mix auto1` (the ABYSS curriculum, §8 of DESIGN). solo:ABYSS 0.296 at 12 M, 0.382 at
+  20 M (natMainT2 0.92); coop4h1 0.338 at 20 M.
+- **NH2 / NH2s** (a plan head at the band decision; NH2s adds a secondary push: secondary bonus 1.0 and dense pays):
+  0.818 / 0.781 at 5 M. NH2s has more secondary layers (87 vs 57), NH2s − NH2 −0.036 ± 0.036. **NH2sA** = NH2s → 30 M
+  on auto1; **NH2sC** = NH2s → mp2 with teammate proxies and `coopReplan`.
+
+### NMA against NH2sA at 30 M (480 seeds per cell)
+none = no pickers; ens = boss scorer + boss picker ensemble (xboss-v1); ensP = ens + the spatial normal picker S80.
+
+| arm | config | none | ens | ensP | natMainT2 | main / sec / Σ (ensP) |
+|---|---|---|---|---|---|---|
+| NMA | solo:ABYSS | 0.504 | 0.613 | **0.653** | 0.94–0.95 | 158 / 72 / 276 |
+| NMA | coop4h1 | 0.382 | 0.454 | **0.492** | 0.68–0.70 | 136 / 56 / 221 |
+| NH2sA | solo:ABYSS | 0.553 | 0.576 | 0.590 | 0.97–0.98 | 176 / 123 / 405 |
+| NH2sA | coop4h1 | 0.347 | 0.399 | 0.460 | 0.67–0.68 | 134 / 71 / 247 |
+
+- NH2sA − NMA, solo / coop: none +0.048 ± 0.030 / −0.036 ± 0.026; ensP −0.063 ± 0.029 / −0.032 ± 0.028.
+- An earlier read at 20 M ("NH2sA dominates NMA on solo", +0.071 ± 0.031 without pickers) did not hold with the
+  pickers.
+- **Decision:** the final recipe is NMA: it wins more in the deployed stack (with pickers), and it is simpler (a rule
+  plan, no plan head, band policy 0). The pickers were fitted on NMA-type boards too, which favours it in this
+  comparison. The owner approved "the NMA recipe to 60 M, MLP and v5, two seeds" at about 20:00.
+- The owner relaxed the requirement at about 17:05: the national main + stacked secondary style only needs to be broadly
+  followed, and win rate decides between candidates. Stacking metrics stay next to every win.
+
+### Reproducibility (from-scratch pipeline)
+- Deterministic BC (`train_bc.py --seed --deterministic --data-cpu`): bit-identical weights across reruns. v5 BC
+  through `rl/final/v5/detrun.py` (torch deterministic algorithms): identical tensors over three runs.
+- NM reproduced from scratch on a second host: data re-recorded byte-identical (224 / 224 files), BC 40 epochs (CE 0.329,
+  BC win 0.682), RL 0.786 / 0.781 on two seeds against NM 0.797 (both within ±0.03). NH2s reproduced likewise (−0.008
+  ± 0.029 over two seeds).
+- One-factor ablations on NM (480 seeds pooled, none adopted): plan-buy prior +0.000 ± 0.014, secondary pay ×2 +0.006,
+  economy masks +0.005 (192 seeds), per-round γ −0.033 ± 0.019.
+- PPO learning rate: 3e-4 learns faster than 1e-4 on the MLP (rolling HARD win at 1.6 M 0.38 vs 0.25); kept 3e-4.
+- Negative: BC on national-tier-2 trajectories only (natMainT2 0.01); forcing the plan in RL (forced p = 1 collapses
+  unforced play; nothing remains once p → 0).
+
+### Architecture: v5 and memory
+- **v5 BC** on the same data: val CE 0.425 (8 epochs) vs the MLP's 0.532 at 40 epochs; init solo:HARD win 0.365 vs
+  0.250 (96 seeds).
+- **Wave 1** (5 M, scratch recipe, 2 seeds each, 480 seeds): MLP from bc-fresh 0.758, MLP from a converged BC 0.735, v5
+  0.733. No win difference; v5 keeps national tier 2 on about 70 % of seats (MLP-b 32 %).
+- **Recurrent arms** (LSTM / GRU 128, zero-init residual branch, `--seq-len 32 --burn-in 16`): 0.621 / 0.627, −0.11 vs
+  v5. The branch stayed unused (zeroing it moves the policy by KL 0.0005); the loss is the cost of the sequence
+  training (fewer, slower updates). No evidence that memory helps; not pursued.
+- **V5P** (plan token, NH recipe, lr 1e-4): +0.031 ± 0.025 vs NH (one seed each). **V5Pbig** (d192 × 3): −0.079 ±
+  0.023, learns slower.
+- **v5 learning rate** (NH2s recipe, 480 seeds): at lr 3e-4 v5 is −0.036 ± 0.018 vs NH2s (KL to BC 0.46–0.60 at 2 M vs
+  0.19: it drifts fast); at **lr 1e-4** it is **+0.035 ± 0.017** (three seeds: 0.823 / 0.821 / 0.823). The final v5
+  trains at 1e-4.
+- **History features** (`obsExt.hist`: the seat's last battle outcomes and shop history): V5H +0.006 ± 0.020 without
+  the plan; V5PH (plan + hist) −0.022 ± 0.013 vs V5P6L. Not additive with the plan; dropped.
+- **v5 on the NMA recipe** (5 M, 480 seeds): V5NM 0.795 (two seeds) vs NM 0.808, −0.014 ± 0.019. No edge at 5 M on this
+  recipe. Both architectures went into the final runs.
+
+### Throughput
+Eight engine patches (memo, deopt and allocation fixes) plus V8 tiering flags: +8.2 % environment steps per second,
+byte-identical outputs on solo and long co-op cases. Because the outputs are identical, no result depends on them.
+
+## Phase 6: the deploy pickers (11-13 10:05 → 21:15 UTC)
+
+Both pickers replace legacy's layout choice at decision time with a learned score over rule-generated candidates. No
+battle is built at decision time. Design: [DESIGN.md](DESIGN.md) §9.
+
+### Normal rounds (rounds 1–13)
+- **Label rule.** The ablation's rule D (no extra leaks, max Σ layers gained, ties to most kills) on K8 legacy
+  candidates: +0.073 ± 0.017 solo / +0.075 ± 0.020 coop4h1 on LIN-C 74 M (480 seeds, legacy boss rounds). An earlier
+  96-seed read of a layer-pick rule (−0.062) was a bad draw (+0.017 ± 0.017 on 480).
+- **Summary-feature heads** (N1 / N2 / v3 / a set encoder V4b, 89 k labels): pooled +0.007 / +0.012 / −0.001. They kept
+  4–14 % of the label's layer gain; val R² ≤ 0. Closed.
+- **Spatial picker** (a v5 tower over each candidate's board): 40 k labels +0.008 ± 0.009 pooled; S80 (80 k) +0.032 ±
+  0.009; **Sall** (about 300 k labels, with DAgger states) +0.054 ± 0.009, oracle +0.101 ± 0.010. Sall became the default.
+- **Bug: label seeds.** Rehearsal seeds had no match term, so the first 196 k labels shared about 52 random streams.
+  Mild impact (a fixed-seed pick keeps 92–95 % of its gain under the live seed); fixed with per-match seeds.
+- **Candidate pool** (templates, last board, one-step edits; about 21.5 per decision): the best candidate is non-legacy
+  24–35 % of the time; the pool's best adds +1.4 to +3.5 layers over K8's best. Sall, trained on K8 only, does not gain
+  from the pool (pool − K8 −0.005 ± 0.011).
+- **c8** (refit on NH2sA labels): +0.005 ± 0.009 over Sall. Not adopted.
+- **c9** (trained on 41 k pool labels): offline utility 1.32 vs Sall-on-pool 1.17 and Sall-on-K8 0.90. In game (both
+  arms on xboss-v3):
+
+| board | config | Sall + v3 | c9 + v3 | Δ (paired) | n |
+|---|---|---|---|---|---|
+| NMA 30 M | solo:ABYSS | 0.674 | 0.680 | +0.005 ± 0.014 | 952 (2 seed sets) |
+| NMA 30 M | coop4h1 | 0.537 | 0.571 | **+0.035 ± 0.017** | 952 |
+| NH2sA 30 M | solo:ABYSS | 0.645 | 0.681 | +0.036 ± 0.020 | 476 |
+| NH2sA 30 M | coop4h1 | 0.483 | 0.515 | +0.032 ± 0.024 | 476 |
+
+  All 2,856 pairs +0.025 ± 0.009; main layers +9 to +28, Σ layers +11 to +37, natMain and elites unchanged. Released as
+  the default normal-round picker at 21:15. A DAgger refit (c10) was started and not finished.
+
+### Boss rounds (Final Assault, hidden core)
+- **Search labels.** Hill-climb on fixed rehearsal seeds: leader damage +35–49 %, boss leaks 0.87 → 0.01 per decision.
+- **QNet scorers over legacy's K12 / K8.** q2 boss-only +0.083 ± 0.038 vs legacy (LIN-C, 96 seeds), below the boss
+  picker; q3 / q4b about equal to the picker. **xboss-v1** = q4b + picker ensemble: +0.012 ± 0.006 over the picker. Q
+  hill-climb and random perturbations as extra candidates hurt an unadapted scorer.
+- **Bug: label seeds again.** Every solo boss label had been scored on the same 3 rehearsal seeds; fixed with salted
+  per-match seeds (`xRehearseForTraining`). The honest re-check of the generator matched the old one.
+- **Generator g3b** (imitation + one AWR step): +0.040 ± 0.017 over legacy in game, the first direct generator to beat
+  legacy; later AWR steps diverged.
+- **Lineup ceiling.** Placement oracle on legacy's lineup 0.533 vs 0.360; a lineup + placement oracle +0.060 ± 0.024
+  more. Left unexploited.
+- **xboss-v2** (scorer q5) +0.007 ± 0.004 over v1. **q8d** (recipe D: from scratch, more labels): offline +0.6 per
+  decision, in game +0.006 ± 0.004. Offline gains on K8 bought little.
+- **Teacher bake-off** (hill-climb / CEM / PUCT at 64 and 256 simulations, re-scored on fresh seeds): equal within
+  ±0.25; hill-climb 256 beats the best K8 candidate by +3.4–3.5 utility. Teacher = hill-climb 256.
+- **Win utility.** Only the round-14 pick moves the win rate. P(win | rehearsed FA share) is steep around share 0.85;
+  the earlier utilities over-weighted leaks (fitted: −0.1 per leak vs +11.7 per unit of share). Re-scored with it, the
+  in-game order of earlier scorers was reproduced.
+- **xboss-v3** = Dw (recipe D on the win utility, including pool labels) over the deploy pool (476 paired seeds, Sall
+  normal picker in every arm):
+
+| board | config | v2 (q5 ens) | q8d | Dw on K8 | **Dw on pool** | Dw pool − v2 |
+|---|---|---|---|---|---|---|
+| NMA 30 M | solo:ABYSS | 0.658 | 0.672 | 0.662 | **0.685** | +0.027 ± 0.013 |
+| NMA 30 M | coop4h1 | 0.521 | 0.534 | 0.523 | **0.534** | +0.013 ± 0.010 |
+| NH2sA 30 M | solo:ABYSS | 0.588 | 0.595 | 0.607 | **0.645** | +0.057 ± 0.018 |
+| NH2sA 30 M | coop4h1 | 0.464 | 0.464 | 0.471 | **0.483** | +0.019 ± 0.012 |
+
+  Pooled +0.029 ± 0.007 over v2; all of it from the pool (Dw pool − Dw K8 +0.021 ± 0.006). Stacking identical across
+  arms. Released at 19:35.
+
+### The pickers on the final models
+Setting b (c9 + xboss-v3) − setting a (no pickers), same checkpoint, 476 paired seeds: +0.13 to +0.20 on every final
+checkpoint, solo and co-op (`records/final/milestones.csv`, column `lift_b_minus_a`). Stacking rises with the pickers
+(Σ layers +30 to +51), natMain is unchanged.
+
+## Phase 7: co-op robustness and the co-op stage (11-13 11:40 → 11-14 04:15 UTC)
+
+### Teammate proxies and the robustness suite
+- A pool of scripted teammates (`proxies.mjs`) and a suite of cells (legacy r3 / r0, national, class, recipe, noisy,
+  each nation forced live). Measured as the "hole": Δ vs the model's own legacy-r3 result on the same seeds.
+- **Elite-route models** (NAT88, LIN-C): a 谢拉格 human costs −0.212 ± 0.031 / −0.271 ± 0.032. The yield rule hands the
+  human's nation to the human, and the elite builds held 2.3–2.5 谢拉格 operators per seat.
+- **National models** (NH2sA, NMA): robust to the teammate type (all Δ within ±0.04 for NH2sA). Their weakness is the
+  co-op level itself (0.35–0.38 without pickers).
+- **NMA nation cells** (480 seeds, no pickers): legacy-r3 0.383; 谢拉格 live 0.299 (hole −0.121 ± 0.030), 拉特兰 live
+  0.371 (−0.089 ± 0.034); collision 0.097 / 0.168 / 0.247. A human taking a carry nation is NMA's hole.
+- **Replanning on collision** (`coopReplan`), as a trained arm (NH2sC) and as an eval-time rule on NMA (NMArp):
+  collisions drop about 10×, win drops in every cell (NMArp legacy-r3 −0.044 ± 0.018, 拉特兰 −0.055 ± 0.025).
+  Rejected both times.
+- Real-player-weighted co-op (proxy cells weighted by the nation mix of 126 real matches, aggregates only): NMA 0.367 ±
+  0.010, NH2sA 0.354 ± 0.010. Lift over legacy fill (96 seeds, NMA): coop4h1 +0.296, coop4h2 +0.186, coop2h1 +0.131.
+
+### Co-op fine-tune arms (10 M from NMA 30 M, KL to the start)
+- **C1** (from NH2sA 30 M, replan on, mixed proxy pool, lr 3e-4): coop +0.069 ± 0.026 at 10 M, solo +0.013.
+- **CA** = C1's recipe on NMA (replan on, `nat:rand` heavy pool). **CB** = no replan; half the proxies ask for a carry
+  nation (`nat:lateranoShip`, `nat:kjeragShip`). Both `--mix mp2 --band-policy 0`, KL anchor = the start, `--micro 2048`
+  after two out-of-memory starts.
+
+| arm @ 10 M | solo | coop legacy-r3 | 谢拉格 live | 拉特兰 live | coop natMain / T2 / Σ / elites | collision / replans |
+|---|---|---|---|---|---|---|
+| CA | +0.013 ± 0.028 | +0.067 ± 0.025 | +0.028 | +0.021 | 0.95 / 0.82 / 238 / 5.7 | 0.005 / 0.74 |
+| CB | +0.010 ± 0.028 | +0.073 ± 0.025 | +0.065 | +0.034 | 0.89 / 0.75 / 247 / 5.5 | 0.091 / 0 |
+
+- At 5 M neither passed; CA's 拉特兰 cell was −0.076 there.
+- **Decision:** CB. It is ≥ CA in every co-op cell and needs no plan-rule change. Real-player-weighted coop4h1 0.367 →
+  0.427. With the pickers (setting b, 476 seeds), CB10 vs NMA 30 M: solo 0.687 (+0.008 ± 0.026), coop 0.620 (+0.080 ±
+  0.028).
+- **Validation on the final runs' 30 M checkpoints** (setting b, vs the 30 M start):
+
+| run | b solo | b coop | a solo | a coop |
+|---|---|---|---|---|
+| CM2 = FIN-MLP-s1 30 M + CB | −0.040 ± 0.027 | **+0.118 ± 0.026** | +0.025 | +0.075 |
+| CV5 = FIN-V5-s1 30 M + CB, lr 1e-4 | +0.046 ± 0.027 | −0.027 ± 0.026 | +0.046 | +0.006 |
+| CV5b = CV5 with lr 3e-4 | −0.017 ± 0.029 | −0.048 ± 0.027 | −0.029 | −0.023 |
+
+- **Decision:** the co-op stage applies to the MLP. On v5 it failed at both learning rates. CM2's solo dip with pickers
+  (−0.040) was flagged as a risk for the 70 M gate.
+
+## Phase 8: the final runs (11-13 21:35 UTC →)
+
+Recipe: the NMA recipe to 60 M, MLP and v5, seeds 1 and 2 (`rl/final/`). Seed 1 ran on an 8× H200 host (one GPU and 56
+threads per run), seed 2 on one RTX 4090 (both architectures sharing it, 32 + 64 threads). Gates before launch: the training tree reproduces the NMA 30 M
+reference evals per match, and the eval tree reproduces the c9 + xboss-v3 reference (476 / 476 matches each).
+
+### Milestones (setting b unless noted; 476 paired seeds; Δ vs NMA 30 M on the same setting)
+
+| checkpoint | b solo | b coop | a solo | a coop | lift solo / coop | natMain / T2 solo | natMain / T2 coop |
+|---|---|---|---|---|---|---|---|
+| NMA 30 M (reference) | 0.679 | 0.540 | 0.504 | 0.382 | +0.175 / +0.158 | 0.99 / 0.96 | 0.90 / 0.73 |
+| FIN-MLP-s1 30 M | 0.622 | 0.485 | 0.429 | 0.355 | +0.193 / +0.130 | 0.97 / 0.94 | 0.89 / 0.69 |
+| FIN-MLP-s2 30 M | 0.632 | 0.483 | 0.431 | 0.309 | +0.202 / +0.174 | 0.98 / 0.94 | 0.85 / 0.60 |
+| FIN-V5-s1 30 M | 0.605 | 0.580 | 0.452 | 0.382 | +0.153 / +0.197 | 0.99 / 0.96 | 0.83 / 0.70 |
+| FIN-V5-s2 30 M | 0.586 | 0.561 | 0.416 | 0.387 | +0.170 / +0.174 | 0.96 / 0.93 | 0.84 / 0.69 |
+| FIN-MLP-s1 60 M | 0.708 | 0.618 | 0.544 | 0.489 | +0.164 / +0.128 | 0.99 / 0.96 | 0.90 / 0.75 |
+| FIN-MLP-s2 60 M | 0.742 | 0.601 | 0.569 | 0.424 | +0.172 / +0.176 | 0.99 / 0.96 | 0.88 / 0.66 |
+| FIN-V5-s1 60 M | 0.704 | 0.687 | 0.561 | 0.511 | +0.143 / +0.176 | 0.99 / 0.97 | 0.87 / 0.71 |
+| FIN-V5-s2 60 M | 0.754 | 0.662 | 0.592 | 0.511 | +0.162 / +0.151 | 0.98 / 0.96 | 0.88 / 0.75 |
+
+- At 30 M every run trailed NMA 30 M on solo by 0.05–0.09, while still rising; NMA 30 M looks like an above-average seed.
+- No drift toward the elite route at any milestone: natMain 0.96–0.99 solo, Σ layers above NMA's, elites 4.6–6.2.
+- The full table, with every 40 / 50 M milestone and the stacking columns: `records/final/milestones.csv`.
+
+### Extension (60 M → 90 M)
+The owner approved continuing runs that were still rising ("you decide"). Rule ([rl/final/README.md](../rl/final/README.md)):
+S1 = paired Δ (60 M − 50 M) of the setting-b mean; S2 = rolling ABYSS training win, 55–60 M minus 45–50 M; extend if
+either ≥ +0.02; at most two runs (one MLP and one v5 may each take a slot).
+
+| run | S1 | S2 | 60 M b mean | extended |
+|---|---|---|---|---|
+| FIN-MLP-s1 | −0.014 ± 0.019 | +0.007 | 0.663 | no |
+| FIN-MLP-s2 | −0.005 ± 0.018 | +0.027 | 0.672 | yes (FIN-MLPX-s2) |
+| FIN-V5-s1 | +0.012 ± 0.019 | +0.027 | 0.696 | first no (V5-s2 had the higher mean), then yes after a rule change (FIN-V5X-s1) |
+| FIN-V5-s2 | +0.045 ± 0.019 | +0.041 | 0.708 | yes (FIN-V5X-s2) |
+
+- Continuation: weights only (fresh Adam with the resume warm-up), `--auto-smin 0.85` pins the curriculum at its 60 M
+  state, the seed offset moves by +500,000 so no match seed is replayed. Continuity checked on the first updates
+  (KL, clip fraction, explained variance, sps against the 55–60 M updates).
+- Rule change (11-14 04:56): the segment's S2 is measured within the extension (its last 5 M against the previous 5 M),
+  S1 decides the first segment, and a run stops at the next milestone if its segment gains < +0.01 on both. MLPX-s2's
+  within-extension S2 was −0.002.
+
+### Co-op stage on the 60 M checkpoints
+- **FIN-MLP-s2**: 70 M vs its own 60 M, setting b solo −0.019 ± 0.026, coop **+0.101 ± 0.027**; setting a +0.025 /
+  +0.084. Adopted by the gate (the solo dip is at the edge, the same pattern as CM2). Stacking at 70 M (b coop): natMain
+  0.91, natMainT2 0.81, Σ 296, elites 5.6 (60 M: 0.88 / 0.66 / 253 / 4.9).
+- FIN-MLP-s1, FIN-V5-s1 (lr 1e-4) and FIN-V5-s2: see `records/final/coopgate.csv`.
+
+### Held-out confirmation (`--seed 200000000`, setting b, 476 + 476 seeds; status 11-14 05:00 UTC)
+
+| candidate | solo | coop4h1 | mean | paired vs FIN-MLP-s2-70M (solo / coop) |
+|---|---|---|---|---|
+| FIN-MLP-s2-70M | 0.784 | 0.737 | 0.761 | |
+| FIN-V5-s2-60M | 0.723 | 0.639 | 0.681 | −0.061 ± 0.026 / −0.099 ± 0.025 |
+| CB10 (seed 0, 30 M + co-op stage) | 0.704 | 0.616 | 0.660 | −0.080 ± 0.025 / −0.122 ± 0.025 |
+
+FIN-V5-s2-60M read 0.754 / 0.662 on the milestone seeds and 0.723 / 0.639 held-out: the selection bias the held-out set
+is there to remove.
+
+### Final pick
+
+<!-- FINAL: pick, extension outcomes, held-out of the top candidates; filled from records/final/ after the pick -->
+*Placeholder: the final pick, the extension and co-op stage outcomes and the held-out numbers of the top candidates go
+here once the pick is made. The tables are in `records/final/` (`ranking.csv`, `coopgate.csv`, `heldout.csv`).*

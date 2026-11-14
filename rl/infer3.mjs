@@ -14,6 +14,7 @@ export class SPPolicy3 {
     const W = (n) => { const t = m.tensors[n]; return { data: f32.subarray(t.offset, t.offset + t.shape.reduce((x, y) => x * y, 1)), shape: t.shape }; };
     const lin = (p) => { const w = W(`${p}.weight`), b = W(`${p}.bias`); return { w: w.data, b: b.data, out: w.shape[0], inn: w.shape[1] }; };
     this.names = Object.keys(m.layout); this.blocks = {};
+    if (Object.values(m.layout).some((L) => L.pslot)) throw new Error('infer3.mjs: plan-slot exports (natPlan.slots) are not supported; use infer2.mjs');
     for (const name of this.names) {
       const L = m.layout[name], l0 = lin(`enc.${name}.0`), l2 = lin(`enc.${name}.2`), tables = []; let col = L.numeric.length;
       for (const [field, voc] of L.ids) {
