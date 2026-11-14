@@ -14,41 +14,49 @@ for a rate, sd / √n of the per-seed differences for a paired Δ.
 <!-- pick:BEGIN results -->
 The released model is **FIN-MLP-s2-70M**: MLP (`rl/py/model.py`), 1.55 M parameters, 70 M steps; MLP BC (PB5) → NM to
 5 M → NMA (auto1) to 60 M → co-op stage (arm CB, seed offset 73,000,000) to 70 M. It was chosen for its inference
-cost. The v5 run FIN-V5X-s1-90M scored a little higher on the held-out seeds (0.788 / 0.769; Δ mean +0.018 ± 0.017,
-about one standard error; +0.031 ± 0.012 pooled with the milestone seeds), but its policy costs 23 ms per decision in
-JS against 1.8 ms for the MLP. The normal-round picker c9 dominates a match's model time with either policy (about 772
-ms per normal-round decision).
-
-*Provisional: the headline will be the confirmation on a fresh seed set (`--seed 300000000`, 476 seeds per config,
-same protocol). Until it is in, the held-out numbers stand in.*
+cost. The v5 run FIN-V5X-s1-90M scored a little higher on the fresh seeds (0.790 / 0.744; paired Δ mean +0.017 ±
+0.018, about one standard error; held-out +0.018 ± 0.017), but its policy costs 23 ms per decision in JS against 1.8
+ms for the MLP. The normal-round picker c9 dominates a match's model time with either policy (about 772 ms per
+normal-round decision).
 
 | | solo:ABYSS | coop4h1:ABYSS |
 |---|---|---|
-| FIN-MLP-s2-70M, setting b, held-out (`--seed 200000000`, 476 each) | 0.784 ± 0.019 | 0.737 ± 0.020 |
+| FIN-MLP-s2-70M, setting b, fresh seeds (`--seed 300000000`, 476 each) | 0.769 ± 0.019 | 0.731 ± 0.020 |
+| FIN-MLP-s2-70M, setting b, held-out (`--seed 200000000`; the last choice was made here) | 0.784 ± 0.019 | 0.737 ± 0.020 |
 | same, milestone seeds (`--seed 7000000`; 10th of 19 on the b mean) | 0.723 ± 0.021 | 0.702 ± 0.021 |
 | same, milestone + held-out pooled (952 seeds each) | 0.753 | 0.720 |
+| real-player-weighted coop4h1 (human-proxy cells, fresh seeds; A1c) | | 0.702 ± 0.010 |
 | setting a (no pickers), milestone seeds | 0.595 | 0.508 |
 | picker lift b − a (milestone seeds, paired) | +0.128 ± 0.022 | +0.193 ± 0.025 |
-| natMain / natMainT2 (held-out) | 0.99 / 0.97 | 0.91 / 0.81 |
-| main tier (held-out) | 1.98 | 1.88 |
-| main / secondary / Σ layers (held-out) | 197 / 82 / 331 | 178 / 74 / 295 |
-| elites (held-out) | 5.7 | 5.6 |
-| not shipped: FIN-V5X-s1-90M (v5, 90 M), setting b, held-out | 0.788 ± 0.019 | 0.769 ± 0.019 |
+| natMain / natMainT2 (fresh) | 0.99 / 0.97 | 0.92 / 0.82 |
+| main tier (fresh) | 1.98 | 1.89 |
+| main / secondary / Σ layers (fresh) | 185 / 87 / 325 | 185 / 75 / 302 |
+| elites (fresh) | 5.6 | 5.7 |
+| not shipped: FIN-V5X-s1-90M (v5, 90 M), setting b, fresh | 0.790 ± 0.019 | 0.744 ± 0.020 |
+| FIN-V5X-s1-90M − FIN-MLP-s2-70M, fresh, paired | +0.021 ± 0.024 | +0.013 ± 0.027 |
+| FIN-V5X-s1-90M, held-out | 0.788 ± 0.019 | 0.769 ± 0.019 |
 | FIN-V5X-s1-90M − FIN-MLP-s2-70M, held-out, paired | +0.004 ± 0.024 | +0.032 ± 0.023 |
 | same, milestone + held-out pooled, paired | +0.033 ± 0.018 | +0.029 ± 0.017 |
 | reference: NMA 30 M (seed 0), setting b, milestone seeds | 0.679 | 0.540 |
 | reference: NAT 88 M + boss picker (elite route, not the target play) | 0.596 | 0.581 |
 | legacy fill (every model seat legacy; 11-13 protocol, b0, 480 seeds) | 0.010 | 0.071 |
 
-- FIN-MLP-s2-70M on the held-out seeds plays the national route: main bonds 拉特兰 0.63, 维多利亚 0.26 (solo), secondaries 灵巧
-  0.46, 坚守 0.22, 精准 0.20. No drift toward the elite route. FIN-V5X-s1-90M: natMain 1.00 / 0.91, Σ layers 349 / 295,
-  elites 5.5 / 4.7.
+- **Why the three seed sets differ.** Each has 476 seeds per config, so a rate has an SE of about 0.02 on its own, and
+  the sets differ in difficulty; only paired numbers on one set compare candidates. On top of that, picking the best
+  of many on a set biases the pick's number on that set upward. The milestone set ranked 19 candidates (its leader
+  FIN-V5X-s1-80M, 0.805 / 0.712, fell to 0.756 / 0.685 held-out). The held-out set compared 11, and the two finalists
+  are its top two: FIN-MLP-s2-70M 0.784 / 0.737 there and 0.769 / 0.731 fresh, FIN-V5X-s1-90M 0.788 / 0.769 there and
+  0.790 / 0.744 fresh. The fresh set chose nothing: its numbers are the headline. The paired gap to FIN-V5X-s1-90M is
+  the same on held-out (+0.018 ± 0.017) and fresh (+0.017 ± 0.018).
+- FIN-MLP-s2-70M plays the national route: main bonds 拉特兰 0.63, 维多利亚 0.26 (held-out solo), secondaries 灵巧 0.46, 坚守
+  0.22, 精准 0.20. No drift toward the elite route. FIN-V5X-s1-90M (fresh): natMain 0.99 / 0.89, Σ layers 336 / 295,
+  elites 5.5 / 4.6.
 - Deploy cost, measured on the release check matches (8 + 8 per model, `parity.json` of each export; the pickers build
   no battles, sims = 0):
 
 | one pinned core, JS, release check matches | FIN-MLP-s2-70M (MLP) | FIN-V5X-s1-90M (v5) |
 |---|---|---|
-| policy, ms per decision | 1.9 | 21 |
+| policy, ms per decision (all check-match decisions) | 1.8 | 23 |
 | c9 (normal rounds), ms per decision | 772 | 714 |
 | xboss-v3 (boss rounds), ms per decision | 191 | 191 |
 | model time per solo:ABYSS match, s (policy + c9 + xboss-v3) | 10.6 | 11.9 |
@@ -79,16 +87,65 @@ pooled view: `records/final/heldout-paired.md` (`rl/final/hopair.py`).
 | FIN-V5-s2-60M | 0.723 | 0.639 | 0.681 | −0.061 ± 0.026 | −0.099 ± 0.025 | −0.080 ± 0.018 |
 | CB10 | 0.704 | 0.616 | 0.660 | −0.080 ± 0.025 | −0.122 ± 0.025 | −0.101 ± 0.018 |
 
-- The held-out set removes the selection bias ([FINDINGS.md](FINDINGS.md) §13). FIN-V5X-s1-80M ranked 1st on the
-  milestone seeds (0.805 / 0.712) and read 0.756 / 0.685 here. FIN-MLP-s2-70M ranked 10th (0.723 / 0.702) and read
-  0.784 / 0.737.
+- The held-out set removes the milestone set's selection bias ([FINDINGS.md](FINDINGS.md) §13); choosing the finalists
+  on it adds its own, which the fresh set in A1b removes. FIN-V5X-s1-80M ranked 1st on the milestone seeds (0.805 /
+  0.712) and read 0.756 / 0.685 here. FIN-MLP-s2-70M ranked 10th (0.723 / 0.702) and read 0.784 / 0.737.
 - FIN-V5X-s1-90M is the only candidate ahead of FIN-MLP-s2-70M on both seed sets: pooled (952 seeds per cell) +0.033 ±
   0.018 solo, +0.029 ± 0.017 co-op, +0.031 ± 0.012 on the mean. Its held-out lead is about one standard error, and it
   is the maximum of 11 held-out runs, so the pooled number is the conservative one.
 
 ### A1b. Fresh-seed confirmation (`--seed 300000000`, setting b, 476 seeds per cell)
 
-*Running at the time of writing; the table goes here.*
+The release's JS parity check matches also ran on seeds of this set, for both exports: solo:ABYSS
+302,000,000–302,000,007 and coop4h1:ABYSS 880,000,000–880,000,007. They check JS against torch and chose nothing.
+
+Both finalists, setting b, `rl/final/confirm.py` (`records/final/confirm.md`). Paired Δ = FIN-V5X-s1-90M −
+FIN-MLP-s2-70M on the same seeds.
+
+| candidate | solo:ABYSS | coop4h1:ABYSS | mean | solo / coop w/o the check-match seeds |
+|---|---|---|---|---|
+| FIN-MLP-s2-70M | 0.769 | 0.731 | 0.750 | 0.765 / 0.729 |
+| FIN-V5X-s1-90M | 0.790 | 0.744 | 0.767 | 0.791 / 0.746 |
+
+Paired V5X - MLP: solo +0.021 ± 0.024 (n 476; w/o check-match seeds +0.026 ± 0.024), coop +0.013 ± 0.027 (n 476; w/o
++0.017 ± 0.028), mean +0.017 ± 0.018
+
+Stacking (fresh set; solo / coop rows):
+
+| candidate | cfg | natMain / T2 | main tier | main / sec / Σ layers | elites | main bond |
+|---|---|---|---|---|---|---|
+| FIN-MLP-s2-70M | solo | 0.99 / 0.97 | 1.98 | 185 / 87 / 325 | 5.6 | 拉特兰 0.64, 维多利亚 0.24 |
+| FIN-MLP-s2-70M | coop | 0.92 / 0.82 | 1.89 | 185 / 75 / 302 | 5.7 | 维多利亚 0.20, 拉特兰 0.20 |
+| FIN-V5X-s1-90M | solo | 0.99 / 0.97 | 1.98 | 191 / 89 / 336 | 5.5 | 拉特兰 0.65, 维多利亚 0.24 |
+| FIN-V5X-s1-90M | coop | 0.89 / 0.75 | 1.80 | 184 / 68 / 295 | 4.6 | 拉特兰 0.20, 维多利亚 0.20 |
+
+### A1c. Robustness to the human teammate (coop4h1:ABYSS, the same fresh seeds)
+
+The human seat is a scripted proxy that builds one nation (`nat:<P>Ship`; scored on the seeds where that nation is
+live) or a class route (`class`). Hole = the cell's win minus the model's own win with the legacy human on the same
+seeds.
+
+| cell | live seeds | MLP-s2-70M | V5X-s1-90M | Δ V5X - MLP (paired) | MLP hole vs own legacy | V5X hole vs own legacy | MLP natMain / T2, Σ, elites | V5X natMain / T2, Σ, elites |
+|---|---|---|---|---|---|---|---|---|
+| 叙拉古 | 269 | 0.736 | 0.773 | +0.037 ± 0.030 | +0.022 ± 0.034 | +0.063 ± 0.033 | 0.98 / 0.89, 300, 5.7 | 0.95 / 0.84, 319, 5.0 |
+| 炎 | 306 | 0.771 | 0.758 | −0.013 ± 0.030 | +0.075 ± 0.031 | +0.046 ± 0.030 | 0.95 / 0.85, 322, 5.9 | 0.92 / 0.81, 313, 4.9 |
+| 谢拉格 | 302 | 0.652 | 0.619 | −0.033 ± 0.034 | −0.132 ± 0.032 | −0.175 ± 0.032 | 0.92 / 0.77, 278, 5.5 | 0.88 / 0.69, 253, 4.0 |
+| 阿戈尔 | 301 | 0.704 | 0.681 | −0.023 ± 0.032 | −0.007 ± 0.032 | −0.010 ± 0.033 | 0.96 / 0.86, 285, 5.7 | 0.93 / 0.78, 285, 4.6 |
+| 卡西米尔 | 298 | 0.661 | 0.681 | +0.020 ± 0.032 | −0.084 ± 0.032 | −0.077 ± 0.031 | 0.91 / 0.79, 290, 5.6 | 0.90 / 0.74, 277, 4.4 |
+| 维多利亚 | 301 | 0.694 | 0.688 | −0.007 ± 0.033 | −0.023 ± 0.032 | −0.066 ± 0.033 | 0.91 / 0.77, 282, 5.5 | 0.93 / 0.70, 293, 4.6 |
+| 拉特兰 | 304 | 0.645 | 0.645 | +0.000 ± 0.031 | −0.128 ± 0.032 | −0.141 ± 0.033 | 0.85 / 0.71, 290, 5.5 | 0.88 / 0.66, 284, 4.3 |
+| 萨尔贡 | 299 | 0.722 | 0.766 | +0.043 ± 0.030 | +0.017 ± 0.029 | +0.027 ± 0.030 | 0.96 / 0.87, 300, 5.8 | 0.94 / 0.81, 309, 5.1 |
+| class | all 476 | 0.674 | 0.704 | +0.029 ± 0.026 | −0.057 ± 0.025 | −0.040 ± 0.026 | 0.91 / 0.79, 293, 5.5 | 0.90 / 0.76, 301, 4.6 |
+
+Real-player-weighted coop4h1: the cells weighted by the nation mix of 126 real matches (aggregates only; 78 %
+national, 22 % class).
+
+| candidate | real-player-weighted coop4h1 | legacy-proxy coop (fresh) |
+|---|---|---|
+| FIN-MLP-s2-70M | 0.702 ± 0.010 | 0.731 |
+| FIN-V5X-s1-90M | 0.713 ± 0.010 | 0.744 |
+
+Paired weighted Δ V5X - MLP = +0.012 ± 0.012
 <!-- pick:END heldout -->
 
 ## A2. Milestones of the final runs (476 paired seeds, `--seed 7000000`)

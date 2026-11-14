@@ -43,9 +43,10 @@ Design: [docs/DESIGN.md](docs/DESIGN.md).
 5. **Co-op stage** (arm CB, used on the MLP; it failed on v5): 10M steps of co-op training with a pool of teammate
    proxies (`rl/proxies.mjs`), KL-anchored to its start, kept only if co-op rises and solo drops by ≤ 0.02.
 
-Two architectures × two seeds were trained. The pick is made on paired 480-seed evals of solo:ABYSS and
-coop4h1:ABYSS with both pickers, then confirmed on a held-out seed set. The exact arguments, seeds, md5s, the pick rule
-and the held-out protocol are in [rl/final/README.md](rl/final/README.md).
+Two architectures × two seeds were trained. Candidates are ranked on paired 480-seed evals of solo:ABYSS and
+coop4h1:ABYSS with both pickers, the leaders are compared on a held-out seed set, and the two finalists are confirmed
+on a fresh one. The exact arguments, seeds, md5s, the pick rule and the seed sets are in
+[rl/final/README.md](rl/final/README.md).
 
 ## Reproducing from scratch
 
@@ -74,27 +75,32 @@ B=$PWD/work ROOT=$PWD/work/FINAL bash work/FINAL/launch.sh rl      # NM -> NMA -
 
 <!-- pick:BEGIN headline -->
 The released model is **FIN-MLP-s2-70M**: the MLP (1.55 M parameters), seed 2, NM 5 M → NMA 60 M → co-op stage 70 M.
-It was chosen for its inference cost. The v5 run FIN-V5X-s1-90M scored a little higher on the held-out seeds (0.788 /
-0.769; Δ mean +0.018 ± 0.017, about one standard error; +0.031 ± 0.012 pooled with the milestone seeds), but its
-policy costs 23 ms per decision in JS against 1.8 ms for the MLP.
-
-*Provisional: the headline will be the confirmation on a fresh seed set (`--seed 300000000`, 476 seeds per config,
-same protocol). Until it is in, the held-out numbers stand in.*
+It was chosen for its inference cost. The v5 run FIN-V5X-s1-90M scored a little higher on the fresh seeds (0.790 /
+0.744; paired Δ mean +0.017 ± 0.018, about one standard error; held-out +0.018 ± 0.017), but its policy costs 23 ms
+per decision in JS against 1.8 ms for the MLP.
 
 | | solo:ABYSS | coop4h1:ABYSS |
 |---|---|---|
-| **FIN-MLP-s2-70M**, deploy setting (both pickers), held-out seeds (`--seed 200000000`, 476 each) | **0.784 ± 0.019** | **0.737 ± 0.020** |
-| natMain / natMainT2 (national main bond; at tier ≥ 2), held-out | 0.99 / 0.97 | 0.91 / 0.81 |
-| main / secondary / Σ layers, elites, held-out | 197 / 82 / 331, 5.7 | 178 / 74 / 295, 5.6 |
+| **FIN-MLP-s2-70M**, deploy setting (both pickers), fresh seeds (`--seed 300000000`, 476 each) | **0.769 ± 0.019** | **0.731 ± 0.020** |
+| FIN-MLP-s2-70M, same setting, held-out seeds (`--seed 200000000`) | 0.784 ± 0.019 | 0.737 ± 0.020 |
+| FIN-MLP-s2-70M, same setting, milestone seeds (`--seed 7000000`) | 0.723 ± 0.021 | 0.702 ± 0.021 |
+| coop4h1 with real-player-like humans (proxy cells weighted by 126 real matches), fresh seeds | | 0.702 ± 0.010 |
+| natMain / natMainT2 (national main bond; at tier ≥ 2), fresh | 0.99 / 0.97 | 0.92 / 0.82 |
+| main / secondary / Σ layers, elites, fresh | 185 / 87 / 325, 5.6 | 185 / 75 / 302, 5.7 |
 | without the pickers (milestone seeds) | 0.595 | 0.508 |
-| not shipped: FIN-V5X-s1-90M (v5), deploy setting, held-out seeds | 0.788 ± 0.019 | 0.769 ± 0.019 |
+| not shipped: FIN-V5X-s1-90M (v5), deploy setting, fresh seeds | 0.790 ± 0.019 | 0.744 ± 0.020 |
 | reference: the legacy rule AI in the model seats (11-13 protocol, b0) | 0.010 | 0.071 |
 | reference: NAT 88M + boss picker (elite-merge route, not the target play) | 0.596 | 0.581 |
 
-The target was ≥ 0.50 on both. ± is one standard error; stacking is averaged over the model seats. Held-out = 476
-seeds per config that no training run or milestone eval reaches; the last choice between candidates was made on them,
-so a second fresh set confirms the result. Every candidate, milestone and gate: [docs/RESULTS.md](docs/RESULTS.md)
-Part A and `records/final/`.
+The target was ≥ 0.50 on both. ± is one standard error; stacking is averaged over the model seats.
+
+**Three seed sets, 476 seeds per config each.** The 19 candidates were ranked on the milestone seeds, and the leading
+11 were compared on the held-out seeds. Nothing was chosen on the fresh seeds, so they give the headline. A number
+from a set that was used to choose is biased upward for whatever was chosen on it (selection bias): FIN-MLP-s2-70M
+read 0.784 / 0.737 on the held-out seeds, where the two finalists were chosen, and 0.769 / 0.731 on the fresh ones. On
+the milestone seeds, where it ranked 10th of 19 and so was not favoured by the selection, it read 0.723 / 0.702; the
+fresh number sits between the two. Every candidate, milestone and gate: [docs/RESULTS.md](docs/RESULTS.md) Part A and
+`records/final/`.
 <!-- pick:END headline -->
 
 ## Hardware

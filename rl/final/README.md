@@ -219,6 +219,9 @@ What ran:
 - **Released: FIN-MLP-s2-70M** (`514db10d`), held-out .784 / .737 (the owner's choice: the MLP for its inference cost,
   policy 1.8 vs 23 ms per decision in JS). Lineage metas: `records/meta/FIN-MLP-s2-NM-meta.json`,
   `FIN-MLP-s2-NMA-meta.json`, `FIN-MLP-s2-COOP-meta.json`.
-- Confirmation on a fresh seed set, `--seed 300000000`, same protocol: running at the time of writing.
+- Confirmation on a fresh seed set, `--seed 300000000`, same protocol: FIN-MLP-s2-70M 0.769 / 0.731, FIN-V5X-s1-90M
+  0.790 / 0.744; paired Δ mean +0.017 ± 0.018, the same gap as held-out. Real-player-weighted coop4h1 0.702 ± 0.010 vs
+  0.713 ± 0.010. With a 谢拉格 human the MLP leads (0.652 vs 0.619, likely from its co-op stage), with a 拉特兰 human they
+  tie (0.645) `confirm.py` prints the tables (`records/final/confirm.md`).
 - Export: `rl/release/export_release.py` ([RELEASE.md](../../RELEASE.md)).
 <!-- pick:END pick -->

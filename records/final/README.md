@@ -12,6 +12,7 @@ are published: the eval JSONs hold them.
 | `ranking.csv` | the pick rule: both setting-b wins ≥ 0.50, ranked by their mean; paired Δ vs rank 1 |
 | `heldout.csv` | the held-out confirmation (`--seed 200000000`), setting b |
 | `heldout-paired.md` | the same held-out runs with full stacking, paired Δ vs FIN-MLP-s2-70M and the pooled view (milestone + held-out seeds); `rl/final/hopair.py` |
+| `confirm.md` | the confirmation of the two finalists on a fresh seed set (`--seed 300000000`): headline, stacking, human-robustness cells and the real-player-weighted co-op win; `rl/final/confirm.py` |
 | `repro-gate.csv` | the eval trees reproduce the reference evals match by match |
 | `summary.md` | the milestone table as markdown |
 
@@ -74,6 +75,12 @@ R9 / R12 and the win of seats with a tier-2 national main against the rest.
 **Held-out** (`heldout.csv`): the same setting-b protocol on `--seed 200000000`: solo:ABYSS match seeds
 202,000,000–202,000,475, coop4h1:ABYSS 780,000,000–780,000,475. Training seeds start at 1.01 × 10⁹, and no other eval
 base used by the project reaches these seeds.
+
+**Fresh** (`confirm.md`): the same protocol on `--seed 300000000`: solo:ABYSS 302,000,000–302,000,475, coop4h1:ABYSS
+880,000,000–880,000,475. Nothing was chosen on these seeds; the released model's headline comes from them. The release
+exports' JS check matches used 302,000,000–302,000,007 and 880,000,000–880,000,007 (parity only); `confirm.md` also
+shows the numbers without them. Human cells (`nat:<P>Ship`, `class`) use the same co-op seeds; a nation cell is scored
+on the seeds where that nation is live.
 
 ## How to read them
 

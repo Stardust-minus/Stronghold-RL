@@ -47,3 +47,4 @@ FIN-MLP-s2-70M/pickers/c9/c9-js.json,7cc8dbbee94fe59d0468927128ea88b5,released c
 FIN-MLP-s2-70M/pickers/xboss-v3/dw.json,3a5b96f1d362f3daf92f8cfe712e5726,released xboss-v3 Dw (e4d1c23d scrubbed; same weights),release FIN-MLP-s2-70M
 FIN-MLP-s2-70M/pickers/xboss-v3/g3b.json,7cd6a15596fcc73e3e3eee5aa5a09a7c,released xboss-v3 g3b (6fc155f1 scrubbed; same weights),release FIN-MLP-s2-70M
 FIN-MLP-s2-70M/pickers/xboss-v3/xplace.json,fb4773c5e2f285d9ea166e4a645fa2e7,released xboss-v3 options (file names relative to the release),release FIN-MLP-s2-70M
+RELEASE-MANIFEST-FIN-MLP-s2-70M.json,5585731879cd42549f69c1207523a3da,second release asset: the staging manifest (files and md5s of the tarball; sources; code commit; trees; lineage metas),release FIN-MLP-s2-70M

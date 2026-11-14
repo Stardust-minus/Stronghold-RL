@@ -6,9 +6,14 @@ checkpoints and checks it ([docs/RUNBOOK.md](docs/RUNBOOK.md) §6).
 
 <!-- pick:BEGIN release -->
 **First release: `FIN-MLP-s2-70M`**: MLP, 1.55 M parameters, 70,000,000 steps (NM 5 M → NMA 60 M → co-op stage 70 M).
-Asset `stronghold-rl-FIN-MLP-s2-70M.tar.gz` (17.1 MB, md5 `4d535b73d8fba3c932bcd1720d11efeb`). Repository commit
-`f3e0730` (`repoCommit` in `manifest.json`); the files it runs on (`manifest.json` → `code`) are unchanged in later
-commits. Numbers and the choice of model: [docs/RESULTS.md](docs/RESULTS.md) "Final result".
+
+- Asset `stronghold-rl-FIN-MLP-s2-70M.tar.gz` (17.1 MB, md5 `4d535b73d8fba3c932bcd1720d11efeb`).
+- Second asset `RELEASE-MANIFEST-FIN-MLP-s2-70M.json` (md5 `5585731879cd42549f69c1207523a3da`): the tarball's files
+  with md5 and bytes, the source checkpoint and picker md5s, the code commit, the frozen trees and the lineage metas,
+  in one file outside the tarball.
+- Code commit `f3e0730` (`repoCommit` in `manifest.json`): the commit of the code the release runs on. Later commits
+  do not change the files listed in `manifest.json` → `code`.
+- Numbers and the choice of model: [docs/RESULTS.md](docs/RESULTS.md) "Final result".
 <!-- pick:END release -->
 
 ## Asset layout
@@ -70,14 +75,15 @@ the battles it built; the count must stay 0.
 **In PyTorch, as evaluated** (`eval.py`; the commands of [docs/RUNBOOK.md](docs/RUNBOOK.md) §5):
 
 ```sh
-python tools/rl/py/eval.py --ckpt <name>/policy/model.pt --configs solo:ABYSS --matches 480 --chunks 28 --seed 200000000 \
+python tools/rl/py/eval.py --ckpt <name>/policy/model.pt --configs solo:ABYSS --matches 480 --chunks 28 --seed 300000000 \
   --greedy --bond-log --rehearsal 0 --boss-rehearsal 0 --band-policy 0 --nat-plan '<manifest.env.natPlan>' \
   --npicker-head <name>/pickers/c9/c9-js.json --npicker-mode reg --npicker-margin 0.5 --npicker-pool \
-  --xplace "$(python tools/rl/release/xplace_arg.py <name>)" --out heldout-solo.json
+  --xplace "$(python tools/rl/release/xplace_arg.py <name>)" --out fresh-solo.json
 ```
 
-With `--seed 200000000` this repeats the held-out solo:ABYSS evaluation (co-op: `--configs coop4h1:ABYSS
---mate-rehearsal 3 --human-proxy '{"kinds":["legacy"],"log":true}'`). Do not add `--picker-head` / `--picker-trunk`.
+With `--seed 300000000` this repeats the fresh-seed headline evaluation of solo:ABYSS; `--seed 200000000` gives the
+held-out one. Co-op: `--configs coop4h1:ABYSS --mate-rehearsal 3 --human-proxy '{"kinds":["legacy"],"log":true}'`. Do
+not add `--picker-head` / `--picker-trunk`.
 
 **The policy alone, in your own JS code:**
 

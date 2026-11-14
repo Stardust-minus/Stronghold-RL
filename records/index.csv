@@ -149,7 +149,7 @@ meta/coop-CM2-meta.json,3008,meta.json of the final runs and the co-op stage arm
 meta/coop-CV5-meta.json,3077,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
 meta/coop-CV5b-meta.json,3127,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
 meta/FIN-MLPX-s2-XC-meta.json,2990,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
-meta/FIN-V5X-s1-EXT-meta.json,3887,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
+meta/FIN-V5X-s1-EXT-meta.json,3884,meta.json of the final runs and the co-op stage arms (paths symbolic: <work>/...)
 scratch/evals/B1.json,16704,"scratch batch 1 arm B1: in-run evals (BC init, 5M PPO)"
 scratch/evals/B2.json,16754,"scratch batch 1 arm B2: in-run evals (BC init, 5M PPO)"
 scratch/evals/LR3.json,16600,"scratch batch 1 arm LR3: in-run evals (BC init, 5M PPO)"
@@ -240,7 +240,7 @@ train/final/FIN-MLPX-s2-XC-curve.csv,70685,"train curve (one row per PPO update:
 train/final/FIN-MLPX-s2-XC-runs.json,5278,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
 train/final/FIN-V5X-s1-EXT-curve.csv,198417,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
 train/final/FIN-V5X-s1-EXT-runs.json,8353,"train curve (one row per PPO update: numeric fields, rolling win per difficulty, diag) / run events"
-weights-md5.csv,3385,md5 of weight files kept out of the repo
+weights-md5.csv,6148,md5 of weight files kept out of the repo
 provenance.csv,8910,"which frozen tree file each repo file comes from, and how it was ported"
 width/evals/AT-inrun.json,6319,width arm AT: in-run eval at 55M
 width/evals/W1-inrun.json,6374,width arm W1: in-run eval at 55M
@@ -251,5 +251,6 @@ width/train/W1-curve.csv,51859,train curve: one row per PPO update
 width/train/W1-runs.json,3079,"run args (start events), in-run evals, end events"
 width/train/W2-curve.csv,51914,train curve: one row per PPO update
 width/train/W2-runs.json,3076,"run args (start events), in-run evals, end events"
-final/README.md,7148,"the metrics of the final evals: definitions, computation, how to read them"
+final/README.md,8184,"the metrics of the final evals: definitions, computation, how to read them"
 final/heldout-paired.md,5592,"held-out table with full stacking, paired deltas and the pooled view (rl/final/hopair.py output)"
+final/confirm.md,3350,"fresh-seed confirmation of the two finalists: headline, stacking, human-robustness cells, real-player-weighted co-op (rl/final/confirm.py output)"

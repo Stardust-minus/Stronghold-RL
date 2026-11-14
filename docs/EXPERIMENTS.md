@@ -783,10 +783,13 @@ included). From 06:55 the rule was: the current pick stays unless a candidate be
 - **By the win rule (09:00):** FIN-V5X-s1-90M. It beat FIN-MLP-s2-70M on held-out, paired (Δ mean +0.018 ± 0.017; solo
   +0.004 ± 0.024, co-op +0.032 ± 0.023), led on the milestone seeds too, and pooled +0.031 ± 0.012.
 - **Released (the owner's choice): FIN-MLP-s2-70M**, held-out 0.784 / 0.737. It was chosen for its inference cost. The
-  v5 run FIN-V5X-s1-90M scored a little higher on the held-out seeds (0.788 / 0.769; Δ mean +0.018 ± 0.017, about one
-  standard error; +0.031 ± 0.012 pooled with the milestone seeds), but its policy costs 23 ms per decision in JS
-  against 1.8 ms for the MLP.
+  v5 run FIN-V5X-s1-90M scored a little higher on the fresh seeds (0.790 / 0.744; paired Δ mean +0.017 ± 0.018, about
+  one standard error; held-out +0.018 ± 0.017), but its policy costs 23 ms per decision in JS against 1.8 ms for the
+  MLP.
 - Stacking of FIN-MLP-s2-70M, held-out (solo / co-op): natMain 0.99 / 0.91, natMainT2 0.97 / 0.81, Σ layers 331 / 295,
   elites 5.7 / 5.6; main bonds 拉特兰 0.63, 维多利亚 0.26, secondaries 灵巧 0.46, 坚守 0.22, 精准 0.20.
-- **Confirmation on a fresh seed set** (`--seed 300000000`, same protocol): running at the time of writing.
+- **Confirmation on a fresh seed set** (`--seed 300000000`, same protocol): FIN-MLP-s2-70M 0.769 / 0.731,
+  FIN-V5X-s1-90M 0.790 / 0.744; paired Δ mean +0.017 ± 0.018, the same gap as held-out. Real-player-weighted coop4h1
+  0.702 ± 0.010 vs 0.713 ± 0.010. With a 谢拉格 human the MLP leads (0.652 vs 0.619, likely from its co-op stage), with a
+  拉特兰 human they tie (0.645) ([RESULTS.md](RESULTS.md) A1b, A1c).
 <!-- pick:END pick -->
